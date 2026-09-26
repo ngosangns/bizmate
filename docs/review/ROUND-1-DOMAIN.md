@@ -140,9 +140,9 @@ Mỗi judge file `docs/review/domain-{judge}.md` với 2–3 bullet **cụ thể
 | Kyle-K1 | Bookkeeper | HITL 3 dòng lớn / bước | **P0** | Open → Adv |
 | Kyle-K2 | Bookkeeper | Pause beat khi đỏ 1B | P1 | Open → Adv |
 | Kyle-K3 | Bookkeeper | --reset header đầu demo | P1 | Open → Adv |
-| Kyle-S1 | Shield | 30s · 💬 1 câu · reasons→AUDIT | **P0** | Open → Adv |
-| Kyle-S2 | Shield | CLI --once | P1 | Open → Adv |
-| Kyle-S3 | Shield | STEP pill live counts | P1 | Open → Adv |
+| Kyle-S1 | Shield | 30s · 💬 1 câu · reasons→AUDIT | **P0** | **Done** |
+| Kyle-S2 | Shield | CLI --once | P1 | **Done** |
+| Kyle-S3 | Shield | STEP pill live counts | P1 | **Done** |
 | Kyle-F1 | FloodOps | HUMAN+COD cùng dòng | **P0** | Open → Adv |
 | Kyle-F2 | FloodOps | Wave status ①②③ | P1 | Open → Adv |
 | Kyle-F3 | FloodOps | Shop An Đông 3 dòng | P1 | Open → Adv |
@@ -158,9 +158,9 @@ Mỗi judge file `docs/review/domain-{judge}.md` với 2–3 bullet **cụ thể
 | Son-K1 | Bookkeeper | `.scratch/bookkeeper-001.md` | **P0** | Open → Adv |
 | Son-K2 | Bookkeeper | Fail→fix git beat 15s | P1 | Open → Adv |
 | Son-K3 | Bookkeeper | Parse = regex stub label | P1 | Open → Adv |
-| Son-S1 | Shield | detector:fixture above-the-fold | P1 | Open → Adv |
-| Son-S2 | Shield | `.scratch/shield-001.md` | P1 | Open → Adv |
-| Son-S3 | Shield | Không claim Mate codegen | P2 | Open → Adv |
+| Son-S1 | Shield | detector:fixture above-the-fold | P1 | **Done** |
+| Son-S2 | Shield | `.scratch/shield-001.md` | P1 | **Done** |
+| Son-S3 | Shield | Không claim Mate codegen | P2 | **Done** |
 | Son-F1 | FloodOps | Scratch honesty 2 câu on stage | P1 | Open → Adv |
 | Son-F2 | FloodOps | Schema flood-decision 10s | P1 | Open → Adv |
 | Son-F3 | FloodOps | Policy evolve path offline | P2 | Open → Adv |

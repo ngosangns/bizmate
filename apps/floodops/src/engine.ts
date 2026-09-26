@@ -10,6 +10,8 @@ export interface Order {
   wardId: string;
   codVnd: number;
   slaHoursLeft: number;
+  /** Optional shop owner id for seller-view demo (e.g. shop-andong). */
+  shopId?: string;
 }
 
 export interface Policy {
@@ -31,17 +33,25 @@ export interface ProposedAction {
   requiresHuman: boolean;
   impactEstimate: string;
   status: "proposed" | "auto_applied" | "awaiting_human" | "approved";
+  /** Mẫu SMS/copy VN seller gửi buyer khi dời/chuyển/giữ — không phải live SMS gateway. */
+  buyerNotifyVi?: string;
+  /** Ước phí 2 chiều (VND) trên propose_refund — deterministic estimate, not live. */
+  roundTripFeeEstimateVnd?: number;
 }
 
 export interface FloodEvent {
   type: string;
   wardId?: string;
   floodCm?: number;
+  /** local_knowledge note, e.g. "ngách chỉ xe máy" */
+  note?: string;
 }
 
 export interface EventSummary {
   floodAlerts: { wardId: string; floodCm: number }[];
   courierCancelWardIds: string[];
+  /** Wards flagged motorcycle-alley only (TA-F3 local-knowledge stub). */
+  motorcycleAlleyWardIds: string[];
 }
 
 export interface AuditEntry {
@@ -56,6 +66,7 @@ export interface AuditEntry {
 export function summarizeEvents(events: FloodEvent[]): EventSummary {
   const floodAlerts: { wardId: string; floodCm: number }[] = [];
   const cancelSet = new Set<string>();
+  const alleySet = new Set<string>();
   for (const e of events) {
     if (e.type === "flood_alert" && e.wardId != null) {
       floodAlerts.push({ wardId: e.wardId, floodCm: e.floodCm ?? 0 });
@@ -63,10 +74,18 @@ export function summarizeEvents(events: FloodEvent[]): EventSummary {
     if (e.type === "courier_cancel" && e.wardId != null) {
       cancelSet.add(e.wardId);
     }
+    if (
+      e.type === "local_knowledge" &&
+      e.wardId != null &&
+      (e.note ?? "").toLowerCase().includes("xe máy")
+    ) {
+      alleySet.add(e.wardId);
+    }
   }
   return {
     floodAlerts,
     courierCancelWardIds: [...cancelSet],
+    motorcycleAlleyWardIds: [...alleySet],
   };
 }
 
@@ -127,6 +146,31 @@ function escalateTightSla(
   return action;
 }
 
+
+/** Mẫu tin nhắn buyer (VN) — honest template, not a live SMS send. */
+export function buildBuyerNotifyVi(
+  orderId: string,
+  wardName: string,
+  kind: ActionKind
+): string | undefined {
+  if (kind === "noop" || kind === "propose_refund") return undefined;
+  const actionPhrase =
+    kind === "reschedule"
+      ? "Shop dời giao sang khung +24h"
+      : kind === "reroute_clear_ward"
+        ? "Shop chuyển tuyến khô"
+        : "Shop tạm giữ đơn chờ rút nước";
+  return `[FloodOps] Đơn ${orderId} bị ảnh hưởng mưa ngập tại ${wardName}. ${actionPhrase}. Xin lỗi vì sự bất tiện.`;
+}
+
+/**
+ * Deterministic round-trip fee estimate (phí 2 chiều) — fixture math, not live carrier rate.
+ * base 25_000₫ + 2% COD.
+ */
+export function estimateRoundTripFeeVnd(codVnd: number): number {
+  return 25_000 + Math.round(codVnd * 0.02);
+}
+
 /**
  * COD tiers (exclusive mid band for refund):
  * - low  (<= autoRescheduleMaxCodVnd) + clear wards → reschedule
@@ -140,7 +184,8 @@ export function replanOrder(
   ward: Ward,
   policy: Policy,
   clearWardIds: string[],
-  courierCancelled = false
+  courierCancelled = false,
+  motorcycleAlley = false
 ): ProposedAction {
   if (ward.status !== "flooded") {
     return {
@@ -161,13 +206,15 @@ export function replanOrder(
   let action: ProposedAction;
 
   if (order.codVnd >= policy.refundRequiresHumanAboveVnd) {
+    const fee = estimateRoundTripFeeVnd(order.codVnd);
     action = {
       orderId: order.id,
       kind: "propose_refund",
       reason: `${floodPrefix} · COD cao ${order.codVnd.toLocaleString("vi-VN")}₫${cancelNote}`,
       requiresHuman: true,
-      impactEstimate: `Hoàn COD + phí 2 chiều (ước tính)`,
+      impactEstimate: `Hoàn COD + phí 2 chiều ~${fee.toLocaleString("vi-VN")}₫ (ước tính)`,
       status: "awaiting_human",
+      roundTripFeeEstimateVnd: fee,
     };
   } else {
     const hasClear = clearWardIds.length > 0;
@@ -176,8 +223,17 @@ export function replanOrder(
       order.codVnd > policy.autoRescheduleMaxCodVnd &&
       order.codVnd < policy.refundRequiresHumanAboveVnd;
 
-    // Mid COD + clear → reroute (đích ward khô; vẫn ghi cancel nếu có)
-    if (isMid && hasClear) {
+    // TA-F3: local-knowledge ngách xe máy → prefer hold over reroute (not reschedule)
+    if (motorcycleAlley && isMid && hasClear && !courierCancelled) {
+      action = {
+        orderId: order.id,
+        kind: "hold",
+        reason: `${floodPrefix} — giữ đơn (local-knowledge: ngách chỉ xe máy)`,
+        requiresHuman: false,
+        impactEstimate: "delay · alley stub",
+        status: "auto_applied",
+      };
+    } else if (isMid && hasClear) {
       const dest = clearWardIds[0]!;
       action = {
         orderId: order.id,
@@ -213,7 +269,12 @@ export function replanOrder(
     }
   }
 
-  return escalateTightSla(action, order, true);
+  action = escalateTightSla(action, order, true);
+  const notify = buildBuyerNotifyVi(order.id, ward.name, action.kind);
+  if (notify) {
+    action = { ...action, buyerNotifyVi: notify };
+  }
+  return action;
 }
 
 export function runWave(
@@ -224,7 +285,9 @@ export function runWave(
 ): ProposedAction[] {
   const byId = new Map(wards.map((w) => [w.id, w]));
   const clear = wards.filter((w) => w.status === "clear").map((w) => w.id);
-  const cancelled = new Set(summarizeEvents(events).courierCancelWardIds);
+  const summary = summarizeEvents(events);
+  const cancelled = new Set(summary.courierCancelWardIds);
+  const alley = new Set(summary.motorcycleAlleyWardIds);
   return orders.map((o) => {
     const w = byId.get(o.wardId);
     if (!w) {
@@ -237,6 +300,13 @@ export function runWave(
         status: "awaiting_human",
       };
     }
-    return replanOrder(o, w, policy, clear, cancelled.has(o.wardId));
+    return replanOrder(
+      o,
+      w,
+      policy,
+      clear,
+      cancelled.has(o.wardId),
+      alley.has(o.wardId)
+    );
   });
 }

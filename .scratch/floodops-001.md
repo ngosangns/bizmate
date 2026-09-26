@@ -38,3 +38,9 @@ runtime (FloodOps) · human review for money path
 ## Notes
 - Analogy SPX only. Persona = internal Sea last-mile ops lead.
 - COD at-risk = Σ COD on flooded wards from fixture (deterministic estimate).
+
+## Follow-on (domain · floodops-002)
+
+- [x] Sid-F3: Mate → Judge → fixture load documented; `fixtures/policy-v2-candidate.json` shows evolve; runtime zero-LLM (see `.scratch/floodops-002-domain.md`).
+- [x] F1 `buyerNotifyVi` mẫu SMS; Sid-F1 COD header; Sid-F2 champion chain — same domain commit.
+

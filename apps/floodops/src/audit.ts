@@ -129,3 +129,32 @@ export function readAuditJsonl(
     .filter((l) => l.trim().length > 0)
     .map((l) => JSON.parse(l) as AuditRecord);
 }
+
+/** Lee-F2: latest human_decision for an order from JSONL (replay after ~7 days). */
+export function findLatestHumanDecision(
+  records: AuditRecord[],
+  orderId: string
+): AuditRecord | undefined {
+  const hits = records.filter(
+    (r) =>
+      r.type === "human_decision" &&
+      r.orderId === orderId &&
+      r.decision === "approved"
+  );
+  return hits.length ? hits[hits.length - 1] : undefined;
+}
+
+/**
+ * Re-apply a prior JSONL approval onto in-memory actions — no new audit append.
+ * Returns the mutated action, or undefined if not applicable.
+ */
+export function applyReplayApproval(
+  actions: ProposedAction[],
+  decision: AuditRecord
+): ProposedAction | undefined {
+  const action = actions.find((a) => a.orderId === decision.orderId);
+  if (!action || action.kind !== "propose_refund") return undefined;
+  action.status = "approved";
+  return action;
+}
+

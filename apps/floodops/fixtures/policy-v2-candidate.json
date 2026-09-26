@@ -1,0 +1,19 @@
+{
+  "_meta": {
+    "role": "Mate-proposed policy candidate (offline)",
+    "flow": "Mate emit → Judge validate flood-decision invariants → human merge into fixture",
+    "runtime": "FloodOps loads thresholds only — zero LLM on hot path",
+    "status": "candidate / not loaded by demo (demo uses hcm-flood-day.json policy)",
+    "notLiveSpx": true
+  },
+  "policy": {
+    "autoRescheduleMaxCodVnd": 400000,
+    "refundRequiresHumanAboveVnd": 800000
+  },
+  "invariants": [
+    "propose_refund never auto_applied",
+    "flooded + slaHoursLeft <= 2 → awaiting_human",
+    "schema: packages/contracts/schemas/flood-decision.v0.1.schema.json"
+  ],
+  "diffFromV1": "Tighter auto band (400k) and earlier refund escalate (800k) — example evolve, not production Sea policy"
+}

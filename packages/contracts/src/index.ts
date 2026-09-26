@@ -67,6 +67,9 @@ export interface EmTask {
   blockedBy: string[];
   hitl?: boolean;
   pillar?: string;
+  /** Optional domain pin — accounting/money tasks must also set hitl:true (Lee-B2). */
+  domain?: "accounting" | "sales";
+  tags?: string[];
 }
 
 /** Ledger entry / proposal payload — money path for Bookkeeper. */
@@ -118,6 +121,8 @@ export interface FloodDecision {
   requiresHuman?: boolean;
   reason?: string;
   impactEstimate?: string;
+  buyerNotifyVi?: string;
+  roundTripFeeEstimateVnd?: number;
   actor?: string;
   decision?: "approved";
   before?: { status: FloodDecision["status"] };

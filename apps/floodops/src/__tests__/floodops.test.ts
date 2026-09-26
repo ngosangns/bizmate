@@ -4,14 +4,18 @@ import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { assertValid, validateFloodDecision } from "@bizmate/contracts";
 import {
+  applyReplayApproval,
   approveRefund,
+  findLatestHumanDecision,
   persistWaveActions,
   readAuditJsonl,
   resetAuditFile,
 } from "../audit.js";
 import {
   buildAuditLog,
+  buildBuyerNotifyVi,
   codAtRiskVnd,
+  estimateRoundTripFeeVnd,
   replanOrder,
   runWave,
   summarizeEvents,
@@ -242,11 +246,12 @@ describe("floodops", () => {
     expect(readAuditJsonl(auditPath).length).toBe(0);
   });
 
-  it("summarizeEvents extracts alerts and cancels", () => {
+  it("summarizeEvents extracts alerts, cancels, and motorcycle alley", () => {
     const s = summarizeEvents([
       { type: "flood_alert", wardId: "a", floodCm: 45 },
       { type: "flood_alert", wardId: "b", floodCm: 30 },
       { type: "courier_cancel", wardId: "a" },
+      { type: "local_knowledge", wardId: "b", note: "ngách chỉ xe máy" },
       { type: "noise" },
     ]);
     expect(s.floodAlerts).toEqual([
@@ -254,6 +259,7 @@ describe("floodops", () => {
       { wardId: "b", floodCm: 30 },
     ]);
     expect(s.courierCancelWardIds).toEqual(["a"]);
+    expect(s.motorcycleAlleyWardIds).toEqual(["b"]);
   });
 
   it("buildAuditLog is deterministic and field-stable", () => {
@@ -333,5 +339,130 @@ describe("floodops", () => {
       requiresHuman: false,
     };
     expect(validateFloodDecision(bad)).toBe(false);
+  });
+
+  it("buyerNotifyVi set on reschedule/reroute/hold with ward name (not refund/noop)", () => {
+    const reschedule = replanOrder(
+      { id: "ORD-1001", wardId: "w1", codVnd: 100_000, slaHoursLeft: 6 },
+      { ...flooded, name: "Chợ An Đông" },
+      policy,
+      ["clear"]
+    );
+    expect(reschedule.kind).toBe("reschedule");
+    expect(reschedule.buyerNotifyVi).toMatch(/ORD-1001/);
+    expect(reschedule.buyerNotifyVi).toMatch(/Chợ An Đông/);
+    expect(reschedule.buyerNotifyVi).toMatch(/\+24h/);
+    expect(reschedule.buyerNotifyVi).toMatch(/^\[FloodOps\]/);
+
+    const reroute = replanOrder(
+      { id: "ORD-1006", wardId: "w1", codVnd: 750_000, slaHoursLeft: 5 },
+      { ...flooded, name: "Hòa Hưng" },
+      policy,
+      ["w-clear"]
+    );
+    expect(reroute.kind).toBe("reroute_clear_ward");
+    expect(reroute.buyerNotifyVi).toMatch(/chuyển tuyến khô/);
+    expect(reroute.buyerNotifyVi).toMatch(/Hòa Hưng/);
+
+    const hold = replanOrder(
+      { id: "ORD-H", wardId: "w1", codVnd: 100_000, slaHoursLeft: 6 },
+      { ...flooded, name: "Chợ An Đông" },
+      policy,
+      [],
+      true
+    );
+    expect(hold.kind).toBe("hold");
+    expect(hold.buyerNotifyVi).toMatch(/tạm giữ đơn/);
+
+    const refund = replanOrder(
+      { id: "ORD-R", wardId: "w1", codVnd: 2_000_000, slaHoursLeft: 4 },
+      flooded,
+      policy,
+      ["clear"]
+    );
+    expect(refund.kind).toBe("propose_refund");
+    expect(refund.buyerNotifyVi).toBeUndefined();
+
+    const noop = replanOrder(
+      { id: "ORD-N", wardId: "w-clear", codVnd: 100_000, slaHoursLeft: 8 },
+      clear,
+      policy,
+      ["w-clear"]
+    );
+    expect(noop.kind).toBe("noop");
+    expect(noop.buyerNotifyVi).toBeUndefined();
+
+    expect(buildBuyerNotifyVi("ORD-X", "Bến Nghé", "noop")).toBeUndefined();
+  });
+
+  it("motorcycle alley local-knowledge prefers hold over reroute (TA-F3)", () => {
+    const a = replanOrder(
+      { id: "o-alley", wardId: "w1", codVnd: 750_000, slaHoursLeft: 5 },
+      flooded,
+      policy,
+      ["w-clear"],
+      false,
+      true
+    );
+    expect(a.kind).toBe("hold");
+    expect(a.reason).toMatch(/xe máy/);
+
+    // Alley does not block low-COD reschedule
+    const low = replanOrder(
+      { id: "o-alley-low", wardId: "w1", codVnd: 100_000, slaHoursLeft: 6 },
+      flooded,
+      policy,
+      ["w-clear"],
+      false,
+      true
+    );
+    expect(low.kind).toBe("reschedule");
+  });
+
+  it("propose_refund includes deterministic round-trip fee estimate (TA-F2)", () => {
+    const a = replanOrder(
+      { id: "o-fee", wardId: "w1", codVnd: 2_500_000, slaHoursLeft: 4 },
+      flooded,
+      policy,
+      ["clear"]
+    );
+    expect(a.kind).toBe("propose_refund");
+    expect(a.roundTripFeeEstimateVnd).toBe(estimateRoundTripFeeVnd(2_500_000));
+    expect(a.roundTripFeeEstimateVnd).toBe(25_000 + Math.round(2_500_000 * 0.02));
+    expect(a.impactEstimate).toMatch(/ước tính/);
+  });
+
+  it("replay applies prior human_decision without new status mismatch (Lee-F2)", () => {
+    const auditPath = tmpAudit();
+    const actions: ProposedAction[] = [
+      replanOrder(
+        { id: "ORD-1003", wardId: "w1", codVnd: 2_500_000, slaHoursLeft: 2 },
+        flooded,
+        policy,
+        ["clear"]
+      ),
+    ];
+    persistWaveActions(actions, { auditPath, waveId: "w1" });
+    approveRefund(actions, "ORD-1003", "ops-lead-demo", { auditPath });
+    const records = readAuditJsonl(auditPath);
+    const decision = findLatestHumanDecision(records, "ORD-1003");
+    expect(decision?.actor).toBe("ops-lead-demo");
+    expect(decision?.decision).toBe("approved");
+
+    // Fresh wave (as --replay would): awaiting_human again, then re-apply from JSONL
+    const fresh: ProposedAction[] = [
+      replanOrder(
+        { id: "ORD-1003", wardId: "w1", codVnd: 2_500_000, slaHoursLeft: 2 },
+        flooded,
+        policy,
+        ["clear"]
+      ),
+    ];
+    expect(fresh[0]!.status).toBe("awaiting_human");
+    const applied = applyReplayApproval(fresh, decision!);
+    expect(applied?.status).toBe("approved");
+    expect(fresh[0]!.status).toBe("approved");
+    // JSONL unchanged length (replay does not append)
+    expect(readAuditJsonl(auditPath).length).toBe(records.length);
   });
 });

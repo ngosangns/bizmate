@@ -5,58 +5,135 @@
   "description": "Single FloodOps replan action or audit line (wave_action / human_decision). propose_refund must never be auto_applied.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["orderId", "kind", "status"],
+  "required": [
+    "orderId",
+    "kind",
+    "status"
+  ],
   "properties": {
-    "ts": { "type": "string" },
-    "type": { "type": "string", "enum": ["wave_action", "human_decision"] },
-    "waveId": { "type": "string" },
-    "orderId": { "type": "string", "minLength": 1 },
+    "ts": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "wave_action",
+        "human_decision"
+      ]
+    },
+    "waveId": {
+      "type": "string"
+    },
+    "orderId": {
+      "type": "string",
+      "minLength": 1
+    },
     "kind": {
       "type": "string",
-      "enum": ["reschedule", "reroute_clear_ward", "hold", "propose_refund", "noop"]
+      "enum": [
+        "reschedule",
+        "reroute_clear_ward",
+        "hold",
+        "propose_refund",
+        "noop"
+      ]
     },
     "status": {
       "type": "string",
-      "enum": ["proposed", "auto_applied", "awaiting_human", "approved"]
+      "enum": [
+        "proposed",
+        "auto_applied",
+        "awaiting_human",
+        "approved"
+      ]
     },
-    "requiresHuman": { "type": "boolean" },
-    "reason": { "type": "string" },
-    "impactEstimate": { "type": "string" },
-    "actor": { "type": "string" },
-    "decision": { "type": "string", "enum": ["approved"] },
+    "requiresHuman": {
+      "type": "boolean"
+    },
+    "reason": {
+      "type": "string"
+    },
+    "impactEstimate": {
+      "type": "string"
+    },
+    "actor": {
+      "type": "string"
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "approved"
+      ]
+    },
     "before": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["status"],
+      "required": [
+        "status"
+      ],
       "properties": {
         "status": {
           "type": "string",
-          "enum": ["proposed", "auto_applied", "awaiting_human", "approved"]
+          "enum": [
+            "proposed",
+            "auto_applied",
+            "awaiting_human",
+            "approved"
+          ]
         }
       }
     },
     "after": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["status"],
+      "required": [
+        "status"
+      ],
       "properties": {
         "status": {
           "type": "string",
-          "enum": ["proposed", "auto_applied", "awaiting_human", "approved"]
+          "enum": [
+            "proposed",
+            "auto_applied",
+            "awaiting_human",
+            "approved"
+          ]
         }
       }
+    },
+    "buyerNotifyVi": {
+      "type": "string",
+      "description": "Optional Vietnamese buyer SMS/copy template for reschedule/reroute/hold — mẫu only, not a live send."
+    },
+    "roundTripFeeEstimateVnd": {
+      "type": "number",
+      "description": "Optional deterministic round-trip fee estimate (VND) on propose_refund — ước tính, not live."
     }
   },
   "allOf": [
     {
       "if": {
-        "properties": { "kind": { "const": "propose_refund" } },
-        "required": ["kind"]
+        "properties": {
+          "kind": {
+            "const": "propose_refund"
+          }
+        },
+        "required": [
+          "kind"
+        ]
       },
       "then": {
         "properties": {
-          "status": { "enum": ["awaiting_human", "approved", "proposed"] },
-          "requiresHuman": { "const": true }
+          "status": {
+            "enum": [
+              "awaiting_human",
+              "approved",
+              "proposed"
+            ]
+          },
+          "requiresHuman": {
+            "const": true
+          }
         }
       }
     }
