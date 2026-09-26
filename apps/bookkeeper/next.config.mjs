@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Isolate production build from ENV `next dev` which races on default `.next/`
+  // (pages-manifest / next-font-manifest ENOENT). Dev keeps `.next`; build/start use
+  // BIZMATE_NEXT_DIST=.next-build (see package.json scripts).
+  distDir: process.env.BIZMATE_NEXT_DIST || ".next",
   // Workspace packages ship ESM from dist/
   transpilePackages: ["@bizmate/core", "@bizmate/contracts", "@bizmate/billing"],
   serverExternalPackages: ["better-sqlite3"],

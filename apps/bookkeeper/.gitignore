@@ -3,6 +3,7 @@ data/*.db
 data/*.db-*
 .data/
 .next/
+.next-build/
 out/
 dist/
 *.tsbuildinfo

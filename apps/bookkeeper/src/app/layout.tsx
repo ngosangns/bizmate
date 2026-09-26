@@ -14,7 +14,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="vi">
-      <body>{children}</body>
+      <body className="min-h-dvh bg-bg text-ink antialiased">{children}</body>
     </html>
   );
 }
