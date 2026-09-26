@@ -111,6 +111,14 @@ npm run demo -w @bizmate/shield -- --once
 - **Kyle-S1:** mỗi STEP = icon + pill + 💬 một câu elder; machine `reasons[]` chỉ trong **AUDIT SUMMARY**.
 - **Kyle-S3:** pill `STEP k/N · block|flag|allow` + `live allow=… flag=… block=…` chạy theo từng tin.
 
+## UI polish (Tailwind · a11y elder/family)
+
+PWA UI uses **Tailwind CSS v3** + local shadcn-like class builders (`web/src/ui.ts`: button / badge / card) — no React/Radix runtime (vanilla Vite TS). Elder-first: large type, high contrast, sticky honesty strip, verdict cards with color + ARIA, Family Care SANDBOX CTA, SW notifications labeled `local-sw-stub`.
+
+Dev server: `npm run dev -w @bizmate/shield` → **:5174** with `server.host: true` + `strictPort: true` (binds 0.0.0.0 — both `http://localhost:5174/` and `http://127.0.0.1:5174/` return 200).
+
+Prove packet: [`docs/review/SHIELD-UI-POLISH.md`](../../docs/review/SHIELD-UI-POLISH.md) · matrix: [`docs/review/UI-POLISH.md`](../../docs/review/UI-POLISH.md).
+
 ## Chạy PWA (family UI + local notifications)
 
 ```bash
@@ -122,7 +130,7 @@ npm run build -w @bizmate/shield
 npm run preview -w @bizmate/shield
 ```
 
-PWA UI: scam-inbox demo, elder VN copy, human override, Family Care sandbox checkout, **Bật thông báo local** → SW shows notification on BLOCK/FLAG (labeled `local-sw-stub`).
+PWA UI (Tailwind polish): scam-inbox demo, elder VN copy + a11y cards, human override, Family Care sandbox checkout CTA, **Bật thông báo local** → SW shows notification on BLOCK/FLAG (labeled `local-sw-stub`). Honesty strip always visible. Dev: `:5174` host:true.
 
 Install: open preview URL → browser “Add to Home Screen” / Install app (manifest present).
 

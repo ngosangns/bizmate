@@ -18,7 +18,9 @@ export default defineConfig({
     },
   },
   server: {
+    host: true, // 0.0.0.0 — judges on 127.0.0.1 and localhost both work (ENV:5174)
     port: 5174,
+    strictPort: true,
     fs: { allow: [shieldRoot, path.resolve(shieldRoot, "../..")] },
   },
   build: {

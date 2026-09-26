@@ -1,130 +1,43 @@
-:root {
-  --bg: #0f1f17;
-  --card: #162a20;
-  --ink: #e8f5ee;
-  --muted: #9bb5a6;
-  --ok: #3dcf7a;
-  --warn: #f0c14a;
-  --block: #ff6b6b;
-  --accent: #228b5a;
-  --border: #2a4638;
-  --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100vh;
+    background-color: #0c1812;
+    color: #f0faf4;
+    font-family: "Segoe UI", system-ui, -apple-system, "Noto Sans", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
 }
 
-* { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: var(--font); }
-body { min-height: 100vh; }
+@layer components {
+  .honesty-strip {
+    @apply sticky top-0 z-40 border-b border-shield-border/80 bg-shield-surface/95 backdrop-blur-md;
+  }
 
-#app { max-width: 720px; margin: 0 auto; padding: 1rem 1rem 3rem; }
+  .status-dot {
+    @apply inline-block h-2.5 w-2.5 shrink-0 rounded-full;
+  }
 
-.banner {
-  background: #1a3326;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 0.85rem 1rem;
-  margin-bottom: 1rem;
-  font-size: 0.92rem;
-  line-height: 1.45;
-}
-.banner strong { color: var(--warn); }
-.banner .stack { color: var(--muted); font-size: 0.85rem; margin-top: 0.35rem; }
+  .status-dot-on {
+    @apply bg-shield-allow;
+  }
 
-h1 { font-size: 1.45rem; margin: 0 0 0.25rem; }
-.sub { color: var(--muted); margin: 0 0 1rem; font-size: 0.95rem; }
+  .status-dot-off {
+    @apply bg-shield-block;
+  }
 
-.toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  .audit-pre {
+    @apply overflow-x-auto whitespace-pre-wrap rounded-2xl border border-shield-border bg-shield-bg p-4 text-sm text-shield-muted;
+  }
 }
-button {
-  appearance: none;
-  border: 1px solid var(--border);
-  background: var(--accent);
-  color: #fff;
-  font: inherit;
-  font-weight: 600;
-  padding: 0.55rem 0.9rem;
-  border-radius: 10px;
-  cursor: pointer;
-}
-button.secondary { background: transparent; color: var(--ink); }
-button:disabled { opacity: 0.5; cursor: not-allowed; }
-button.danger { background: #8b2222; }
-
-.live {
-  font-size: 0.9rem;
-  color: var(--muted);
-  margin-bottom: 0.75rem;
-}
-
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 0.9rem 1rem;
-  margin-bottom: 0.75rem;
-}
-.card .meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem 0.75rem;
-  font-size: 0.8rem;
-  color: var(--muted);
-  margin-bottom: 0.4rem;
-}
-.pill {
-  display: inline-block;
-  padding: 0.15rem 0.55rem;
-  border-radius: 999px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-}
-.pill.allow { background: #1e3d2c; color: var(--ok); }
-.pill.flag { background: #3d3420; color: var(--warn); }
-.pill.block { background: #3d1e1e; color: var(--block); }
-.elder { font-size: 1.05rem; line-height: 1.4; margin: 0.35rem 0; }
-.family { color: var(--muted); font-size: 0.9rem; margin: 0.25rem 0 0; }
-.tip { margin-top: 0.4rem; font-size: 0.88rem; color: var(--warn); }
-.fixture-tag {
-  display: inline-block;
-  margin-top: 0.35rem;
-  font-size: 0.75rem;
-  color: var(--warn);
-  border: 1px dashed var(--warn);
-  padding: 0.1rem 0.4rem;
-  border-radius: 6px;
-}
-
-.section-title {
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-  margin: 1.25rem 0 0.5rem;
-}
-
-.audit, .billing {
-  font-size: 0.85rem;
-  color: var(--muted);
-  white-space: pre-wrap;
-  background: #0c1812;
-  border-radius: 10px;
-  padding: 0.75rem;
-  border: 1px solid var(--border);
-  overflow-x: auto;
-}
-
-.status-dot {
-  display: inline-block;
-  width: 0.55rem;
-  height: 0.55rem;
-  border-radius: 50%;
-  margin-right: 0.35rem;
-  background: var(--muted);
-}
-.status-dot.on { background: var(--ok); }
-.status-dot.off { background: var(--block); }
