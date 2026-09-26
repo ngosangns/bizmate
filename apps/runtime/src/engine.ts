@@ -3,7 +3,7 @@
  * Compute steps dispatch to deterministic domain handlers (no LLM).
  */
 import type { Domain, Workflow, WorkflowStep } from "@bizmate/contracts";
-import { appendAudit } from "./audit.js";
+import { appendAudit, type HotPathTiming, type StepTiming } from "./audit.js";
 import {
   computeSale,
   processSale,
@@ -28,6 +28,8 @@ export interface StepResult {
   skipped?: boolean;
   output?: unknown;
   error?: string;
+  /** Wall ms for this step (demo-derived hot-path). */
+  durationMs?: number;
 }
 
 export interface ExecutionResult {
@@ -37,6 +39,8 @@ export interface ExecutionResult {
   approved: boolean;
   steps: StepResult[];
   finalState: Record<string, unknown>;
+  /** Lee-B3: per-step timings from this run. */
+  hotPath?: HotPathTiming;
 }
 
 function asSaleInput(event: unknown): SaleVoiceInput {
@@ -110,6 +114,12 @@ function runPersist(
   throw new Error(`No persist handler for domain: ${domain}`);
 }
 
+function nowMs(): number {
+  return typeof performance !== "undefined" && performance.now
+    ? performance.now()
+    : Date.now();
+}
+
 /**
  * Execute workflow steps in order with the given input event.
  */
@@ -120,6 +130,7 @@ export function executeWorkflow(
 ): ExecutionResult {
   const approved = Boolean(opts.approved);
   const steps: StepResult[] = [];
+  const timings: StepTiming[] = [];
   const state: Record<string, unknown> = {
     event,
     domain: workflow.domain,
@@ -130,6 +141,7 @@ export function executeWorkflow(
     workflowVersion: workflow.version,
     domain: workflow.domain,
   };
+  const runStart = nowMs();
 
   for (const step of workflow.steps) {
     if (!ok) {
@@ -139,10 +151,12 @@ export function executeWorkflow(
         ok: false,
         skipped: true,
         error: "skipped after prior failure",
+        durationMs: 0,
       });
       continue;
     }
 
+    const t0 = nowMs();
     try {
       let output: unknown;
 
@@ -217,17 +231,38 @@ export function executeWorkflow(
         }
       }
 
-      steps.push({ stepId: step.id, kind: step.kind, ok: true, output });
+      const durationMs = Math.max(0, Math.round((nowMs() - t0) * 1000) / 1000);
+      timings.push({ stepId: step.id, kind: step.kind, ms: durationMs });
+      steps.push({
+        stepId: step.id,
+        kind: step.kind,
+        ok: true,
+        output,
+        durationMs,
+      });
     } catch (err) {
+      const durationMs = Math.max(0, Math.round((nowMs() - t0) * 1000) / 1000);
+      timings.push({ stepId: step.id, kind: step.kind, ms: durationMs });
       ok = false;
       steps.push({
         stepId: step.id,
         kind: step.kind,
         ok: false,
         error: err instanceof Error ? err.message : String(err),
+        durationMs,
       });
     }
   }
+
+  const totalMs = Math.max(0, Math.round((nowMs() - runStart) * 1000) / 1000);
+  const computePersistMs = timings
+    .filter((t) => t.kind === "compute" || t.kind === "persist")
+    .reduce((a, t) => a + t.ms, 0);
+  const hotPath: HotPathTiming = {
+    steps: timings,
+    totalMs,
+    computePersistMs: Math.round(computePersistMs * 1000) / 1000,
+  };
 
   return {
     workflowId: workflow.id,
@@ -236,5 +271,6 @@ export function executeWorkflow(
     approved,
     steps,
     finalState: state,
+    hotPath,
   };
 }

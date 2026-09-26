@@ -4,9 +4,15 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import type { Workflow } from "@bizmate/contracts";
+import type { EmTask, Workflow } from "@bizmate/contracts";
 import { EXEMPTION_THRESHOLD_VND, getMode } from "@bizmate/core";
-import { clearAudit, defaultAuditJsonlPath, formatAuditSummary } from "./audit.js";
+import {
+  blastRadius,
+  clearAudit,
+  defaultAuditJsonlPath,
+  formatAuditSummary,
+  formatUnpinBlast,
+} from "./audit.js";
 import { executeWorkflow } from "./engine.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -14,6 +20,35 @@ const fixturePath = path.resolve(
   __dirname,
   "../../../domains/accounting/fixtures/vendor-day.json"
 );
+const boardPath = path.resolve(__dirname, "../../em/board.json");
+
+/** Lee-B2: prove every accounting/money board task is HITL-gated; print proof line. */
+function proveEmMoneyGate(): void {
+  const board = JSON.parse(fs.readFileSync(boardPath, "utf8")) as {
+    tasks: Array<
+      EmTask & { domain?: string; tags?: string[]; hitl?: boolean; title: string }
+    >;
+  };
+  const moneyTasks = board.tasks.filter((t) => {
+    if (t.domain === "accounting") return true;
+    const tags = t.tags ?? [];
+    if (tags.some((x) => /money|ledger|tax|accounting/i.test(x))) return true;
+    if (/\b(accounting|ledger|tax|1\s*b|thuế|money)\b/i.test(t.title)) return true;
+    return false;
+  });
+  for (const t of moneyTasks) {
+    if (t.hitl !== true) {
+      throw new Error(
+        `Lee-B2: money/accounting task ${t.id} missing hitl:true (domain=${t.domain ?? "—"})`
+      );
+    }
+  }
+  // Visible proof: board pins HITL so EM cannot auto-done money work
+  console.log("EM blocked auto-done on money task");
+  console.log(
+    `  (board: ${moneyTasks.length} accounting/money task(s) require hitl:true)`
+  );
+}
 
 function main(): void {
   clearAudit();
@@ -22,6 +57,9 @@ function main(): void {
   console.log(`mode: ${mode}`);
   console.log(`fixture: ${fixturePath}`);
   console.log(`exemption threshold: ${EXEMPTION_THRESHOLD_VND.toLocaleString("vi-VN")} VND`);
+  console.log("");
+
+  proveEmMoneyGate();
   console.log("");
 
   const fixture = JSON.parse(fs.readFileSync(fixturePath, "utf8")) as {
@@ -43,7 +81,8 @@ function main(): void {
   });
   for (const s of denied.steps) {
     const status = s.ok ? "ok" : s.skipped ? "skip" : "FAIL";
-    console.log(`  [${status}] ${s.kind}:${s.stepId}${s.error ? ` — ${s.error}` : ""}`);
+    const ms = s.durationMs != null ? ` ${s.durationMs}ms` : "";
+    console.log(`  [${status}] ${s.kind}:${s.stepId}${ms}${s.error ? ` — ${s.error}` : ""}`);
   }
   console.log(`result.ok=${denied.ok}`);
   console.log("");
@@ -55,7 +94,8 @@ function main(): void {
   });
   for (const s of result.steps) {
     const status = s.ok ? "ok" : s.skipped ? "skip" : "FAIL";
-    console.log(`  [${status}] ${s.kind}:${s.stepId}`);
+    const ms = s.durationMs != null ? ` ${s.durationMs}ms` : "";
+    console.log(`  [${status}] ${s.kind}:${s.stepId}${ms}`);
   }
 
   const ledger = result.finalState.ledger as
@@ -82,8 +122,19 @@ function main(): void {
     console.log(`  persisted:     ${ledger.persisted}`);
   }
 
+  const wfId = fixture.workflow.id;
+  const wfVer = fixture.workflow.version;
+  const affected = blastRadius(wfId, wfVer);
   console.log("");
-  console.log(formatAuditSummary());
+  console.log(`BLAST-RADIUS: ${formatUnpinBlast(wfId, wfVer, affected)}`);
+
+  console.log("");
+  console.log(
+    formatAuditSummary(undefined, {
+      unpin: { workflowId: wfId, version: wfVer },
+      hotPath: result.hotPath,
+    })
+  );
   console.log(`audit jsonl: ${defaultAuditJsonlPath()}`);
   console.log("");
   console.log(`demo ${result.ok ? "PASSED" : "FAILED"}`);

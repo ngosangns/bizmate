@@ -8,9 +8,9 @@
 | App | Tech PASS lenses | Domain notes filed | Routed to Adv |
 |-----|------------------|--------------------|---------------|
 | BizMate | Lee · Tuấn Anh · Kyle · Sidharth (4/5; Son COND) | domain-sidharth + seed | ✅ re-route Sid-* |
-| Bookkeeper | Lee · Tuấn Anh · Kyle · Son · Sidharth (5/5) | domain-sidharth + seed | ✅ re-route Sid-* |
-| Shield | Lee · Tuấn Anh · Kyle · Son · Sidharth (5/5) | domain-sidharth + seed | ✅ re-route Sid-* |
-| FloodOps | Lee · Tuấn Anh · Kyle · Son · Sidharth (5/5) | domain-sidharth + seed | ✅ re-route Sid-* |
+| Bookkeeper | Lee · Tuấn Anh · Kyle · Son · Sidharth (5/5) | all judge packets | ✅ **domain proved** `e5db3dd`/`4baf38a` |
+| Shield | Lee · Tuấn Anh · Kyle · Son · Sidharth (5/5) | all judge packets | ✅ **domain proved** `13cde1b`/`50c172e` |
+| FloodOps | Lee · Tuấn Anh · Kyle · Son · Sidharth (5/5) | all judge packets | ✅ **domain proved** `29491df` |
 
 Kyle / Son domain notes: filed — `domain-kyle.md` · `domain-son.md`. Son R1d BizMate PASS 36 (B5–B7 done).
 
@@ -98,27 +98,27 @@ Mỗi judge file `docs/review/domain-{judge}.md` với 2–3 bullet **cụ thể
 
 | ID | App | Improvement | P | Status |
 |----|-----|-------------|---|--------|
-| Lee-B1 | BizMate | Blast-radius unpin: Y executions from AUDIT JSONL | P1 | Open → Adv |
-| Lee-B2 | BizMate | EM hitl:true on accounting + demo “blocked auto-done” | P1 | Open → Adv |
-| Lee-B3 | BizMate | Hot-path latency ms/step demo-derived footer | P1 | Open → Adv |
-| Lee-K1 | Bookkeeper | E-invoice fixture + citation đoạn cụ thể | P2 | Open → Adv |
-| Lee-K2 | Bookkeeper | Refuse path + approve_rejected audit | P1 | Open → Adv |
-| Lee-K3 | Bookkeeper | Idempotent re-ingest beat (đổi số → reject) | P1 | Open → Adv |
-| Lee-S1 | Shield | deepfake=fixture + blacklistVersion flash | **P0** | Open → Adv |
-| Lee-S2 | Shield | Shadow +7d pattern mới → FLAG only | P1 | Open → Adv |
-| Lee-S3 | Shield | FP SLA line sau human override | P1 | Open → Adv |
-| Lee-F1 | FloodOps | COD-at-risk header (khớp Sid-F1) | P1 | Open → Adv |
-| Lee-F2 | FloodOps | `--replay` human decide từ JSONL | P1 | Open → Adv |
-| Lee-F3 | FloodOps | Roadmap 1 dòng live feed = post-hackathon | P2 | Open → Adv |
+| Lee-B1 | BizMate | Blast-radius unpin: Y executions from AUDIT JSONL | P1 | **Done** |
+| Lee-B2 | BizMate | EM hitl:true on accounting + demo “blocked auto-done” | P1 | **Done** |
+| Lee-B3 | BizMate | Hot-path latency ms/step demo-derived footer | P1 | **Done** |
+| Lee-K1 | Bookkeeper | E-invoice fixture + citation đoạn cụ thể | P2 | **Done** `4baf38a`/`e5db3dd` |
+| Lee-K2 | Bookkeeper | Refuse path + approve_rejected audit | P1 | **Done** `4baf38a`/`e5db3dd` |
+| Lee-K3 | Bookkeeper | Idempotent re-ingest beat (đổi số → reject) | P1 | **Done** `4baf38a`/`e5db3dd` |
+| Lee-S1 | Shield | deepfake=fixture + blacklistVersion flash | **P0** | **Done** `13cde1b`/`50c172e` |
+| Lee-S2 | Shield | Shadow +7d pattern mới → FLAG only | P1 | **Done** `13cde1b`/`50c172e` |
+| Lee-S3 | Shield | FP SLA line sau human override | P1 | **Done** `13cde1b`/`50c172e` |
+| Lee-F1 | FloodOps | COD-at-risk header (khớp Sid-F1) | P1 | **Done** `29491df` |
+| Lee-F2 | FloodOps | `--replay` human decide từ JSONL | P1 | **Done** `29491df` |
+| Lee-F3 | FloodOps | Roadmap 1 dòng live feed = post-hackathon | P2 | **Done** `29491df` |
 
 
 ## Trần Tuấn Anh seller packet (`domain-tuananh.md`) — routed 18:24 ICT
 
 | ID | App | Improvement | P | Status |
 |----|-----|-------------|---|--------|
-| TA-B1 | BizMate | Hero Bà Lan / 1B trong 10s; meta sau giây 45 | **P0** | Open → Adv |
-| TA-B2 | BizMate | Sales nút ẩn hoặc “backup domain” | P1 | Open → Adv |
-| TA-B3 | BizMate | Impact shop 1 câu vượt 1B trước phạt | P1 | Open → Adv |
+| TA-B1 | BizMate | Hero Bà Lan / 1B trong 10s; meta sau giây 45 | **P0** | **Done** |
+| TA-B2 | BizMate | Sales nút ẩn hoặc “backup domain” | P1 | **Done** |
+| TA-B3 | BizMate | Impact shop 1 câu vượt 1B trước phạt | P1 | **Done** |
 | TA-K1 | Bookkeeper | One-screen mobile VN (Sạp An Đông · Duyệt) | P1 | Open → Adv |
 | TA-K2 | Bookkeeper | Utterance sửa sai / không bán | P1 | Open → Adv |
 | TA-K3 | Bookkeeper | Một kênh phân phối (khớp Sid-K3) | P2 | Open → Adv |
@@ -134,9 +134,9 @@ Mỗi judge file `docs/review/domain-{judge}.md` với 2–3 bullet **cụ thể
 
 | ID | App | Item | P | Status |
 |----|-----|------|---|--------|
-| Kyle-B1 | BizMate | YTD/1B above-the-fold sau Chạy | **P0** | Open → Adv |
-| Kyle-B2 | BizMate | Progress chỉ khi Tạo lại | P1 | Open → Adv |
-| Kyle-B3 | BizMate | Reset full loop + seed #N to | P1 | Open → Adv |
+| Kyle-B1 | BizMate | YTD/1B above-the-fold sau Chạy | **P0** | **Done** |
+| Kyle-B2 | BizMate | Progress chỉ khi Tạo lại | P1 | **Done** |
+| Kyle-B3 | BizMate | Reset full loop + seed #N visible | P1 | **Done** |
 | Kyle-K1 | Bookkeeper | HITL 3 dòng lớn / bước | **P0** | Open → Adv |
 | Kyle-K2 | Bookkeeper | Pause beat khi đỏ 1B | P1 | Open → Adv |
 | Kyle-K3 | Bookkeeper | --reset header đầu demo | P1 | Open → Adv |
@@ -152,9 +152,9 @@ Mỗi judge file `docs/review/domain-{judge}.md` với 2–3 bullet **cụ thể
 
 | ID | App | Item | P | Status |
 |----|-----|------|---|--------|
-| Son-B1 | BizMate | Board 7/3 live on stage | P1 | Open → Adv |
-| Son-B2 | BizMate | Nói stub-fail trên sân | P1 | Open → Adv |
-| Son-B3 | BizMate | Self-review PR template 3 dòng | P2 | Open → Adv |
+| Son-B1 | BizMate | Board 7/3 live on stage | P1 | **Done** |
+| Son-B2 | BizMate | Nói stub-fail trên sân | P1 | **Done** |
+| Son-B3 | BizMate | Self-review PR template 3 dòng | P2 | **Done** |
 | Son-K1 | Bookkeeper | `.scratch/bookkeeper-001.md` | **P0** | Open → Adv |
 | Son-K2 | Bookkeeper | Fail→fix git beat 15s | P1 | Open → Adv |
 | Son-K3 | Bookkeeper | Parse = regex stub label | P1 | Open → Adv |

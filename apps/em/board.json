@@ -1,6 +1,6 @@
 {
-  "goal": "Biz Mate MVP \u2014 offline generate \u2192 judge \u2192 approve \u2192 run for accounting + sales",
-  "updatedAt": "2026-09-26T11:23:20.126Z",
+  "goal": "Biz Mate MVP — offline generate → judge → approve → run for accounting + sales",
+  "updatedAt": "2026-09-26T11:30:00.000Z",
   "tasks": [
     {
       "id": "em-001",
@@ -10,7 +10,7 @@
       "pillar": "em",
       "acceptance": [
         "DEVELOPMENT_RULES MVP scope locked (accounting + sales)",
-        "Owner \u2192 deliverable \u2192 done-when table published",
+        "Owner → deliverable → done-when table published",
         "Offline demo path named in README"
       ],
       "blockedBy": []
@@ -29,7 +29,13 @@
       "blockedBy": [
         "em-001"
       ],
-      "doneNote": "Landed: offline generate accounting + approve-before-persist + tests (cd03ae2 era)."
+      "doneNote": "Landed: offline generate accounting + approve-before-persist + tests (cd03ae2 era).",
+      "domain": "accounting",
+      "hitl": true,
+      "tags": [
+        "accounting",
+        "ledger"
+      ]
     },
     {
       "id": "mate-002",
@@ -55,7 +61,7 @@
       "pillar": "judge",
       "acceptance": [
         "Verdict validates against judge-verdict schema",
-        "Missing human-approve step \u2192 fail",
+        "Missing human-approve step → fail",
         "Offline mode needs no network"
       ],
       "blockedBy": [
@@ -111,11 +117,18 @@
       "blockedBy": [
         "human-001"
       ],
-      "doneNote": "Landed: demo:offline PASS + 1B + audit JSONL."
+      "doneNote": "Landed: demo:offline PASS + 1B + audit JSONL.",
+      "domain": "accounting",
+      "hitl": true,
+      "tags": [
+        "money",
+        "threshold",
+        "1B"
+      ]
     },
     {
       "id": "web-001",
-      "title": "Web: offline demo UI generate \u2192 judge \u2192 approve \u2192 run",
+      "title": "Web: offline demo UI generate → judge → approve → run",
       "owner": "web",
       "status": "done",
       "pillar": "web",
@@ -136,7 +149,7 @@
       "status": "todo",
       "pillar": "mate",
       "acceptance": [
-        "generation N\u2192N+1 diff visible",
+        "generation N→N+1 diff visible",
         "Parent id linked in workflow.generation",
         "Re-judge still passes offline"
       ],

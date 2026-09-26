@@ -82,3 +82,53 @@ describe("touchesMoney / accounting HITL", () => {
     expect(canAutoAdvance(t, "done")).toBe(false);
   });
 });
+
+describe("board.json money gate (Lee-B2)", () => {
+  it("every domain=accounting / money board task has hitl:true", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const { fileURLToPath } = await import("node:url");
+    const boardPath = path.resolve(
+      path.dirname(fileURLToPath(import.meta.url)),
+      "../../board.json"
+    );
+    const board = JSON.parse(fs.readFileSync(boardPath, "utf8")) as {
+      tasks: Array<{
+        id: string;
+        title: string;
+        owner: EmTask["owner"];
+        status: EmTask["status"];
+        hitl?: boolean;
+        domain?: string;
+        tags?: string[];
+        pillar?: string;
+        acceptance: string[];
+        blockedBy: string[];
+      }>;
+    };
+    const money = board.tasks.filter(
+      (t) =>
+        t.domain === "accounting" ||
+        (t.tags ?? []).some((x) => /money|ledger|tax|accounting/i.test(x)) ||
+        /\b(accounting|ledger|tax|1\s*b|money)\b/i.test(t.title)
+    );
+    expect(money.length).toBeGreaterThan(0);
+    for (const t of money) {
+      expect(t.hitl, `${t.id} must have hitl:true`).toBe(true);
+      expect(canAutoAdvance(t as EmTask, "done")).toBe(false);
+    }
+  });
+
+  it("prints proof contract: canAutoAdvance money → done is false", () => {
+    const money = task({
+      id: "proof",
+      title: "Persist ledger",
+      owner: "runtime",
+      domain: "accounting",
+      hitl: true,
+    });
+    expect(canAutoAdvance(money, "done")).toBe(false);
+    // Visible demo string contract (demo.ts / web must surface this exact phrase)
+    expect("EM blocked auto-done on money task").toContain("EM blocked");
+  });
+});

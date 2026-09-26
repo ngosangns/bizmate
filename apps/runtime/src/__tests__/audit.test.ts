@@ -6,8 +6,10 @@ import type { Workflow } from "@bizmate/contracts";
 import {
   appendAudit,
   auditSummary,
+  blastRadius,
   clearAudit,
   formatAuditSummary,
+  formatUnpinBlast,
   listAudit,
   setAuditJsonlPath,
   setAuditPersistToDisk,
@@ -127,13 +129,62 @@ describe("audit trail", () => {
     expect(summary.approveOk).toBe(1);
     expect(summary.persistOk).toBe(1);
     expect(summary.approveFail).toBe(0);
-    const formatted = formatAuditSummary(summary);
+    const formatted = formatAuditSummary(summary, {
+      unpin: { workflowId: "wf-audit-accounting", version: "0.1.0" },
+      hotPath: result.hotPath,
+    });
     expect(formatted).toContain("AUDIT SUMMARY");
     expect(formatted).toContain("approve_ok");
     expect(formatted).toContain("persist_ok");
     expect(formatted).toContain("wf-audit-accounting@0.1.0");
+    expect(formatted).toContain("BLAST-RADIUS");
+    expect(formatted).toContain("HOT-PATH LATENCY");
+    expect(formatted).toContain("ms/step");
     expect(fs.existsSync(tmpJsonl)).toBe(true);
     const diskLines = fs.readFileSync(tmpJsonl, "utf8").trim().split("\n");
     expect(diskLines.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("blastRadius counts events for workflow@version (Lee-B1)", () => {
+    appendAudit({
+      action: "approve_ok",
+      workflowId: "wf-br",
+      workflowVersion: "0.1.0",
+      domain: "accounting",
+    });
+    appendAudit({
+      action: "persist_ok",
+      workflowId: "wf-br",
+      workflowVersion: "0.1.0",
+      domain: "accounting",
+    });
+    appendAudit({
+      action: "approve_ok",
+      workflowId: "wf-br",
+      workflowVersion: "0.2.0",
+      domain: "accounting",
+    });
+    expect(blastRadius("wf-br", "0.1.0")).toBe(2);
+    expect(blastRadius("wf-br", "0.2.0")).toBe(1);
+    expect(formatUnpinBlast("wf-br", "0.1.0")).toContain(
+      "unpin workflow version wf-br@0.1.0 → 2 executions affected"
+    );
+  });
+
+  it("executeWorkflow records hotPath ms/step (Lee-B3)", () => {
+    const result = executeWorkflow(accountingWorkflow, event, {
+      approved: true,
+      entryId: "ledger-hotpath",
+    });
+    expect(result.hotPath).toBeDefined();
+    expect(result.hotPath!.steps.length).toBeGreaterThan(0);
+    expect(result.hotPath!.totalMs).toBeGreaterThanOrEqual(0);
+    const compute = result.hotPath!.steps.find((s) => s.kind === "compute");
+    const persist = result.hotPath!.steps.find((s) => s.kind === "persist");
+    expect(compute).toBeDefined();
+    expect(persist).toBeDefined();
+    expect(result.steps.every((s) => typeof s.durationMs === "number")).toBe(
+      true
+    );
   });
 });

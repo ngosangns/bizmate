@@ -76,3 +76,20 @@ BIZMATE_MODE=offline npm run judge -- --file <path-from-generate>
 | Sid-B1 P0 | Done | `docs/hackathon/pitch/bizmate-wtp-slide.md` |
 | Sid-B2 P1 | Done | Web panel + `PITCH-bizmate.md` demo-derived table |
 | Sid-B3 P1 | Done | `docs/hackathon/pitch/bizmate-partnership-20s.md` |
+
+
+### Lee-B1–B3 + TA-B1–B3 + Kyle-B* + Son-B* (2026-09-26)
+
+| ID | Status | Artifact |
+|----|--------|----------|
+| Lee-B1 P1 | Done | `audit.blastRadius` + web **Blast-radius** card + AUDIT SUMMARY unpin line |
+| Lee-B2 P1 | Done | `board.json` accounting/money → `hitl:true`; demo line `EM blocked auto-done on money task`; vitest |
+| Lee-B3 P1 | Done | engine `durationMs` / `hotPath`; AUDIT SUMMARY **HOT-PATH LATENCY** ms/step (*demo-derived*); web footer |
+| TA-B1 P0 | Done | `PITCH-bizmate.md` open = Bà Lan+1B ≤10s; Evoloop/meta after 45s |
+| TA-B2 P1 | Done | Web Sales button = **backup domain** (dashed, de-emphasized) |
+| TA-B3 P1 | Done | Impact line on pitch + web persona/crossed banner |
+| Kyle-B1 P0 | Done | YTD / crossed / remaining **above the fold** after Chạy |
+| Kyle-B2/B3 P1 | Done | Chip animation only on **Tạo lại**; Reset = full reset + visible `seed #N` |
+| Son-B1/B2 P1 | Done | Web+pitch: board **7 done / 3 todo**; stub-fail honesty callout |
+| Son-B3 P2 | Done | `docs/review/bizmate-self-review.md` |
+

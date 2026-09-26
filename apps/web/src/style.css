@@ -429,3 +429,76 @@ pre.json {
   border-radius: 999px;
   margin-left: 0.25rem;
 }
+
+/* Lee / Kyle / TA / Son — 2026-09-26 */
+.seed-badge {
+  display: inline-block;
+  margin-left: 0.35rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: #2a4060;
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 650;
+  font-family: var(--mono);
+  vertical-align: middle;
+}
+
+.impact-line {
+  margin: 0.45rem 0 0;
+  color: var(--warn);
+  font-weight: 650;
+  font-size: 0.92rem;
+}
+
+.ledger-above-fold {
+  border-color: var(--warn);
+  background: linear-gradient(180deg, #1c1810 0%, var(--panel) 100%);
+}
+
+.ledger-hero-lg .metric dd {
+  font-size: 1.25rem;
+}
+
+.blast-card .unpin-msg {
+  margin: 0.35rem 0;
+  font-size: 0.95rem;
+}
+
+.blast-card code {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--accent);
+}
+
+.domain-pills button.backup-domain {
+  opacity: 0.55;
+  font-size: 0.78rem;
+  border-style: dashed;
+}
+
+.domain-pills button.backup-domain.active {
+  opacity: 0.85;
+}
+
+.em-money-proof {
+  color: var(--warn) !important;
+  font-weight: 650;
+  font-family: var(--mono);
+  font-size: 0.82rem !important;
+}
+
+.hotpath-footer {
+  font-family: var(--mono);
+  font-size: 0.78rem !important;
+}
+
+.stub-callout {
+  border-left: 3px solid var(--warn);
+  padding-left: 0.65rem;
+}
+
+.stage-honesty h3 {
+  margin: 0 0 0.4rem;
+  font-size: 0.95rem;
+}
