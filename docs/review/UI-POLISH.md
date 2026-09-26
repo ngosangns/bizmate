@@ -3,7 +3,7 @@
 > Orchestrator · 2026-09-26 Asia/Saigon · Source: **Pstack / User P0**  
 > Goal: polish UI on all 4 rebuilt apps (shadcn/ui · Tailwind · Radix primitives as fit).  
 > After tip green → fold into **ROUND-4 hands-on re-use**.  
-> **ENV HOLD** still until `docs/review/ROUND-4-ENV.md` green (CLI/demo prove vẫn nhận).
+> **ENV GREEN** (`687e652`) — full UI walk open; fold polish tips into R4 re-use.
 
 ## Honesty
 
@@ -13,10 +13,10 @@ Keep stub/sandbox labels. No fake live SPX / tax / payment. Shared `@bizmate/con
 
 | App | Adv | Current UI | Polish target | Tip SHA | Demo | Build | Tests | Docs | Status |
 |-----|-----|------------|---------------|---------|------|-------|-------|------|--------|
-| BizMate | Adv · BizMate | Vite SPA `apps/web` | Tailwind + shadcn/Radix · story + billing **Giá** panel | — | ☐ | ☐ | ☐ | ☐ | **Routed** |
-| Bookkeeper | Adv · Bookkeeper | Next App Router | Tailwind + shadcn/Radix · HITL Duyệt/Từ chối · ledger cards | — | ☐ | ☐ | ☐ | ☐ | **Routed** |
-| Shield | Adv · Shield | PWA + Vite `:5174` | Tailwind + a11y elder/family · SW notifs labeled · Care CTA | — | ☐ | ☐ | ☐ | ☐ | **Routed** |
-| FloodOps | Adv · FloodOps | Next + Leaflet `:3011` | Tailwind + shadcn · map/orders/billing · **fix Lee R4 `build:web`** first | — | ☐ | ☐ | ☐ | ☐ | **Routed** (+ R4 CONDITIONAL) |
+| BizMate | Adv · BizMate | Vite SPA `apps/web` | Tailwind + shadcn-style (hand-roll) · story + billing **Giá** panel | 5da6e5b | ☑ | ☑ | ☑ demo:offline | ☑ `BIZMATE-UI-POLISH.md` | **Prove filed** |
+| Bookkeeper | Adv · Bookkeeper | Next App Router | Tailwind + shadcn/Radix · HITL Duyệt/Từ chối · ledger cards | — | ☐ | ☐ | ☐ | ☐ | **In progress** |
+| Shield | Adv · Shield | PWA + Vite `:5174` | Tailwind + a11y elder/family · SW notifs labeled · Care CTA | — | ☐ | ☐ | ☐ | ☐ | **In progress** |
+| FloodOps | Adv · FloodOps | Next + Leaflet `:3011` | Tailwind + shadcn · map/orders/billing · **fix Lee+Sid R4 `build:web`** first | — | ☐ | ☐ | ☐ | ☐ | **In progress** (+ R4 CONDITIONAL) |
 
 **Status legend:** Routed → In progress → Prove filed → **Verified** (Orchestrator) → Folded into R4 re-use.
 
@@ -35,7 +35,7 @@ Keep stub/sandbox labels. No fake live SPX / tax / payment. Shared `@bizmate/con
 | Hands-on protocol | `ROUND-4-HANDS-ON.md` |
 | Rubric / checklists / form | `ROUND-4-RUBRIC.md` · `ROUND-4-CHECKLISTS.md` · `ROUND-4-FEEDBACK-FORM.md` |
 | Env gate | `ROUND-4-ENV.md` |
-| Open CONDITIONAL | FloodOps · Lee · `build:web` packaging |
+| Open CONDITIONAL | FloodOps · Lee + Sidharth · `build:web` packaging |
 
 ## Routed
 

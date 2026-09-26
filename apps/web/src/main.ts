@@ -1,3 +1,4 @@
+import "./style.css";
 import {
   type Domain,
   verdictFor,
@@ -15,6 +16,13 @@ import {
   type CheckoutResult,
   type StubChargeResult,
 } from "@bizmate/billing";
+import {
+  alertVariants,
+  badgeVariants,
+  buttonVariants,
+  card,
+  cn,
+} from "./ui/index.js";
 
 type Progress = "idle" | "generating" | "judging" | "ready" | "running" | "done";
 
@@ -68,7 +76,6 @@ function sleep(ms: number): Promise<void> {
 
 function chipClass(index: number): string {
   if (!animateChips && progress !== "running" && progress !== "done") {
-    // Idle chips — no busy animation until Tạo lại
     if (progress === "ready") {
       if (index <= 1) return "chip done";
       if (index === 2) return approved ? "chip done" : "chip active";
@@ -100,36 +107,48 @@ function chipClass(index: number): string {
 
 function progressBanner(): string {
   if (!animateChips && progress !== "running") return "";
+  let msg = "";
   switch (progress) {
     case "generating":
-      return `<div class="progress-banner">⏳ Đang tạo workflow…</div>`;
+      msg = "⏳ Đang tạo workflow…";
+      break;
     case "judging":
-      return `<div class="progress-banner">⚖️ Đang chấm workflow (Laya offline)…</div>`;
+      msg = "⚖️ Đang chấm workflow (Laya offline)…";
+      break;
     case "running":
-      return `<div class="progress-banner">▶️ Đang chạy runtime deterministic…</div>`;
+      msg = "▶️ Đang chạy runtime deterministic…";
+      break;
     default:
       return "";
   }
+  return `<div class="${alertVariants({ variant: "info", className: "mb-4 font-medium" })}" role="status">${msg}</div>`;
 }
 
 function personaBlock(): string {
   if (domain === "accounting") {
     return `
-      <div class="persona">
-        <div class="persona-avatar" aria-hidden="true">👵</div>
-        <div>
-          <h2>Bà Lan · tiểu thương chợ An Đông</h2>
-          <p>Ghi sổ bán hàng bằng giọng nói · theo dõi ngưỡng miễn thuế 1 tỷ ₫ (ND-141).</p>
-          <p class="impact-line">Chủ sạp biết mình vừa vượt 1 tỷ <strong>trước khi</strong> bị phạt.</p>
+      <div class="${card.root("mb-4 overflow-hidden bg-gradient-to-br from-primary/10 via-card to-card")}">
+        <div class="${card.content("flex gap-4 items-start")}">
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/20 text-2xl ring-1 ring-primary/30" aria-hidden="true">👵</div>
+          <div class="min-w-0 space-y-1">
+            <h2 class="text-base font-semibold tracking-tight sm:text-lg">Bà Lan · tiểu thương chợ An Đông</h2>
+            <p class="text-sm text-muted-foreground">Ghi sổ bán hàng bằng giọng nói · theo dõi ngưỡng miễn thuế 1 tỷ ₫ (ND-141).</p>
+            <p class="text-sm font-semibold text-warn">Chủ sạp biết mình vừa vượt 1 tỷ <strong>trước khi</strong> bị phạt.</p>
+          </div>
         </div>
       </div>`;
   }
   return `
-    <div class="persona">
-      <div class="persona-avatar" aria-hidden="true">🏪</div>
-      <div>
-        <h2>Pipeline bán hàng SME <span class="badge">backup domain</span></h2>
-        <p>Lead → báo giá → đơn · domain phụ — không phải hero sân khấu.</p>
+    <div class="${card.root("mb-4")}">
+      <div class="${card.content("flex gap-4 items-start")}">
+        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-secondary text-2xl ring-1 ring-border" aria-hidden="true">🏪</div>
+        <div class="min-w-0 space-y-1">
+          <h2 class="text-base font-semibold tracking-tight sm:text-lg">
+            Pipeline bán hàng SME
+            <span class="${badgeVariants({ variant: "secondary", className: "ml-1.5 align-middle" })}">backup domain</span>
+          </h2>
+          <p class="text-sm text-muted-foreground">Lead → báo giá → đơn · domain phụ — không phải hero sân khấu.</p>
+        </div>
       </div>
     </div>`;
 }
@@ -137,16 +156,28 @@ function personaBlock(): string {
 function transcriptBlock(): string {
   if (domain === "accounting") {
     return `
-      <div class="transcript-card">
-        <div class="label">Ghi âm hôm nay · <span class="seed-badge">seed #${seed}</span></div>
-        <blockquote>“${escapeHtml(vendorDayFixture.transcript)}”</blockquote>
+      <div class="${card.root("mb-4")}">
+        <div class="${card.content()}">
+          <div class="mb-2 text-[0.7rem] font-semibold uppercase tracking-wider text-muted-foreground">
+            Ghi âm hôm nay · <span class="${badgeVariants({ variant: "default", className: "font-mono" })}">seed #${seed}</span>
+          </div>
+          <blockquote class="border-l-2 border-primary pl-4 text-base font-medium leading-snug sm:text-lg">
+            “${escapeHtml(vendorDayFixture.transcript)}”
+          </blockquote>
+        </div>
       </div>`;
   }
   const names = pipelineFixture.leads.map((l) => l.name).join(", ");
   return `
-    <div class="transcript-card">
-      <div class="label">Pipeline · <span class="seed-badge">seed #${seed}</span></div>
-      <blockquote>${pipelineFixture.leads.length} lead: ${escapeHtml(names)}</blockquote>
+    <div class="${card.root("mb-4")}">
+      <div class="${card.content()}">
+        <div class="mb-2 text-[0.7rem] font-semibold uppercase tracking-wider text-muted-foreground">
+          Pipeline · <span class="${badgeVariants({ variant: "default", className: "font-mono" })}">seed #${seed}</span>
+        </div>
+        <blockquote class="border-l-2 border-primary pl-4 text-base font-medium leading-snug">
+          ${pipelineFixture.leads.length} lead: ${escapeHtml(names)}
+        </blockquote>
+      </div>
     </div>`;
 }
 
@@ -163,7 +194,6 @@ function aboveFoldLedger(): string {
         persisted: boolean;
       }
     | undefined;
-  // Also accept compute-only (denied path) for partial visibility
   const compute = lastResult.summary.compute as
     | {
         saleTotalVnd: number;
@@ -179,21 +209,26 @@ function aboveFoldLedger(): string {
   const crossed = data.crossedExemption;
   const persisted = ledger?.persisted ?? false;
   return `
-    <section class="panel ledger-above-fold" aria-live="polite">
-      <h2>Sổ cái · trên fold <span class="badge">sau Chạy</span></h2>
-      <div class="ledger-hero ledger-hero-lg">
-        <div class="metric"><dt>YTD sau</dt><dd>${fmtVnd(data.ytdAfterVnd)}</dd></div>
-        <div class="metric"><dt>Còn miễn thuế</dt><dd>${fmtVnd(data.remainingExemptionVnd)}</dd></div>
-        <div class="metric ${crossed ? "highlight" : "ok-highlight"}">
-          <dt>Ngưỡng 1 tỷ</dt>
-          <dd>${crossed ? "⚠️ ĐÃ VƯỢT" : "Chưa vượt"} · ghi sổ=${persisted ? "có" : "không"}</dd>
+    <section class="${card.root("mb-4 border-warn/40 bg-gradient-to-b from-warn/5 to-card")}" aria-live="polite">
+      <div class="${card.content()}">
+        <h2 class="mb-3 flex flex-wrap items-center gap-2 text-sm font-semibold tracking-tight sm:text-base">
+          Sổ cái · trên fold
+          <span class="${badgeVariants({ variant: "warn" })}">sau Chạy</span>
+        </h2>
+        <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+          <div class="metric-tile"><dt>YTD sau</dt><dd>${fmtVnd(data.ytdAfterVnd)}</dd></div>
+          <div class="metric-tile"><dt>Còn miễn thuế</dt><dd>${fmtVnd(data.remainingExemptionVnd)}</dd></div>
+          <div class="metric-tile ${crossed ? "highlight" : "ok-highlight"}">
+            <dt>Ngưỡng 1 tỷ</dt>
+            <dd>${crossed ? "⚠️ ĐÃ VƯỢT" : "Chưa vượt"} · ghi sổ=${persisted ? "có" : "không"}</dd>
+          </div>
         </div>
+        ${
+          crossed
+            ? `<div class="${alertVariants({ variant: "warn", className: "mt-3 font-semibold" })}">Chủ sạp biết mình vừa vượt 1 tỷ <strong>trước khi</strong> bị phạt — Bà Lan vừa vượt ngưỡng miễn thuế 1 tỷ ₫ (tính bằng code, không phải LLM).</div>`
+            : ""
+        }
       </div>
-      ${
-        crossed
-          ? `<div class="crossed-banner">Chủ sạp biết mình vừa vượt 1 tỷ <strong>trước khi</strong> bị phạt — Bà Lan vừa vượt ngưỡng miễn thuế 1 tỷ ₫ (tính bằng code, không phải LLM).</div>`
-          : ""
-      }
     </section>`;
 }
 
@@ -204,13 +239,22 @@ function blastRadiusCard(): string {
       e.workflowId === wf.id &&
       e.workflowVersion === wf.version
   ).length;
-  // Session seed count; CLI AUDIT JSONL is source of truth for offline demo
   const y = affected > 0 ? affected : webAudit.length;
   return `
-    <section class="panel blast-card">
-      <h2>Blast-radius <span class="badge">demo-derived</span></h2>
-      <p class="unpin-msg">unpin workflow version <code>${escapeHtml(wf.id)}@${escapeHtml(wf.version)}</code> → <strong>${y}</strong> executions affected</p>
-      <p class="hint">Đếm từ audit phiên (mirror CLI <code>apps/runtime/.audit/events.jsonl</code>) — rollback trước khi BGH hỏi production blast.</p>
+    <section class="${card.root("mb-4")}">
+      <div class="${card.content()}">
+        <h2 class="mb-2 flex flex-wrap items-center gap-2 text-sm font-semibold">
+          Blast-radius
+          <span class="${badgeVariants({ variant: "secondary" })}">demo-derived</span>
+        </h2>
+        <p class="text-sm sm:text-[0.95rem]">
+          unpin workflow version <code>${escapeHtml(wf.id)}@${escapeHtml(wf.version)}</code>
+          → <strong>${y}</strong> executions affected
+        </p>
+        <p class="mt-2 text-xs text-muted-foreground">
+          Đếm từ audit phiên (mirror CLI <code>apps/runtime/.audit/events.jsonl</code>) — rollback trước khi BGH hỏi production blast.
+        </p>
+      </div>
     </section>`;
 }
 
@@ -221,7 +265,7 @@ function demoDerivedMetricsHtml(): string {
   const ms = lastRunMs != null ? `${lastRunMs} ms` : "—";
   const stepLines =
     lastStepMs.length > 0
-      ? `<ul class="audit-mini">${lastStepMs
+      ? `<ul class="mt-3 space-y-1 font-mono text-xs text-muted-foreground">${lastStepMs
           .map(
             (s) =>
               `<li>${escapeHtml(s.kind)}:${escapeHtml(s.stepId)} ${s.ms}ms/step</li>`
@@ -229,26 +273,30 @@ function demoDerivedMetricsHtml(): string {
           .join("")}</ul>`
       : "";
   return `
-    <section class="panel metrics-demo">
-      <h2>Chỉ số <span class="badge">demo-derived</span></h2>
-      <p class="hint">Từ audit phiên offline — không phải baseline field study.</p>
-      <div class="ledger-hero">
-        <div class="metric"><dt>approve_fail</dt><dd>${approveFail}</dd></div>
-        <div class="metric"><dt>approve_ok</dt><dd>${approveOk}</dd></div>
-        <div class="metric"><dt>persist_ok</dt><dd>${persistOk}</dd></div>
-        <div class="metric"><dt>Last run</dt><dd>${ms}</dd></div>
+    <section class="${card.root("mb-4")}">
+      <div class="${card.content()}">
+        <h2 class="mb-1 flex flex-wrap items-center gap-2 text-sm font-semibold">
+          Chỉ số
+          <span class="${badgeVariants({ variant: "secondary" })}">demo-derived</span>
+        </h2>
+        <p class="mb-3 text-xs text-muted-foreground">Từ audit phiên offline — không phải baseline field study.</p>
+        <div class="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+          <div class="metric-tile"><dt>approve_fail</dt><dd>${approveFail}</dd></div>
+          <div class="metric-tile"><dt>approve_ok</dt><dd>${approveOk}</dd></div>
+          <div class="metric-tile"><dt>persist_ok</dt><dd>${persistOk}</dd></div>
+          <div class="metric-tile"><dt>Last run</dt><dd>${ms}</dd></div>
+        </div>
+        ${stepLines}
+        <p class="mt-3 font-mono text-xs text-muted-foreground">HOT-PATH (demo-derived): last run ${ms}${
+          lastStepMs.length
+            ? ` · ${lastStepMs.map((s) => `${s.kind} ${s.ms}ms/step`).join(" · ")}`
+            : ""
+        }</p>
+        <p class="mt-1 font-mono text-xs font-semibold text-warn">EM blocked auto-done on money task</p>
+        <p class="mt-1 text-xs text-muted-foreground">Payer D-Day: <strong>Sea internal tooling</strong> · SME = roadmap.</p>
       </div>
-      ${stepLines}
-      <p class="hint hotpath-footer">HOT-PATH (demo-derived): last run ${ms}${
-        lastStepMs.length
-          ? ` · ${lastStepMs.map((s) => `${s.kind} ${s.ms}ms/step`).join(" · ")}`
-          : ""
-      }</p>
-      <p class="hint em-money-proof">EM blocked auto-done on money task</p>
-      <p class="hint">Payer D-Day: <strong>Sea internal tooling</strong> · SME = roadmap.</p>
     </section>`;
 }
-
 
 function pricingPanel(): string {
   const plans = listPlans("bizmate");
@@ -257,15 +305,15 @@ function pricingPanel(): string {
   const rows = plans
     .map((p) => {
       const road = p.roadmapOnly
-        ? `<span class="badge roadmap">roadmap</span>`
-        : `<span class="badge">D-Day</span>`;
-      return `<li class="plan-row">
-        <div class="plan-head">
-          <strong>${escapeHtml(p.nameVi)}</strong> ${road}
-          <span class="plan-price">${escapeHtml(p.priceDisplay)}</span>
+        ? `<span class="${badgeVariants({ variant: "roadmap" })}">roadmap</span>`
+        : `<span class="${badgeVariants({ variant: "ok" })}">D-Day</span>`;
+      return `<li class="rounded-lg border border-border bg-background/40 p-4">
+        <div class="mb-1 flex flex-wrap items-baseline gap-2">
+          <strong class="text-sm">${escapeHtml(p.nameVi)}</strong> ${road}
+          <span class="ml-auto font-mono text-sm text-primary">${escapeHtml(p.priceDisplay)}</span>
         </div>
-        <p class="hint">${escapeHtml(p.honestyNote)}</p>
-        <ul class="plan-features">${p.features
+        <p class="text-xs text-muted-foreground">${escapeHtml(p.honestyNote)}</p>
+        <ul class="mt-2 list-disc space-y-0.5 pl-4 text-xs text-muted-foreground">${p.features
           .map((f) => `<li>${escapeHtml(f)}</li>`)
           .join("")}</ul>
       </li>`;
@@ -275,47 +323,63 @@ function pricingPanel(): string {
   let outcome = "";
   if (lastBilling?.kind === "checkout") {
     const r = lastBilling.result;
-    outcome = `<div class="billing-outcome" role="status">
-      <p class="honesty-banner">${escapeHtml(r.honestyBanner)}</p>
-      <p class="hint"><code>${escapeHtml(r.sessionId)}</code> · ok=${r.ok} · stub=${r.stub}
-      ${r.url ? ` · <span class="mono-break">${escapeHtml(r.url)}</span>` : ""}
+    outcome = `<div class="mt-4 rounded-lg border border-border bg-background/50 p-3" role="status">
+      <p class="${alertVariants({ variant: "warn", className: "mb-2 font-semibold" })}">${escapeHtml(r.honestyBanner)}</p>
+      <p class="text-xs text-muted-foreground"><code>${escapeHtml(r.sessionId)}</code> · ok=${r.ok} · stub=${r.stub}
+      ${r.url ? ` · <span class="break-all font-mono text-[0.75rem]">${escapeHtml(r.url)}</span>` : ""}
       ${r.costCenter ? ` · CC=${escapeHtml(r.costCenter)}` : ""}</p>
-      <p class="hint">${escapeHtml(r.detail)}</p>
+      <p class="mt-1 text-xs text-muted-foreground">${escapeHtml(r.detail)}</p>
     </div>`;
   } else if (lastBilling?.kind === "stub") {
     const r = lastBilling.result;
-    outcome = `<div class="billing-outcome" role="status">
-      <p class="honesty-banner">${escapeHtml(r.honestyBanner)}</p>
-      <p class="hint"><code>${escapeHtml(r.chargeId)}</code> · CC=${escapeHtml(r.costCenter)}</p>
-      <p class="hint">${escapeHtml(r.detail)}</p>
+    outcome = `<div class="mt-4 rounded-lg border border-border bg-background/50 p-3" role="status">
+      <p class="${alertVariants({ variant: "warn", className: "mb-2 font-semibold" })}">${escapeHtml(r.honestyBanner)}</p>
+      <p class="text-xs text-muted-foreground"><code>${escapeHtml(r.chargeId)}</code> · CC=${escapeHtml(r.costCenter)}</p>
+      <p class="mt-1 text-xs text-muted-foreground">${escapeHtml(r.detail)}</p>
     </div>`;
   }
 
   return `
-    <section class="panel pricing-panel" id="pricing">
-      <h2>Giá / subscription <span class="badge">BR2 · fixture</span></h2>
-      <p class="hint">Payer D-Day: <strong>Sea internal tooling</strong> (cost-center). SME Pro = roadmap. Giá = fixture — không phải catalog live.</p>
-      <ul class="plan-list">${rows}</ul>
-      <div class="honesty-stack">
-        <p class="honesty-banner">${escapeHtml(bannerStub)}</p>
-        <p class="honesty-banner">${escapeHtml(bannerStripe)}</p>
+    <section class="${card.root("mb-4")}" id="pricing">
+      <div class="${card.content()}">
+        <h2 class="mb-2 flex flex-wrap items-center gap-2 text-sm font-semibold">
+          Giá / subscription
+          <span class="${badgeVariants({ variant: "secondary" })}">BR2 · fixture</span>
+        </h2>
+        <p class="mb-3 text-xs text-muted-foreground">
+          Payer D-Day: <strong>Sea internal tooling</strong> (cost-center). SME Pro = roadmap. Giá = fixture — không phải catalog live.
+        </p>
+        <ul class="mb-4 flex list-none flex-col gap-3 p-0">${rows}</ul>
+        <div class="mb-4 flex flex-col gap-2">
+          <p class="${alertVariants({ variant: "warn", className: "font-semibold" })}">${escapeHtml(bannerStub)}</p>
+          <p class="${alertVariants({ variant: "warn", className: "font-semibold" })}">${escapeHtml(bannerStripe)}</p>
+        </div>
+        <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+          <button type="button" class="${buttonVariants()}" id="btn-sea-stub">Cost-center Sea (stub)</button>
+          <button type="button" class="${buttonVariants({ variant: "outline" })}" id="btn-stripe-sme">Checkout SME · Stripe TEST</button>
+          <button type="button" class="${buttonVariants({ variant: "outline" })}" id="btn-stripe-codex">Checkout Codex · Stripe TEST</button>
+        </div>
+        <p class="mt-3 text-xs text-muted-foreground">
+          Mode hiện tại CTA Stripe: <code>${billingMode}</code> · Sea path luôn <code>offline_stub</code>.
+        </p>
+        ${outcome}
       </div>
-      <div class="actions billing-actions">
-        <button type="button" class="primary" id="btn-sea-stub">Cost-center Sea (stub)</button>
-        <button type="button" class="secondary" id="btn-stripe-sme">Checkout SME · Stripe TEST</button>
-        <button type="button" class="secondary" id="btn-stripe-codex">Checkout Codex · Stripe TEST</button>
-      </div>
-      <p class="hint">Mode hiện tại CTA Stripe: <code>${billingMode}</code> · Sea path luôn <code>offline_stub</code>.</p>
-      ${outcome}
     </section>`;
 }
 
 function stageHonestyBlock(): string {
   return `
-    <section class="panel stage-honesty">
-      <h3>Sân khấu · Codex honesty</h3>
-      <p class="hint">EM board live: <strong>${EM_BOARD_DONE} done / ${EM_BOARD_TODO} todo</strong> (từ <code>apps/em/board.json</code>).</p>
-      <p class="hint stub-callout"><strong>Stub-fail honesty:</strong> <code>BIZMATE_MODE=live</code> Mate/Judge SLM = heuristics — sân khấu demo <em>offline rules</em>, không claim frontier model.</p>
+    <section class="${card.root("mb-4")}">
+      <div class="${card.content()}">
+        <h3 class="mb-2 text-sm font-semibold">Sân khấu · Codex honesty</h3>
+        <p class="text-xs text-muted-foreground">
+          EM board live: <strong>${EM_BOARD_DONE} done / ${EM_BOARD_TODO} todo</strong> (từ <code>apps/em/board.json</code>).
+        </p>
+        <div class="${alertVariants({ variant: "warn", className: "mt-3 border-l-4 border-l-warn" })}">
+          <strong>Stub-fail honesty:</strong>
+          <code>BIZMATE_MODE=live</code> Mate/Judge SLM = heuristics — sân khấu demo <em>offline rules</em>, không claim frontier model.
+        </div>
+      </div>
     </section>`;
 }
 
@@ -330,16 +394,22 @@ function render(): void {
     progress === "running";
 
   app.innerHTML = `
-    <header>
-      <h1>Biz Mate <span class="badge">offline</span> <span class="seed-badge">seed #${seed}</span></h1>
-      <p class="tagline">Bà Lan · sổ 1 tỷ ₫. AI đề xuất → code kiểm → người quyết. Payer D-Day: Sea internal.</p>
+    <header class="mb-6 space-y-2">
+      <h1 class="flex flex-wrap items-center gap-2 text-xl font-bold tracking-tight sm:text-2xl">
+        Biz Mate
+        <span class="${badgeVariants({ variant: "default" })}">offline</span>
+        <span class="${badgeVariants({ variant: "outline", className: "font-mono" })}">seed #${seed}</span>
+      </h1>
+      <p class="text-sm text-muted-foreground sm:text-[0.95rem]">
+        Bà Lan · sổ 1 tỷ ₫. AI đề xuất → code kiểm → người quyết. Payer D-Day: Sea internal.
+      </p>
     </header>
 
     ${personaBlock()}
     ${transcriptBlock()}
     ${aboveFoldLedger()}
 
-    <div class="step-chips" role="list" aria-label="Các bước">
+    <div class="mb-4 flex flex-wrap gap-2" role="list" aria-label="Các bước">
       ${CHIP_LABELS.map(
         (label, i) =>
           `<span class="${chipClass(i)}" role="listitem">${label}</span>`
@@ -352,55 +422,86 @@ function render(): void {
     ${stageHonestyBlock()}
     ${pricingPanel()}
 
-    <section class="panel">
-      <h3>Domain</h3>
-      <div class="domain-pills">
-        <button type="button" data-domain="accounting" class="${domain === "accounting" ? "active" : ""}">Kế toán · hero</button>
-        <button type="button" data-domain="sales" class="secondary-domain backup-domain ${domain === "sales" ? "active" : ""}" title="Backup domain — không phải hero">Bán hàng · backup domain</button>
-      </div>
-      <p class="hint">Hero = kế toán tiểu thương. Sales = <strong>backup domain</strong> (không ngang hàng trên pitch).</p>
-    </section>
-
-    <section class="panel">
-      <h3>Điểm Judge</h3>
-      <div class="score-badge">
-        <span class="score-num">${verdict.score}</span>
-        <span class="score-label">${verdict.passed ? "Đạt" : "Chưa đạt"} · ${verdict.mode}</span>
-      </div>
-      <p class="hint">${escapeHtml(verdict.highLevelSummary ?? "")}</p>
-    </section>
-
-    <section class="panel">
-      <h3>Người duyệt (HITL)</h3>
-      <div class="actions">
-        <button type="button" class="primary" id="btn-approve" ${busy ? "disabled" : ""}>${approved ? "Đã duyệt ✓" : "Duyệt workflow"}</button>
-        <button type="button" class="secondary" id="btn-revoke" ${approved && !busy ? "" : "disabled"}>Thu hồi</button>
-        <span class="status-pill ${approved ? "approved" : ""}">
-          ${approved ? "Đã mở khóa ghi sổ" : "Chờ duyệt trước khi persist"}
-        </span>
+    <section class="${card.root("mb-4")}">
+      <div class="${card.content()}">
+        <h3 class="${card.title("mb-3")}">Domain</h3>
+        <div class="mb-2 flex flex-col gap-2 sm:flex-row">
+          <button type="button" data-domain="accounting"
+            class="${cn(
+              buttonVariants({
+                variant: domain === "accounting" ? "default" : "outline",
+                className: "flex-1",
+              })
+            )}">Kế toán · hero</button>
+          <button type="button" data-domain="sales"
+            class="${cn(
+              buttonVariants({
+                variant: domain === "sales" ? "secondary" : "dashed",
+                className: "flex-1 text-xs opacity-70 sm:text-sm",
+              }),
+              domain === "sales" && "opacity-90"
+            )}"
+            title="Backup domain — không phải hero">Bán hàng · backup domain</button>
+        </div>
+        <p class="text-xs text-muted-foreground">
+          Hero = kế toán tiểu thương. Sales = <strong>backup domain</strong> (không ngang hàng trên pitch).
+        </p>
       </div>
     </section>
 
-    <section class="panel">
-      <h3>Chạy offline</h3>
-      <div class="actions">
-        <button type="button" class="primary" id="btn-run" ${busy ? "disabled" : ""}>Chạy ${domain === "accounting" ? "sổ kế toán" : "pipeline"}</button>
-        <button type="button" class="secondary" id="btn-regen" ${busy ? "disabled" : ""}>Tạo lại</button>
-        <button type="button" class="reset" id="btn-reset" ${busy ? "disabled" : ""}>Reset · seed #${seed}</button>
+    <section class="${card.root("mb-4")}">
+      <div class="${card.content()}">
+        <h3 class="${card.title("mb-3")}">Điểm Judge</h3>
+        <div class="inline-flex items-center gap-3 rounded-lg border border-border bg-background/60 px-4 py-3">
+          <span class="font-mono text-2xl font-bold text-ok">${verdict.score}</span>
+          <span class="text-sm text-muted-foreground">${verdict.passed ? "Đạt" : "Chưa đạt"} · ${verdict.mode}</span>
+        </div>
+        <p class="mt-2 text-xs text-muted-foreground">${escapeHtml(verdict.highLevelSummary ?? "")}</p>
       </div>
-      <div id="run-out">${lastResult ? renderResult(lastResult) : '<p class="hint">Bấm Chạy để ghi sổ / cập nhật pipeline (fixture offline).</p>'}</div>
     </section>
 
-    <details class="tech">
-      <summary>Chi tiết kỹ thuật (workflow + verdict JSON)</summary>
-      <p class="hint" style="margin-top:0.5rem">Workflow ${escapeHtml(workflow.id)} v${escapeHtml(workflow.version)}</p>
-      <pre class="json">${escapeHtml(JSON.stringify(workflow, null, 2))}</pre>
-      <pre class="json">${escapeHtml(JSON.stringify(verdict, null, 2))}</pre>
-      <pre class="json">${escapeHtml(JSON.stringify(fixture, null, 2))}</pre>
+    <section class="${card.root("mb-4")}">
+      <div class="${card.content()}">
+        <h3 class="${card.title("mb-3")}">Người duyệt (HITL)</h3>
+        <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+          <button type="button" class="${buttonVariants()}" id="btn-approve" ${busy ? "disabled" : ""}>${approved ? "Đã duyệt ✓" : "Duyệt workflow"}</button>
+          <button type="button" class="${buttonVariants({ variant: "outline" })}" id="btn-revoke" ${approved && !busy ? "" : "disabled"}>Thu hồi</button>
+          <span class="${cn(
+            "text-sm",
+            approved ? "font-medium text-ok" : "text-muted-foreground"
+          )}">
+            ${approved ? "Đã mở khóa ghi sổ" : "Chờ duyệt trước khi persist"}
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section class="${card.root("mb-4")}">
+      <div class="${card.content()}">
+        <h3 class="${card.title("mb-3")}">Chạy offline</h3>
+        <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+          <button type="button" class="${buttonVariants()}" id="btn-run" ${busy ? "disabled" : ""}>Chạy ${domain === "accounting" ? "sổ kế toán" : "pipeline"}</button>
+          <button type="button" class="${buttonVariants({ variant: "outline" })}" id="btn-regen" ${busy ? "disabled" : ""}>Tạo lại</button>
+          <button type="button" class="${buttonVariants({ variant: "dashed", size: "sm" })}" id="btn-reset" ${busy ? "disabled" : ""}>Reset · seed #${seed}</button>
+        </div>
+        <div id="run-out" class="mt-3">${lastResult ? renderResult(lastResult) : '<p class="text-xs text-muted-foreground">Bấm Chạy để ghi sổ / cập nhật pipeline (fixture offline).</p>'}</div>
+      </div>
+    </section>
+
+    <details class="mt-2 rounded-lg border border-border bg-background/40 p-3 open:pb-4">
+      <summary class="cursor-pointer text-xs text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded">
+        Chi tiết kỹ thuật (workflow + verdict JSON)
+      </summary>
+      <p class="mt-2 text-xs text-muted-foreground">Workflow ${escapeHtml(workflow.id)} v${escapeHtml(workflow.version)}</p>
+      <pre class="mt-2 max-h-56 overflow-auto rounded-md bg-background p-3 font-mono text-[0.7rem] leading-snug text-muted-foreground">${escapeHtml(JSON.stringify(workflow, null, 2))}</pre>
+      <pre class="mt-2 max-h-56 overflow-auto rounded-md bg-background p-3 font-mono text-[0.7rem] leading-snug text-muted-foreground">${escapeHtml(JSON.stringify(verdict, null, 2))}</pre>
+      <pre class="mt-2 max-h-56 overflow-auto rounded-md bg-background p-3 font-mono text-[0.7rem] leading-snug text-muted-foreground">${escapeHtml(JSON.stringify(fixture, null, 2))}</pre>
     </details>
 
-    <footer class="stack-footer">
-      <p class="hint">stack: Vite + Node runtime · TS monorepo (mate / judge / em / runtime / web) · stubs labeled</p>
+    <footer class="mt-8 border-t border-border pt-4 text-center">
+      <p class="font-mono text-[0.7rem] text-muted-foreground">
+        stack: Vite + Tailwind + shadcn-style · Node runtime · TS monorepo (mate / judge / em / runtime / web) · stubs labeled
+      </p>
     </footer>
   `;
 
@@ -408,7 +509,6 @@ function render(): void {
     btn.addEventListener("click", () => {
       if (busy) return;
       domain = btn.dataset.domain as Domain;
-      // Domain switch = full reset, no chip animation (Kyle-B2)
       seed += 1;
       approved = false;
       lastResult = null;
@@ -534,7 +634,6 @@ async function runWithProgress(): Promise<void> {
   const t0 = performance.now();
   lastResult = runDomain(domain, approved);
   lastRunMs = Math.round(performance.now() - t0);
-  // Per-step ms proxy from runner (single-threaded; distribute by step count)
   const n = Math.max(1, lastResult.steps.length);
   const per = Math.max(0, Math.round((lastRunMs / n) * 100) / 100);
   lastStepMs = lastResult.steps
@@ -573,10 +672,10 @@ async function runWithProgress(): Promise<void> {
 function renderResult(result: RunResult): string {
   const steps = result.steps
     .map((s) => {
-      const tag = s.ok ? "tag-ok" : "tag-fail";
+      const tag = s.ok ? "text-ok" : "text-destructive";
       const label = s.ok ? "ok" : s.skipped ? "skip" : "FAIL";
       const err = s.error ? ` — ${escapeHtml(s.error)}` : "";
-      return `<li><span class="${tag}">[${label}]</span> ${escapeHtml(s.kind)}:${escapeHtml(s.stepId)}${err}</li>`;
+      return `<li class="border-b border-border/60 py-1 font-mono text-xs text-muted-foreground"><span class="${tag} font-semibold">[${label}]</span> ${escapeHtml(s.kind)}:${escapeHtml(s.stepId)}${err}</li>`;
     })
     .join("");
 
@@ -593,9 +692,8 @@ function renderResult(result: RunResult): string {
     | undefined;
 
   if (ledger) {
-    // Compact echo under Chạy — primary numbers already above-fold (Kyle-B1)
     cards = `
-      <p class="hint">Chi tiết đơn: ${fmtVnd(ledger.saleTotalVnd)} · YTD trước ${fmtVnd(ledger.ytdBeforeVnd)} (xem panel trên fold).</p>`;
+      <p class="text-xs text-muted-foreground">Chi tiết đơn: ${fmtVnd(ledger.saleTotalVnd)} · YTD trước ${fmtVnd(ledger.ytdBeforeVnd)} (xem panel trên fold).</p>`;
   } else if (result.domain === "sales" && Array.isArray(result.summary.leads)) {
     const leads = result.summary.leads as Array<{
       id: string;
@@ -603,17 +701,17 @@ function renderResult(result: RunResult): string {
       stage: string;
       amountVnd: number;
     }>;
-    cards = `<ul class="step-list">${leads
+    cards = `<ul class="mt-2 list-none space-y-1 p-0">${leads
       .map(
         (l) =>
-          `<li>${escapeHtml(l.name)} · ${escapeHtml(l.stage)} · ${fmtVnd(l.amountVnd)}</li>`
+          `<li class="font-mono text-xs text-muted-foreground">${escapeHtml(l.name)} · ${escapeHtml(l.stage)} · ${fmtVnd(l.amountVnd)}</li>`
       )
       .join("")}</ul>`;
   }
 
   const auditHtml =
     webAudit.length > 0
-      ? `<ul class="audit-mini">${webAudit
+      ? `<ul class="mt-2 space-y-1 font-mono text-xs text-muted-foreground">${webAudit
           .map(
             (e) =>
               `<li>[${escapeHtml(e.action)}] ${escapeHtml(e.detail)}</li>`
@@ -622,19 +720,18 @@ function renderResult(result: RunResult): string {
       : "";
 
   return `
-    <p style="margin:0.75rem 0 0">
-      <strong class="${result.ok ? "passed" : "failed"}">${result.ok ? "THÀNH CÔNG" : "BỊ CHẶN"}</strong>
+    <p class="mt-3">
+      <strong class="${result.ok ? "text-ok" : "text-destructive"} font-semibold">${result.ok ? "THÀNH CÔNG" : "BỊ CHẶN"}</strong>
       · duyệt=${result.approved ? "có" : "không"}
       · seed #${seed}
     </p>
     ${cards}
     ${auditHtml}
-    <details class="tech">
-      <summary>Log bước runtime</summary>
-      <ul class="step-list">${steps}</ul>
+    <details class="mt-3 rounded-md border border-border bg-background/40 p-2">
+      <summary class="cursor-pointer text-xs text-muted-foreground">Log bước runtime</summary>
+      <ul class="mt-2 list-none p-0">${steps}</ul>
     </details>
   `;
 }
 
-// Initial paint: ready state, no generate animation (Kyle-B2)
 render();
