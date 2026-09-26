@@ -2,7 +2,12 @@
  * Bookkeeper agent: LLM would propose classification; here offline stub parses
  * utterances, rules compute money, human must approve before persist.
  */
-import { createProposal, markApproved, markVerified } from "@bizmate/core";
+import {
+  createProposal,
+  markApproved,
+  markVerified,
+  type Proposal,
+} from "@bizmate/core";
 import { parseUtterance } from "./parse-utterance.js";
 import {
   approveEntry,
@@ -21,7 +26,7 @@ export function ingestUtterance(
   utteranceId: string,
   text: string,
   citationIds: string[]
-): { proposal: ReturnType<typeof createProposal<LedgerEntry>>; state: VendorState } {
+): { proposal: Proposal<LedgerEntry>; state: VendorState } {
   const items = parseUtterance(text);
   const entry = proposeLedgerEntry(
     utteranceId,
@@ -34,14 +39,16 @@ export function ingestUtterance(
   return { proposal: verified, state };
 }
 
+/** Persist only after a verified proposal is human-approved. */
 export function commitApproved(
   state: VendorState,
-  entry: LedgerEntry
+  verifiedProposal: Proposal<LedgerEntry>
 ): VendorState {
-  const approved = approveEntry(entry);
-  markApproved(
-    createProposal(approved.id, approved, "human")
-  ); // lifecycle demo
+  if (verifiedProposal.status !== "verified") {
+    throw new Error("Refuse to persist without a verified proposal");
+  }
+  const decided = markApproved(verifiedProposal, "human");
+  const approved = approveEntry(decided.payload);
   return {
     ...state,
     ytdRevenueVnd: approved.ytdAfter,

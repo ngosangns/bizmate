@@ -23,12 +23,14 @@ const cites = fixture.officialDocs.map((d: { id: string }) => d.id);
 for (const u of fixture.utterances) {
   const { proposal } = ingestUtterance(state, u.id, u.text, cites);
   console.log(`Utterance: "${u.text}"`);
-  console.log(`  → proposed ${proposal.payload.totalVnd.toLocaleString("vi-VN")}₫ (status=${proposal.status})`);
+  console.log(
+    `  → proposed ${proposal.payload.totalVnd.toLocaleString("vi-VN")}₫ (status=${proposal.status})`
+  );
   if (proposal.payload.crossedThreshold) {
     console.log("  ⚠️  Vượt ngưỡng miễn thuế 1 tỷ — cần human approve trước khi ghi sổ");
   }
-  // human decides
-  state = commitApproved(state, proposal.payload) as typeof state;
+  // human decides — refuse path would skip commitApproved
+  state = commitApproved(state, proposal) as typeof state;
   console.log(`  ✓ approved · YTD sau: ${state.ytdRevenueVnd.toLocaleString("vi-VN")}₫\n`);
 }
 

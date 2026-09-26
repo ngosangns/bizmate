@@ -1,10 +1,23 @@
 {
   "vendorId": "vendor-an-dong-fabric",
   "displayName": "Bà Lan — sạp vải chợ An Đông",
-  "ytdRevenueVnd": 980_000_000,
+  "ytdRevenueVnd": 980000000,
   "utterances": [
-    { "id": "u1", "text": "sáng nay bán 3 áo, mỗi cái 250 nghìn", "ts": "2026-09-26T08:15:00+07:00" },
-    { "id": "u2", "text": "chiều bán thêm 2 mét vải, 180 nghìn một mét", "ts": "2026-09-26T15:40:00+07:00" }
+    {
+      "id": "u1",
+      "text": "sáng nay bán 3 áo, mỗi cái 250 nghìn",
+      "ts": "2026-09-26T08:15:00+07:00"
+    },
+    {
+      "id": "u2",
+      "text": "chiều bán thêm 2 mét vải, 180 nghìn một mét",
+      "ts": "2026-09-26T15:40:00+07:00"
+    },
+    {
+      "id": "u3",
+      "text": "cuối ngày bán 1 lô áo đặc biệt, 25000 nghìn",
+      "ts": "2026-09-26T18:00:00+07:00"
+    }
   ],
   "officialDocs": [
     {
