@@ -19,6 +19,9 @@ const inbox = JSON.parse(
   fs.readFileSync(path.join(__dirname, "../fixtures/scam-inbox.json"), "utf8")
 );
 
+/** Kyle-S2: `--once` skips RESET REPLAY; default keeps full reset loop. */
+const ONCE = process.argv.includes("--once");
+
 function printHeader(): void {
   console.log(`\n🛡️  Shield demo — hộp thư của ${inbox.elderName}`);
   // TA-S1 P0 — MUST be first opener (family/buyer; NEVER seller KPI)
@@ -27,10 +30,16 @@ function printHeader(): void {
   console.log(`backup 30s · family B2C`);
   console.log(`STAGE: 30s backup only — not hero; not seller KPI`);
   console.log(`buyer-trust QR / phishing adjacent (no live SPX)`);
+  // Son-S1 — detector: fixture above-the-fold (before any machine reasons)
+  console.log(`detector: fixture`);
   // Sid-S1 / S2 — mandatory honesty (also printed per-message on m2)
   console.log(`deepfakeScore=fixture`);
   console.log(
     `HONESTY: deepfakeScore = fixture meta (not a live detector)`
+  );
+  // Son-S3 — do not claim Mate codegen for Shield
+  console.log(
+    `ENGINE: rule engine + fixture score — not Mate codegen (Codex = contracts/audit only)`
   );
   // Sid-S2 — Sea wedge = distribution surface, NOT payer
   console.log(
@@ -49,8 +58,16 @@ function printHeader(): void {
       shadowIds.length ? shadowIds.join(", ") : "(none)"
     }`
   );
+  // Kyle-S2
+  console.log(
+    ONCE
+      ? `CLI: --once (single pass; skip RESET REPLAY)`
+      : `CLI: default (RESET REPLAY on); pass --once to skip`
+  );
   console.log();
 }
+
+type LiveCounts = { allow: number; flag: number; block: number };
 
 function runInboxPass(
   label: string,
@@ -58,30 +75,32 @@ function runInboxPass(
 ): ShieldVerdict[] {
   console.log(`—— ${label} ——`);
   const verdicts: ShieldVerdict[] = [];
+  const live: LiveCounts = { allow: 0, flag: 0, block: 0 };
   const total = messages.length;
   for (let i = 0; i < total; i++) {
     const m = messages[i];
     const step = i + 1;
     const v = judgeMessage(m);
     verdicts.push(v);
+    live[v.action]++;
     const icon = v.action === "block" ? "🚫" : v.action === "flag" ? "⚠️" : "✅";
-    console.log(`STEP ${step}/${total}  ${icon} [${m.channel}] ${m.from}`);
-    console.log(`   ${m.body.slice(0, 80)}${m.body.length > 80 ? "…" : ""}`);
-    if (m.meta?.deepfakeScore !== undefined) {
-      // Lee-S1 — unmistakable fixture callout on m2
+    // Kyle-S3 — STEP pill with live running counts (not only SUMMARY)
+    console.log(
+      `STEP ${step}/${total} · ${v.action}  ${icon}  live allow=${live.allow} flag=${live.flag} block=${live.block}`
+    );
+    // Son-S1 / Lee-S1 — fixture callout on deepfake (m2) before any machine clutter
+    if (m.meta?.deepfakeScore !== undefined || v.detector) {
       console.log(
-        `   deepfakeScore=fixture (upstream detector stub) value=${m.meta.deepfakeScore}`
+        `   detector: fixture${
+          m.meta?.deepfakeScore !== undefined
+            ? ` (deepfakeScore stub value=${m.meta.deepfakeScore})`
+            : ""
+        }`
       );
     }
-    console.log(
-      `   → ${v.action.toUpperCase()} (${v.risk}): ${v.reasons.join("; ") || "clean"}`
-    );
-    if (v.detector) console.log(`   detector: ${v.detector}`);
-    if (v.shadowPatternIds?.length) {
-      console.log(`   shadowPatternIds: ${v.shadowPatternIds.join(", ")}`);
-    }
-    if (v.familyAlert) console.log(`   📱 ${v.familyAlert}`);
+    // Kyle-S1 — main line = icon+STEP+💬 one elder sentence; reasons[] only in AUDIT
     console.log(`   💬 ${v.elderExplanation}`);
+    if (v.familyAlert) console.log(`   📱 ${v.familyAlert}`);
     // TA-S2 — buyer VN tip after blocking fake QR hoàn tiền (m3)
     if (
       v.action === "block" &&
@@ -96,7 +115,7 @@ function runInboxPass(
   return verdicts;
 }
 
-function printAuditSummary(): void {
+function printAuditSummary(verdicts: ShieldVerdict[]): void {
   const counts = { allow: 0, flag: 0, block: 0 };
   for (const e of auditLog) {
     counts[e.action]++;
@@ -109,15 +128,31 @@ function printAuditSummary(): void {
   console.log(
     `  allow=${counts.allow}  flag=${counts.flag}  block=${counts.block}  (total entries=${auditLog.length})`
   );
+  // Kyle-S1 — machine reasons[] only in AUDIT (not cluttered inline on STEPs)
+  console.log(`  —— machine reasons (AUDIT only) ——`);
+  for (const v of verdicts) {
+    const shadow =
+      v.shadowPatternIds?.length
+        ? ` | shadowPatternIds=${v.shadowPatternIds.join(",")}`
+        : "";
+    console.log(
+      `  ${v.messageId}: ${v.action} (${v.risk}) — ${
+        v.reasons.join("; ") || "clean"
+      }${shadow}`
+    );
+  }
 }
 
 clearAuditLog();
 printHeader();
 
 const messages = inbox.messages as IncomingMessage[];
-const verdicts = runInboxPass(`INBOX PASS 1 (${messages.length} messages)`, messages);
+const verdicts = runInboxPass(
+  `INBOX PASS 1 (${messages.length} messages)`,
+  messages
+);
 
-printAuditSummary();
+printAuditSummary(verdicts);
 
 // Example human override on a blocked message (false-positive story path)
 const blocked = verdicts.find((v) => v.action === "block");
@@ -135,13 +170,22 @@ if (blocked) {
   );
 }
 
-console.log("\n—— RESET ——");
-console.log(
-  `  To restart the 90s demo: clear auditLog + re-judge the same fixture (done below).`
-);
-console.log(`  CLI: npm run demo:shield   (idempotent offline replay)\n`);
+if (ONCE) {
+  console.log("\n—— --once: skip RESET REPLAY ——");
+  console.log(
+    `  Re-run without --once (or: npm run demo:shield) for full RESET loop.\n`
+  );
+} else {
+  console.log("\n—— RESET ——");
+  console.log(
+    `  To restart the 90s demo: clear auditLog + re-judge the same fixture (done below).`
+  );
+  console.log(
+    `  CLI: npm run demo:shield   |  npm run demo -w @bizmate/shield -- --once\n`
+  );
 
-clearAuditLog();
-runInboxPass("RESET REPLAY (inbox from scratch)", messages);
-printAuditSummary();
-console.log();
+  clearAuditLog();
+  const replay = runInboxPass("RESET REPLAY (inbox from scratch)", messages);
+  printAuditSummary(replay);
+  console.log();
+}

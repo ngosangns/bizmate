@@ -26,9 +26,33 @@ Maps ROUND-1-DOMAIN Shield rows + late Sid/Lee/TA packets → evidence in code/d
 cd /workspace/bizmate
 npm run test -w @bizmate/shield
 npm run demo:shield
+npm run demo -w @bizmate/shield -- --once
 ```
 
 Expect: all tests green; demo EXIT 0; ~3 block / 2 flag / 1 allow; OTP/CSKH stay flag (shadow).
+
+
+## Kyle / Son follow-on (post `13cde1b`)
+
+| ID | Source | Improvement | Status | Evidence |
+|----|--------|-------------|--------|----------|
+| **Kyle-S1** | Kyle | Main STEP = icon + pill + 💬 one elder sentence; `reasons[]` only in AUDIT | **Done** | `demo.ts` runInboxPass: no inline reasons; AUDIT SUMMARY prints machine reasons per messageId |
+| **Kyle-S2** | Kyle | CLI `--once` skips RESET REPLAY; default keeps reset | **Done** | `process.argv.includes("--once")`; README documents `npm run demo -w @bizmate/shield -- --once` |
+| **Kyle-S3** | Kyle | STEP pill live counts | **Done** | `STEP k/N · action` + `live allow=… flag=… block=…` each message |
+| **Son-S1** | Son | `detector: fixture` above-the-fold | **Done** | Header prints `detector: fixture` before honesty/Sea; m2 still prints detector fixture line |
+| **Son-S2** | Son | `.scratch/shield-001.md` Codex/task evidence | **Done** | `.scratch/shield-001.md` — goal, trust boundary rules-not-LLM, self-review, acceptance |
+| **Son-S3** | Son | Do not claim Mate codegen for Shield | **Done** | Demo `ENGINE: rule engine + fixture score — not Mate codegen`; README honesty section |
+
+### Prove (Kyle/Son)
+
+```bash
+cd /workspace/bizmate
+npm run test -w @bizmate/shield
+npm run demo:shield
+npm run demo -w @bizmate/shield -- --once
+```
+
+Expect: all EXIT 0; default still runs RESET REPLAY; `--once` prints `skip RESET REPLAY` and one inbox pass only.
 
 ## Remaining gaps (non-blockers)
 

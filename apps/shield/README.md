@@ -44,7 +44,10 @@ Mỗi entry trong `SCRIPT_PATTERNS` mang:
 
 ## Honesty — deepfake & on-device
 
-- Demo opener bắt buộc: `deepfakeScore=fixture` + `HONESTY: deepfakeScore = fixture meta (not a live detector)`.
+- **Not Mate codegen:** Shield is a **rule engine + fixture score** (blacklist / patterns / meta stubs). Codex leverage = contracts + audit schema — **do not claim** Mate generated Shield verdicts or policy in this demo.
+
+
+- Demo opener bắt buộc (above-the-fold): `detector: fixture` + `deepfakeScore=fixture` + `HONESTY: deepfakeScore = fixture meta (not a live detector)`.
 - `deepfakeScore` trong fixture / `msg.meta` là **upstream detector stub**, không phải live ML. Engine gắn `detector: "fixture"` trên verdict + audit; machine reason ghi `[detector: fixture]`. Demo in `deepfakeScore=fixture (upstream detector stub)` trên m2.
 - Elder / familyAlert copy luôn tiếng Việt thường, **không** lộ jargon / “Deepfake score 97%” / “fixture”.
 - On-device / PII: rules chạy local trên tin nhắn; không gửi nội dung lên cloud trong bản offline này.
@@ -74,18 +77,24 @@ npm run demo -w @bizmate/shield
 # hoặc
 npm run demo:shield
 npm run test -w @bizmate/shield
+
+# Kyle-S2 — single pass (skip RESET REPLAY)
+npm run demo -w @bizmate/shield -- --once
 ```
 
-Demo in **STEP 1..N**, rồi **RESET REPLAY** (clear auditLog + re-judge cùng fixture) để 90s demo restart offline.
+- **Default:** in **STEP 1..N** với live counts, rồi **RESET REPLAY** (clear auditLog + re-judge cùng fixture).
+- **`--once`:** một inbox pass + AUDIT + override; **bỏ** RESET REPLAY (tránh scroll 2×N trên pitch 30s).
+- **Kyle-S1:** mỗi STEP = icon + pill + 💬 một câu elder; machine `reasons[]` chỉ trong **AUDIT SUMMARY**.
+- **Kyle-S3:** pill `STEP k/N · block|flag|allow` + `live allow=… flag=… block=…` chạy theo từng tin.
 
 ## Script demo ~30s backup slot
 
-1. Opener: `30s backup · ba/mẹ mua Shopee` + `backup 30s · family B2C` + honesty + Sea wedge (no seller KPI).
-2. STEP qua inbox — 🚫 blacklist/deepfake-fixture/QR, ✅ tin con, ⚠️ CSKH/OTP (shadow flag).
+1. Opener: `30s backup · ba/mẹ mua Shopee` + `backup 30s · family B2C` + `detector: fixture` + honesty + Sea wedge + ENGINE not-Mate-codegen (no seller KPI).
+2. STEP qua inbox — pill live counts; 💬 1 câu elder; 🚫 blacklist/deepfake-fixture/QR, ✅ tin con, ⚠️ CSKH/OTP (shadow flag).
 3. After m3 QR block: Tip buyer VN.
-4. AUDIT SUMMARY (version + hash + deepfake=fixture).
+4. AUDIT SUMMARY (version + hash + deepfake=fixture + machine reasons[]).
 5. HUMAN OVERRIDE + FP SLA line.
-6. RESET REPLAY.
+6. RESET REPLAY (skip with `--once`).
 
 ## Khoảng trống còn lại
 
