@@ -30,7 +30,7 @@ Mỗi app (BizMate · Bookkeeper · Shield · FloodOps) phải ship:
 |-----|-----|-----|-----|-----|-----|---------|
 | BizMate | Adv · BizMate | 6a43e29 | Done | Done | Done | Done |
 | Bookkeeper | Adv · Bookkeeper | _(pending push)_ | Done | Done | Done | Done |
-| Shield | Adv · Shield | `3b094fa` | Done | Done | Done | Adv Done — Orchestrator verify |
+| Shield | Adv · Shield | `becd861` | Done | Done | Done | Adv Done — Orchestrator verify |
 | FloodOps | Adv · FloodOps | — | Open | Open | Open | Open |
 
 ## Per-app hints (reuse domain GTM, không duplicate fiction)
@@ -73,4 +73,4 @@ _(Orchestrator fills after each Adv Done.)_
 - BR3: demo BILLING section `createCheckout` (`stripe_test` default) + always `honestyBanner`; dep `@bizmate/billing@0.1.0`.
 - Consumed shared `packages/billing` (did not rewrite package API). Shield plan tiers filled to match BR2 matrix.
 - Prove: `npm run test -w @bizmate/billing` · `npm run test -w @bizmate/shield` · `npm run demo:shield` → EXIT 0.
-- SHA: `3b094fa` (Adv push; Orchestrator verify).
+- SHA: `becd861` (Adv push; Orchestrator verify).
