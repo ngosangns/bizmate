@@ -31,9 +31,9 @@
 
 | App | Adv | Stack chosen | Tip SHA | Demo | Tests | Docs | Status |
 |-----|-----|--------------|---------|------|-------|------|--------|
-| Bookkeeper | Adv · Bookkeeper | **Next App Router + Route Handlers/Server Actions + better-sqlite3** (not tRPC/Prisma) | tip pending prove | pending | pending | README+BUSINESS+runbook+PROVE | **In progress** (Adv implementing) |
+| Bookkeeper | Adv · Bookkeeper | **Next App Router + Route Handlers/Server Actions + better-sqlite3** (not tRPC/Prisma) | `37cfd0c` | EXIT 0 | EXIT 0 (16) | README+BUSINESS+runbook+PROVE | **Done** (Adv claim) |
 | Shield | Adv · Shield | **PWA + Service Worker (+ Vite)** | `d751cef` | EXIT 0 | EXIT 0 | `SHIELD-STACK.md` | **Done** (Adv claim) |
-| FloodOps | Adv · FloodOps | **Next + Leaflet + Node worker** (chosen) | `fd56e9a` baseline | — | — | — | **In progress** |
+| FloodOps | Adv · FloodOps | **Next + Leaflet + Node worker** (+ JSON state) | `73cac83` / feat `6e4542c` | EXIT 0 ✓ | EXIT 0 ✓ | `FLOODOPS-STACK-PROVE.md` | **Verified** · Orchestrator |
 | BizMate | Adv · BizMate | **Vite + TS monorepo** (not Next) | `124e0f7` | EXIT 0 | EXIT 0 | `docs/review/BIZMATE-STACK.md` | **Done** (Adv claim) |
 
 ## Routed
@@ -44,3 +44,4 @@ Orchestrator → 4 Advs · 2026-09-26 ~18:52 ICT · baseline tip `fd56e9a` · R3
 
 _Stand by until 4/4 green._ Then Judging Room: stack-fit / demo clarity glance; Tech R1 scores not auto-invalidated.
 
+**Orchestrator verify FloodOps** 18:59 ICT · tip `73cac83`/`6e4542c` · test 24/24 · demo EXIT 0 · worker EXIT 0 · Next build:web EXIT 0 · Leaflet + COD≠invoice.
