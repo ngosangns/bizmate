@@ -73,3 +73,12 @@ Web: **Blast-radius** card + **Chỉ số demo-derived** + HOT-PATH footer + abo
 ## Partnership 20s (Sid-B3)
 
 Mate = **creation-time** Codex path. Runtime = **deterministic**. Registry owner = **EM + human**. Full line: `docs/hackathon/pitch/bizmate-partnership-20s.md`.
+
+---
+
+## Business packaging (BR1–BR3)
+
+See `docs/review/BIZMATE-BUSINESS.md`. Shared sandbox: `@bizmate/billing`.  
+Web: **Giá / subscription** panel + honesty banners (`stripe_test` / `offline_stub`).  
+Unit economics = **demo-derived** AUDIT only — no invented ARR.
+

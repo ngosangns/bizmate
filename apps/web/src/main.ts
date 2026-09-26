@@ -6,6 +6,15 @@ import {
   workflowFor,
 } from "./samples.js";
 import { runDomain, type RunResult } from "./runner.js";
+import {
+  createCheckout,
+  honestyBanner,
+  listPlans,
+  stubCharge,
+  type BillingMode,
+  type CheckoutResult,
+  type StubChargeResult,
+} from "@bizmate/billing";
 
 type Progress = "idle" | "generating" | "judging" | "ready" | "running" | "done";
 
@@ -26,6 +35,12 @@ let lastRunMs: number | null = null;
 let lastStepMs: Array<{ stepId: string; kind: string; ms: number }> = [];
 /** Kyle-B2: animate chips only after explicit Tạo lại click. */
 let animateChips = false;
+/** BR2/BR3: last sandbox/stub checkout or cost-center stub. */
+let lastBilling:
+  | { kind: "checkout"; result: CheckoutResult }
+  | { kind: "stub"; result: StubChargeResult }
+  | null = null;
+let billingMode: BillingMode = "stripe_test";
 
 /** Son-B1: live board counts from apps/em/board.json (7 done / 3 todo) — do not invent. */
 const EM_BOARD_DONE = 7;
@@ -234,6 +249,67 @@ function demoDerivedMetricsHtml(): string {
     </section>`;
 }
 
+
+function pricingPanel(): string {
+  const plans = listPlans("bizmate");
+  const bannerStripe = honestyBanner("stripe_test");
+  const bannerStub = honestyBanner("offline_stub");
+  const rows = plans
+    .map((p) => {
+      const road = p.roadmapOnly
+        ? `<span class="badge roadmap">roadmap</span>`
+        : `<span class="badge">D-Day</span>`;
+      return `<li class="plan-row">
+        <div class="plan-head">
+          <strong>${escapeHtml(p.nameVi)}</strong> ${road}
+          <span class="plan-price">${escapeHtml(p.priceDisplay)}</span>
+        </div>
+        <p class="hint">${escapeHtml(p.honestyNote)}</p>
+        <ul class="plan-features">${p.features
+          .map((f) => `<li>${escapeHtml(f)}</li>`)
+          .join("")}</ul>
+      </li>`;
+    })
+    .join("");
+
+  let outcome = "";
+  if (lastBilling?.kind === "checkout") {
+    const r = lastBilling.result;
+    outcome = `<div class="billing-outcome" role="status">
+      <p class="honesty-banner">${escapeHtml(r.honestyBanner)}</p>
+      <p class="hint"><code>${escapeHtml(r.sessionId)}</code> · ok=${r.ok} · stub=${r.stub}
+      ${r.url ? ` · <span class="mono-break">${escapeHtml(r.url)}</span>` : ""}
+      ${r.costCenter ? ` · CC=${escapeHtml(r.costCenter)}` : ""}</p>
+      <p class="hint">${escapeHtml(r.detail)}</p>
+    </div>`;
+  } else if (lastBilling?.kind === "stub") {
+    const r = lastBilling.result;
+    outcome = `<div class="billing-outcome" role="status">
+      <p class="honesty-banner">${escapeHtml(r.honestyBanner)}</p>
+      <p class="hint"><code>${escapeHtml(r.chargeId)}</code> · CC=${escapeHtml(r.costCenter)}</p>
+      <p class="hint">${escapeHtml(r.detail)}</p>
+    </div>`;
+  }
+
+  return `
+    <section class="panel pricing-panel" id="pricing">
+      <h2>Giá / subscription <span class="badge">BR2 · fixture</span></h2>
+      <p class="hint">Payer D-Day: <strong>Sea internal tooling</strong> (cost-center). SME Pro = roadmap. Giá = fixture — không phải catalog live.</p>
+      <ul class="plan-list">${rows}</ul>
+      <div class="honesty-stack">
+        <p class="honesty-banner">${escapeHtml(bannerStub)}</p>
+        <p class="honesty-banner">${escapeHtml(bannerStripe)}</p>
+      </div>
+      <div class="actions billing-actions">
+        <button type="button" class="primary" id="btn-sea-stub">Cost-center Sea (stub)</button>
+        <button type="button" class="secondary" id="btn-stripe-sme">Checkout SME · Stripe TEST</button>
+        <button type="button" class="secondary" id="btn-stripe-codex">Checkout Codex · Stripe TEST</button>
+      </div>
+      <p class="hint">Mode hiện tại CTA Stripe: <code>${billingMode}</code> · Sea path luôn <code>offline_stub</code>.</p>
+      ${outcome}
+    </section>`;
+}
+
 function stageHonestyBlock(): string {
   return `
     <section class="panel stage-honesty">
@@ -274,6 +350,7 @@ function render(): void {
     ${blastRadiusCard()}
     ${demoDerivedMetricsHtml()}
     ${stageHonestyBlock()}
+    ${pricingPanel()}
 
     <section class="panel">
       <h3>Domain</h3>
@@ -377,6 +454,45 @@ function render(): void {
     if (busy) return;
     fullReset();
   });
+
+  app.querySelector("#btn-sea-stub")?.addEventListener("click", () => {
+    if (busy) return;
+    lastBilling = {
+      kind: "stub",
+      result: stubCharge({
+        appId: "bizmate",
+        planId: "bizmate-sea-seat",
+        costCenter: "SEA-INTERNAL-TOOLING",
+      }),
+    };
+    render();
+  });
+  app.querySelector("#btn-stripe-sme")?.addEventListener("click", () => {
+    if (busy) return;
+    billingMode = "stripe_test";
+    lastBilling = {
+      kind: "checkout",
+      result: createCheckout({
+        appId: "bizmate",
+        planId: "bizmate-sme-pro",
+        mode: "stripe_test",
+      }),
+    };
+    render();
+  });
+  app.querySelector("#btn-stripe-codex")?.addEventListener("click", () => {
+    if (busy) return;
+    billingMode = "stripe_test";
+    lastBilling = {
+      kind: "checkout",
+      result: createCheckout({
+        appId: "bizmate",
+        planId: "bizmate-codex-partnership",
+        mode: "stripe_test",
+      }),
+    };
+    render();
+  });
 }
 
 /** Kyle-B3: full reset + visible seed #N (no auto progress animation). */
@@ -388,6 +504,7 @@ function fullReset(): void {
   lastRunMs = null;
   lastStepMs = [];
   animateChips = false;
+  lastBilling = null;
   progress = "ready";
   render();
 }

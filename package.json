@@ -2,14 +2,14 @@
   "name": "bizmate",
   "version": "0.1.0",
   "private": true,
-  "description": "Biz Mate \u2014 agent generates deterministic business workflows (sales, accounting). Runtime is code; creation is agent.",
+  "description": "Biz Mate — agent generates deterministic business workflows (sales, accounting). Runtime is code; creation is agent.",
   "workspaces": [
     "packages/*",
     "apps/*"
   ],
   "scripts": {
-    "build": "npm run build -w @bizmate/contracts && npm run build -w @bizmate/core && npm run build -w @bizmate/mate && npm run build -w @bizmate/judge && npm run build -w @bizmate/em && npm run build -w @bizmate/runtime && npm run build -w @bizmate/web && npm run build -w @bizmate/bookkeeper && npm run build -w @bizmate/shield && npm run build -w @bizmate/floodops",
-    "test": "npm run test -w @bizmate/core && npm run test -w @bizmate/mate && npm run test -w @bizmate/judge && npm run test -w @bizmate/em && npm run test -w @bizmate/runtime && npm run test -w @bizmate/bookkeeper && npm run test -w @bizmate/shield && npm run test -w @bizmate/floodops",
+    "build": "npm run build -w @bizmate/contracts && npm run build -w @bizmate/billing && npm run build -w @bizmate/core && npm run build -w @bizmate/mate && npm run build -w @bizmate/judge && npm run build -w @bizmate/em && npm run build -w @bizmate/runtime && npm run build -w @bizmate/web && npm run build -w @bizmate/bookkeeper && npm run build -w @bizmate/shield && npm run build -w @bizmate/floodops",
+    "test": "npm run test -w @bizmate/billing && npm run test -w @bizmate/core && npm run test -w @bizmate/mate && npm run test -w @bizmate/judge && npm run test -w @bizmate/em && npm run test -w @bizmate/runtime && npm run test -w @bizmate/bookkeeper && npm run test -w @bizmate/shield && npm run test -w @bizmate/floodops",
     "demo": "npm run demo -w @bizmate/runtime",
     "demo:offline": "BIZMATE_MODE=offline npm run demo -w @bizmate/runtime",
     "mate:generate": "node apps/mate/dist/cli.js generate",

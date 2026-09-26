@@ -502,3 +502,75 @@ pre.json {
   margin: 0 0 0.4rem;
   font-size: 0.95rem;
 }
+
+/* BR2/BR3 — pricing / billing honesty */
+.pricing-panel .plan-list {
+  list-style: none;
+  margin: 0.5rem 0 1rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.pricing-panel .plan-row {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+  background: #141c28;
+}
+.pricing-panel .plan-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 0.65rem;
+  margin-bottom: 0.25rem;
+}
+.pricing-panel .plan-price {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--accent);
+}
+.pricing-panel .plan-features {
+  margin: 0.35rem 0 0;
+  padding-left: 1.1rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+.badge.roadmap {
+  background: #3a2a10;
+  color: var(--warn);
+}
+.honesty-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+.honesty-banner {
+  margin: 0;
+  padding: 0.55rem 0.75rem;
+  border-radius: 8px;
+  border: 1px dashed var(--warn);
+  background: #2a2210;
+  color: var(--warn);
+  font-size: 0.82rem;
+  font-weight: 650;
+  line-height: 1.35;
+}
+.billing-outcome {
+  margin-top: 0.85rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #121820;
+}
+.billing-outcome .mono-break {
+  word-break: break-all;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.billing-actions {
+  margin-top: 0.25rem;
+}
