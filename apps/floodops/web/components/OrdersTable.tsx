@@ -1,4 +1,5 @@
 import type { Order, ProposedAction, Ward } from "../lib/load-state";
+import { Badge } from "./ui/badge";
 
 function vnd(n: number): string {
   return n.toLocaleString("vi-VN") + "₫";
@@ -16,7 +17,7 @@ export default function OrdersTable({ orders, actions, wards }: Props) {
 
   if (actions.length === 0) {
     return (
-      <p className="muted">
+      <p className="text-sm text-muted">
         Chưa có actions — chạy <code>npm run worker -w @bizmate/floodops</code>{" "}
         để replan và ghi <code>data/orders.json</code>.
       </p>
@@ -30,17 +31,17 @@ export default function OrdersTable({ orders, actions, wards }: Props) {
   });
 
   return (
-    <div style={{ overflowX: "auto" }}>
-      <table className="orders">
+    <div className="overflow-x-auto">
+      <table className="w-full border-collapse text-sm">
         <thead>
-          <tr>
-            <th>Order</th>
-            <th>Ward</th>
-            <th>COD (VND)</th>
-            <th>SLA</th>
-            <th>Action</th>
-            <th>Gate</th>
-            <th>Status</th>
+          <tr className="text-left text-muted">
+            <th className="border-b border-border px-2 py-2 font-medium">Order</th>
+            <th className="border-b border-border px-2 py-2 font-medium">Ward</th>
+            <th className="border-b border-border px-2 py-2 font-medium">COD (VND)</th>
+            <th className="border-b border-border px-2 py-2 font-medium">SLA</th>
+            <th className="border-b border-border px-2 py-2 font-medium">Action</th>
+            <th className="border-b border-border px-2 py-2 font-medium">Gate</th>
+            <th className="border-b border-border px-2 py-2 font-medium">Status</th>
           </tr>
         </thead>
         <tbody>
@@ -48,50 +49,49 @@ export default function OrdersTable({ orders, actions, wards }: Props) {
             const a = byId.get(o.id);
             const w = wardName.get(o.wardId);
             return (
-              <tr key={o.id}>
-                <td>
+              <tr key={o.id} className="align-top">
+                <td className="border-b border-border px-2 py-2">
                   <code>{o.id}</code>
                 </td>
-                <td>
-                  {w?.name ?? o.wardId}{" "}
+                <td className="border-b border-border px-2 py-2">
+                  <span className="mr-1.5">{w?.name ?? o.wardId}</span>
                   {w && (
-                    <span
-                      className={`badge ${w.status === "flooded" ? "flood" : "clear"}`}
-                    >
+                    <Badge variant={w.status === "flooded" ? "flood" : "clear"}>
                       {w.status}
-                    </span>
+                    </Badge>
                   )}
                 </td>
-                <td className="cod">{vnd(o.codVnd)}</td>
-                <td>{o.slaHoursLeft}h</td>
-                <td>
+                <td className="border-b border-border px-2 py-2 font-medium tabular-nums whitespace-nowrap">
+                  {vnd(o.codVnd)}
+                </td>
+                <td className="border-b border-border px-2 py-2">{o.slaHoursLeft}h</td>
+                <td className="border-b border-border px-2 py-2">
                   {a?.kind ?? "—"}
                   {a?.reason && (
-                    <div className="muted" style={{ maxWidth: 280 }}>
+                    <div className="mt-0.5 max-w-[280px] text-xs text-muted">
                       {a.reason}
                     </div>
                   )}
                 </td>
-                <td>
+                <td className="border-b border-border px-2 py-2">
                   {a ? (
-                    <span
-                      className={`badge ${a.requiresHuman ? "human" : "auto"}`}
-                    >
+                    <Badge variant={a.requiresHuman ? "human" : "auto"}>
                       {a.requiresHuman ? "👤 HUMAN" : "🤖 AUTO"}
-                    </span>
+                    </Badge>
                   ) : (
                     "—"
                   )}
                 </td>
-                <td>{a?.status ?? "—"}</td>
+                <td className="border-b border-border px-2 py-2">{a?.status ?? "—"}</td>
               </tr>
             );
           })}
         </tbody>
       </table>
-      <p className="muted" style={{ marginTop: "0.6rem" }}>
+      <p className="mt-2.5 text-sm text-muted">
         COD trên bảng = giá trị thu hộ đơn (ops risk) —{" "}
-        <strong>COD ≠ invoice / seat charge</strong>. Refund cao luôn HUMAN.
+        <strong className="text-warn">COD ≠ invoice / seat charge</strong>.
+        Refund cao luôn HUMAN.
       </p>
     </div>
   );

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { Ward } from "../lib/load-state";
+import { Badge } from "./ui/badge";
 
 type Geo = Record<string, { lat: number; lng: number }>;
 
@@ -26,7 +27,6 @@ export default function FloodMap({ wards, wardGeo }: Props) {
 
       const el = document.getElementById("floodops-map");
       if (!el) return;
-      // Avoid double-init in React strict mode
       if ((el as HTMLElement & { _leaflet_id?: number })._leaflet_id) {
         setReady(true);
         return;
@@ -34,7 +34,8 @@ export default function FloodMap({ wards, wardGeo }: Props) {
 
       const map = L.map(el).setView([10.78, 106.7], 11);
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> · FloodOps sandbox pins',
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> · FloodOps sandbox pins',
         maxZoom: 18,
       }).addTo(map);
 
@@ -66,12 +67,15 @@ export default function FloodMap({ wards, wardGeo }: Props) {
   return (
     <div>
       <div id="floodops-map" className="map-wrap" />
-      {!ready && <p className="muted">Đang tải bản đồ Leaflet…</p>}
-      <div className="legend">
-        <span className="flooded">flooded / ngập</span>
-        <span className="dry">clear / khô</span>
+      {!ready && (
+        <p className="mt-2 text-sm text-muted">Đang tải bản đồ Leaflet…</p>
+      )}
+      <div className="mt-2.5 flex flex-wrap items-center gap-3 text-sm text-muted">
+        <span className="legend-dot flooded">flooded / ngập</span>
+        <span className="legend-dot dry">clear / khô</span>
+        <Badge variant="muted">fixture pins</Badge>
       </div>
-      <p className="muted" style={{ marginTop: "0.4rem" }}>
+      <p className="mt-1.5 text-sm text-muted">
         Pin fixture HCMC · analogy last-mile (SPX-style) — không live tracking.
       </p>
     </div>
