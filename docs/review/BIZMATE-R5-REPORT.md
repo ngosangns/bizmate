@@ -1,74 +1,73 @@
- ()# ()  ()A ()d ()v ()  ()R ()E ()P ()O ()R ()T ()  ()— ()  ()B ()i ()z ()M ()a ()t ()e ()  ()( ()R ()5 ()  ()U ()X ()  ()· ()  ()L ()e ()e ()  ()+ ()  ()S ()i ()d ()  ()+ ()  ()T ()A ()  ()+ ()  ()K ()y ()l ()e ()  ()+ ()  ()S ()o ()n ()) ()
- ()
- ()> ()  ()A ()d ()v ()  ()· ()  ()B ()i ()z ()M ()a ()t ()e ()  ()· ()  ()2 ()0 ()2 ()6 ()- ()0 ()9 ()- ()2 ()6 ()  ()A ()s ()i ()a ()/ ()S ()a ()i ()g ()o ()n ()  ()· ()  ()R ()o ()u ()n ()d ()- ()5 ()  ()U ()X ()  ()  ()
- ()> ()  ()T ()i ()p ()  ()b ()e ()f ()o ()r ()e (): ()  ()` ()2 ()3 ()e ()c ()3 ()b ()4 ()` ()  ()( ()d ()o ()c ()s ()  ()k ()i ()t ()) ()  ()· ()  ()J ()u ()d ()g ()e ()s (): ()  ()L ()e ()e ()  ()C ()O ()N ()D ()I ()T ()I ()O ()N ()A ()L ()  ()3 (). ()2 ()5 ()  ()· ()  ()S ()i ()d ()h ()a ()r ()t ()h ()  ()C ()O ()N ()D ()I ()T ()I ()O ()N ()A ()L ()  ()3 (). ()2 ()5 ()  ()· ()  ()T ()u ()ấ ()n ()  ()A ()n ()h ()  ()C ()O ()N ()D ()I ()T ()I ()O ()N ()A ()L ()  ()3 (). ()5 ()  ()· ()  ()K ()y ()l ()e ()  ()* ()* ()C ()O ()N ()D ()I ()T ()I ()O ()N ()A ()L ()* ()* ()  ()( ()w ()a ()s ()  ()F ()A ()I ()L ()  ()T ()B ()  ()1 (). ()7 ()5 (), ()  ()a ()m ()e ()n ()d ()e ()d ()  ()b ()y ()  ()j ()u ()d ()g ()e ()  ()t ()o ()  ()C ()O ()N ()D ()I ()T ()I ()O ()N ()A ()L ()  ()/ ()  ()0 ()  ()F ()A ()I ()L ()  ()p ()a ()n ()e ()l ()) ()  ()· ()  ()S ()o ()n ()  ()C ()O ()N ()D ()I ()T ()I ()O ()N ()A ()L ()  ()( ()s ()a ()m ()e ()  ()t ()h ()e ()m ()e ()) ()
- ()
- ()# ()# ()# ()  ()A ()p ()p (): ()  ()B ()i ()z ()M ()a ()t ()e ()  ()( ()V ()i ()t ()e ()  ()+ ()  ()T ()a ()i ()l ()w ()i ()n ()d ()  ()v ()a ()n ()i ()l ()l ()a ()  ()T ()S ()  ()· ()  ()` (): ()5 ()1 ()7 ()3 ()` ()) ()
- ()
- ()| ()  ()F ()i ()e ()l ()d ()  ()| ()  ()C ()o ()n ()t ()e ()n ()t ()  ()| ()
- ()| ()- ()- ()- ()- ()- ()- ()- ()| ()- ()- ()- ()- ()- ()- ()- ()- ()- ()| ()
- ()| ()  ()* ()* ()B ()e ()f ()o ()r ()e ()* ()* ()  ()| ()  ()T ()i ()p ()  ()` ()2 ()3 ()e ()c ()3 ()b ()4 ()` (). ()  ()L ()e ()e (): ()  ()H ()I ()T ()L ()  ()b ()e ()l ()o ()w ()  ()G ()i ()á ()/ ()m ()e ()t ()r ()i ()c ()s (); ()  ()c ()h ()i ()p ()s ()  ()v ()i ()s ()u ()a ()l ()l ()y ()  ()` ()T ()ạ ()o ()C ()h ()ấ ()m ()D ()u ()y ()ệ ()t ()C ()h ()ạ ()y ()` (); ()  ()C ()h ()ạ ()y ()  ()f ()e ()e ()d ()b ()a ()c ()k ()  ()b ()u ()r ()i ()e ()d ()  ()( ()p ()e ()r ()s ()i ()s ()t ()_ ()o ()k ()/ ()L ()a ()s ()t ()  ()r ()u ()n ()  ()f ()e ()e ()l ()  ()d ()e ()a ()d ()) (). ()  ()S ()i ()d (): ()  ()w ()h ()o ()- ()p ()a ()y ()s ()  ()/ ()  ()w ()e ()e ()k ()- ()2 ()  ()/ ()  ()m ()o ()n ()e ()y ()  ()C ()T ()A ()s ()  ()b ()e ()l ()o ()w ()  ()f ()o ()l ()d (); ()  ()E ()M ()/ ()C ()o ()d ()e ()x ()/ ()b ()l ()a ()s ()t ()  ()n ()o ()i ()s ()e ()  ()d ()o ()m ()i ()n ()a ()t ()e ()s ()  ()3 ()0 ()s ()  ()G ()T ()M ()  ()s ()c ()a ()n (). ()  ()T ()A (): ()  ()s ()a ()m ()e ()  ()H ()I ()T ()L ()- ()b ()e ()l ()o ()w ()- ()e ()n ()g ()/ ()p ()r ()i ()c ()i ()n ()g ()  ()f ()o ()r ()  ()s ()ạ ()p ()  ()s ()c ()a ()n (). ()  ()K ()y ()l ()e (): ()  ()* ()* ()C ()O ()N ()D ()I ()T ()I ()O ()N ()A ()L ()* ()* ()  ()( ()a ()m ()e ()n ()d ()e ()d ()  ()f ()r ()o ()m ()  ()F ()A ()I ()L ()) ()  ()— ()  ()C ()S ()S ()  ()o ()n ()l ()y ()  ()v ()i ()a ()  ()m ()o ()d ()u ()l ()e ()  ()J ()S ()  ()i ()n ()j ()e ()c ()t ()  ()( ()n ()o ()  ()` ()< ()l ()i ()n ()k ()  ()r ()e ()l ()= ()s ()t ()y ()l ()e ()s ()h ()e ()e ()t ()> ()` ()  ()i ()n ()  ()H ()T ()M ()L ()) ()  ()+ ()  ()` (): (): ()1 ()` ()- ()o ()n ()l ()y ()  ()b ()i ()n ()d ()  ()s ()o ()  ()h ()e ()a ()d ()l ()e ()s ()s ()/ ()1 ()2 ()7 (). ()0 (). ()0 (). ()1 ()  ()w ()a ()l ()k ()s ()  ()r ()e ()a ()d ()  ()u ()n ()s ()t ()y ()l ()e ()d ()/ ()g ()l ()u ()e ()d ()  ()c ()h ()i ()p ()s (). ()  ()S ()o ()n (): ()  ()s ()a ()m ()e ()  ()f ()o ()l ()d ()/ ()H ()I ()T ()L ()  ()t ()h ()e ()m ()e (). ()  ()S ()h ()o ()t ()s (): ()  ()` ()d ()o ()c ()s ()/ ()r ()e ()v ()i ()e ()w ()/ ()r ()u ()n ()s ()/ ()r ()5 ()- ()l ()e ()e ()- ()u ()i ()- ()b ()i ()z ()m ()a ()t ()e (). ()p ()n ()g ()` ()  ()· ()  ()` ()r ()5 ()- ()k ()y ()l ()e ()- ()* (). ()p ()n ()g ()` ()  ()· ()  ()f ()o ()r ()m ()s ()  ()` ()r ()5 ()- ()f ()o ()r ()m ()- ()* (). ()m ()d ()` (). ()  ()| ()
- ()| ()  ()* ()* ()A ()f ()t ()e ()r ()* ()* ()  ()| ()  ()* ()* ()( ()K ()y ()l ()e ()  ()P ()0 ()  ()C ()S ()S ()) ()* ()* ()  ()C ()r ()i ()t ()i ()c ()a ()l ()  ()c ()h ()i ()p ()/ ()o ()p ()s ()  ()t ()o ()k ()e ()n ()s ()  ()i ()n ()  ()` ()i ()n ()d ()e ()x (). ()h ()t ()m ()l ()` ()  ()` ()< ()s ()t ()y ()l ()e ()  ()i ()d ()= ()" ()b ()i ()z ()m ()a ()t ()e ()- ()c ()r ()i ()t ()i ()c ()a ()l ()" ()> ()` (); ()  ()p ()r ()o ()d ()u ()c ()t ()i ()o ()n ()  ()` ()v ()i ()t ()e ()  ()b ()u ()i ()l ()d ()` ()  ()e ()m ()i ()t ()s ()  ()` ()< ()l ()i ()n ()k ()  ()r ()e ()l ()= ()" ()s ()t ()y ()l ()e ()s ()h ()e ()e ()t ()" ()  ()h ()r ()e ()f ()= ()" ()/ ()a ()s ()s ()e ()t ()s ()/ ()* (). ()c ()s ()s ()" ()> ()` (); ()  ()` ()v ()i ()t ()e (). ()c ()o ()n ()f ()i ()g (). ()t ()s ()` ()  ()` ()s ()e ()r ()v ()e ()r (). ()h ()o ()s ()t (): ()  ()t ()r ()u ()e ()` ()  ()+ ()  ()` ()p ()r ()e ()v ()i ()e ()w (). ()h ()o ()s ()t (): ()  ()t ()r ()u ()e ()` ()  ()+ ()  ()` ()s ()t ()r ()i ()c ()t ()P ()o ()r ()t ()` ()  ()o ()n ()  ()5 ()1 ()7 ()3 (); ()  ()l ()i ()v ()e ()  ()s ()e ()r ()v ()e ()  ()v ()i ()a ()  ()* ()* ()` ()v ()i ()t ()e ()  ()p ()r ()e ()v ()i ()e ()w ()  ()- ()- ()h ()o ()s ()t ()  ()- ()- ()p ()o ()r ()t ()  ()5 ()1 ()7 ()3 ()` ()* ()* ()  ()s ()o ()  ()1 ()2 ()7 (). ()0 (). ()0 (). ()1 ()  ()a ()n ()d ()  ()l ()o ()c ()a ()l ()h ()o ()s ()t ()  ()b ()o ()t ()h ()  ()H ()T ()T ()P ()  ()2 ()0 ()0 ()  ()w ()i ()t ()h ()  ()s ()t ()y ()l ()e ()d ()  ()p ()a ()g ()e (). ()  ()* ()* ()( ()L ()e ()e ()) ()* ()* ()  ()S ()t ()i ()c ()k ()y ()  ()` ()# ()o ()p ()s ()- ()r ()a ()i ()l ()` ()  ()a ()b ()o ()v ()e ()  ()f ()o ()l ()d ()  ()( ()D ()u ()y ()ệ ()t ()  ()/ ()  ()T ()h ()u ()  ()h ()ồ ()i ()  ()/ ()  ()C ()h ()ạ ()y ()  ()+ ()  ()c ()o ()m ()p ()a ()c ()t ()  ()m ()e ()t ()r ()i ()c ()s ()  ()+ ()  ()r ()u ()n ()  ()b ()a ()n ()n ()e ()r ()) (); ()  ()c ()h ()i ()p ()- ()r ()o ()w ()  ()+ ()  ()m ()i ()d ()d ()o ()t ()  ()` (). ()c ()h ()i ()p ()- ()s ()e ()p ()` ()  ()+ ()  ()s ()t ()r ()o ()n ()g ()e ()r ()  ()c ()h ()i ()p ()  ()c ()h ()r ()o ()m ()e (); ()  ()a ()f ()t ()e ()r ()  ()C ()h ()ạ ()y (): ()  ()b ()a ()n ()n ()e ()r ()  ()+ ()  ()` ()p ()e ()r ()s ()i ()s ()t ()_ ()o ()k ()` ()/ ()` ()L ()a ()s ()t ()  ()r ()u ()n ()` ()  ()o ()n ()  ()o ()p ()s ()  ()m ()e ()t ()r ()i ()c ()s ()  ()( ()` ()a ()r ()i ()a ()- ()l ()i ()v ()e ()` ()) ()  ()— ()  ()b ()l ()o ()c ()k ()e ()d ()  ()p ()a ()t ()h ()  ()b ()u ()m ()p ()s ()  ()a ()p ()p ()r ()o ()v ()e ()_ ()f ()a ()i ()l ()  ()a ()n ()d ()  ()s ()t ()i ()l ()l ()  ()u ()p ()d ()a ()t ()e ()s ()  ()L ()a ()s ()t ()  ()r ()u ()n (). ()  ()* ()* ()( ()S ()i ()d ()) ()* ()* ()  ()W ()h ()o ()- ()p ()a ()y ()s ()  ()S ()e ()a ()  ()+ ()  ()w ()e ()e ()k ()- ()2 ()  ()* ()* ()1 ()0 ()  ()S ()e ()a ()  ()p ()i ()l ()o ()t ()  ()s ()e ()a ()t ()s ()* ()* ()  ()+ ()  ()S ()T ()U ()B ()/ ()S ()A ()N ()D ()B ()O ()X ()  ()m ()o ()n ()e ()y ()  ()C ()T ()A ()s ()  ()o ()n ()  ()o ()p ()s ()  ()r ()a ()i ()l (); ()  ()E ()M ()  ()b ()o ()a ()r ()d ()  ()/ ()  ()b ()l ()a ()s ()t ()- ()r ()a ()d ()i ()u ()s ()  ()/ ()  ()l ()o ()n ()g ()  ()m ()e ()t ()r ()i ()c ()s ()  ()/ ()  ()J ()S ()O ()N ()  ()m ()o ()v ()e ()d ()  ()i ()n ()t ()o ()  ()c ()o ()l ()l ()a ()p ()s ()e ()d ()  ()` ()< ()d ()e ()t ()a ()i ()l ()s ()> ()` ()  ()d ()ư ()ớ ()i ()  ()f ()o ()l ()d (). ()  ()* ()* ()( ()T ()A ()) ()* ()* ()  ()P ()e ()r ()s ()o ()n ()a ()  ()→ ()  ()c ()h ()i ()p ()s ()  ()→ ()  ()H ()I ()T ()L ()/ ()C ()h ()ạ ()y ()  ()→ ()  ()r ()e ()s ()u ()l ()t ()  ()→ ()  ()t ()h ()e ()n ()  ()p ()r ()i ()c ()i ()n ()g (); ()  ()V ()N ()  ()m ()i ()c ()r ()o ()c ()o ()p ()y ()  ()o ()n ()  ()c ()o ()m ()p ()a ()c ()t ()  ()m ()e ()t ()r ()i ()c ()  ()t ()i ()l ()e ()s (). ()  ()* ()* ()( ()S ()o ()n ()) ()* ()* ()  ()C ()o ()v ()e ()r ()e ()d ()  ()b ()y ()  ()s ()a ()m ()e ()  ()C ()S ()S ()+ ()H ()I ()T ()L ()  ()f ()o ()l ()d ()  ()t ()i ()p ()  ()— ()  ()n ()o ()  ()e ()x ()t ()r ()a ()  ()P ()0 (). ()  ()H ()o ()n ()e ()s ()t ()y ()  ()S ()T ()U ()B ()/ ()S ()A ()N ()D ()B ()O ()X ()  ()k ()e ()p ()t (); ()  ()E ()M ()  ()c ()o ()u ()n ()t ()s ()  ()7 ()/ ()3 ()  ()u ()n ()c ()h ()a ()n ()g ()e ()d ()  ()( ()i ()n ()  ()d ()e ()t ()a ()i ()l ()s ()  ()o ()n ()l ()y ()) (). ()  ()| ()
- ()| ()  ()* ()* ()T ()i ()p ()  ()S ()H ()A ()* ()* ()  ()| ()  ()` ()T ()I ()P ()_ ()P ()L ()A ()C ()E ()H ()O ()L ()D ()E ()R ()` ()  ()· ()  ()w ()e ()b ()  ()f ()i ()l ()e ()s ()  ()a ()l ()s ()o ()  ()p ()r ()e ()s ()e ()n ()t ()  ()f ()r ()o ()m ()  ()` ()4 ()9 ()f ()5 ()7 ()b ()4 ()` ()  ()( ()c ()o ()n ()c ()u ()r ()r ()e ()n ()t ()  ()b ()o ()o ()k ()k ()e ()e ()p ()e ()r ()  ()t ()i ()p ()  ()r ()a ()c ()e (); ()  ()t ()h ()i ()s ()  ()t ()i ()p ()  ()i ()s ()  ()A ()d ()v ()  ()B ()i ()z ()M ()a ()t ()e ()  ()R ()E ()P ()O ()R ()T ()  ()+ ()  ()h ()o ()s ()t ()  ()s ()t ()a ()m ()p ()) ()  ()| ()
- ()| ()  ()* ()* ()P ()r ()o ()v ()e ()* ()* ()  ()| ()  ()S ()e ()e ()  ()t ()a ()b ()l ()e ()  ()b ()e ()l ()o ()w ()  ()— ()  ()b ()u ()i ()l ()d ()  ()E ()X ()I ()T ()  ()0 ()  ()· ()  ()c ()u ()r ()l ()  ()1 ()2 ()7 (). ()0 (). ()0 (). ()1 ()  ()+ ()  ()l ()o ()c ()a ()l ()h ()o ()s ()t ()  ()* ()* ()2 ()0 ()0 ()* ()* ()  ()· ()  ()C ()S ()S ()  ()a ()s ()s ()e ()t ()  ()2 ()0 ()0 ()  ()w ()i ()t ()h ()  ()` (). ()c ()h ()i ()p (){ ()… ()b ()o ()r ()d ()e ()r (): ()1 (). ()5 ()p ()x ()… ()} ()` ()  ()· ()  ()r ()u ()n ()t ()i ()m ()e ()  ()t ()e ()s ()t ()s ()  ()1 ()2 ()/ ()1 ()2 ()  ()· ()  ()h ()e ()a ()d ()l ()e ()s ()s ()  ()d ()u ()m ()p ()- ()d ()o ()m ()  ()s ()h ()o ()w ()s ()  ()s ()e ()p ()a ()r ()a ()t ()e ()d ()  ()c ()h ()i ()p ()s ()  ()+ ()  ()H ()I ()T ()L ()  ()b ()e ()f ()o ()r ()e ()  ()G ()i ()á ()  ()| ()
- ()| ()  ()* ()* ()H ()o ()w ()  ()t ()o ()  ()r ()e ()- ()u ()s ()e ()* ()* ()  ()| ()  ()S ()e ()e ()  ()b ()l ()o ()c ()k ()  ()b ()e ()l ()o ()w ()  ()| ()
- ()| ()  ()* ()* ()H ()o ()n ()e ()s ()t ()y ()* ()* ()  ()| ()  ()* ()* ()Y ()* ()* ()  ()— ()  ()S ()T ()U ()B ()  ()c ()o ()s ()t ()- ()c ()e ()n ()t ()e ()r ()  ()S ()e ()a ()  ()· ()  ()S ()t ()r ()i ()p ()e ()  ()T ()E ()S ()T ()  ()S ()A ()N ()D ()B ()O ()X ()  ()· ()  ()n ()o ()  ()l ()i ()v ()e ()  ()c ()h ()a ()r ()g ()e ()  ()· ()  ()o ()f ()f ()l ()i ()n ()e ()  ()f ()i ()x ()t ()u ()r ()e ()  ()· ()  ()B ()à ()  ()L ()a ()n ()  ()s ()t ()o ()r ()y ()  ()| ()
- ()
- ()# ()# ()# ()  ()H ()o ()w ()  ()t ()o ()  ()r ()e ()- ()u ()s ()e ()  ()( ()e ()x ()a ()c ()t ()) ()
- ()
- ()` ()` ()` ()b ()a ()s ()h ()
- ()c ()d ()  ()/ ()w ()o ()r ()k ()s ()p ()a ()c ()e ()/ ()b ()i ()z ()m ()a ()t ()e ()
- ()n ()p ()m ()  ()r ()u ()n ()  ()b ()u ()i ()l ()d ()  ()- ()w ()  ()@ ()b ()i ()z ()m ()a ()t ()e ()/ ()w ()e ()b ()  ()  ()  ()  ()  ()  ()  ()  ()  ()  ()# ()  ()E ()X ()I ()T ()  ()0 ()
- ()# ()  ()P ()r ()e ()f ()e ()r ()  ()s ()t ()y ()l ()e ()d ()  ()j ()u ()d ()g ()e ()  ()w ()a ()l ()k ()  ()( ()C ()S ()S ()  ()< ()l ()i ()n ()k ()> ()  ()i ()n ()  ()d ()i ()s ()t ()  ()H ()T ()M ()L ()) (): ()
- ()c ()d ()  ()a ()p ()p ()s ()/ ()w ()e ()b ()  ()& ()& ()  ()n ()p ()x ()  ()v ()i ()t ()e ()  ()p ()r ()e ()v ()i ()e ()w ()  ()- ()- ()h ()o ()s ()t ()  ()- ()- ()p ()o ()r ()t ()  ()5 ()1 ()7 ()3 ()  ()- ()- ()s ()t ()r ()i ()c ()t ()P ()o ()r ()t ()
- ()# ()  ()( ()d ()e ()v ()  ()a ()l ()s ()o ()  ()o ()k ()  ()a ()f ()t ()e ()r ()  ()h ()o ()s ()t (): ()t ()r ()u ()e (): ()  ()n ()p ()m ()  ()r ()u ()n ()  ()d ()e ()v (): ()w ()e ()b ()) ()
- ()c ()u ()r ()l ()  ()- ()s ()  ()- ()o ()  ()/ ()d ()e ()v ()/ ()n ()u ()l ()l ()  ()- ()w ()  ()' ()% (){ ()h ()t ()t ()p ()_ ()c ()o ()d ()e ()} ()\ ()n ()' ()  ()h ()t ()t ()p (): ()/ ()/ ()1 ()2 ()7 (). ()0 (). ()0 (). ()1 (): ()5 ()1 ()7 ()3 ()/ ()  ()  ()  ()# ()  ()2 ()0 ()0 ()
- ()c ()u ()r ()l ()  ()- ()s ()  ()- ()o ()  ()/ ()d ()e ()v ()/ ()n ()u ()l ()l ()  ()- ()w ()  ()' ()% (){ ()h ()t ()t ()p ()_ ()c ()o ()d ()e ()} ()\ ()n ()' ()  ()h ()t ()t ()p (): ()/ ()/ ()l ()o ()c ()a ()l ()h ()o ()s ()t (): ()5 ()1 ()7 ()3 ()/ ()  ()  ()  ()  ()# ()  ()2 ()0 ()0 ()
- ()# ()  ()W ()a ()l ()k (): ()  ()o ()p ()e ()n ()  (): ()5 ()1 ()7 ()3 ()  ()→ ()  ()D ()u ()y ()ệ ()t ()  ()w ()o ()r ()k ()f ()l ()o ()w ()  ()→ ()  ()C ()h ()ạ ()y ()  ()s ()ổ ()  ()k ()ế ()  ()t ()o ()á ()n ()
- ()# ()  ()  ()  ()→ ()  ()b ()a ()n ()n ()e ()r ()  ()T ()H ()À ()N ()H ()  ()C ()Ô ()N ()G ()  ()· ()  ()p ()e ()r ()s ()i ()s ()t ()_ ()o ()k ()  ()i ()n ()c ()r ()e ()m ()e ()n ()t ()s ()  ()· ()  ()L ()a ()s ()t ()  ()r ()u ()n ()  ()s ()h ()o ()w ()s ()  ()m ()s ()  ()( ()n ()o ()t ()  ()— ()) ()
- ()# ()  ()W ()a ()l ()k ()  ()b ()l ()o ()c ()k ()e ()d (): ()  ()T ()h ()u ()  ()h ()ồ ()i ()  ()→ ()  ()C ()h ()ạ ()y ()  ()→ ()  ()b ()a ()n ()n ()e ()r ()  ()B ()Ị ()  ()C ()H ()Ặ ()N ()  ()· ()  ()a ()p ()p ()r ()o ()v ()e ()_ ()f ()a ()i ()l ()  ()+ ()1 ()  ()· ()  ()L ()a ()s ()t ()  ()r ()u ()n ()  ()s ()t ()i ()l ()l ()  ()m ()s ()
- ()` ()` ()` ()
- ()
- ()# ()# ()# ()  ()P ()r ()o ()v ()e ()  ()e ()x ()i ()t ()s ()  ()( ()A ()d ()v ()  ()· ()  ()2 ()0 ()2 ()6 ()- ()0 ()9 ()- ()2 ()6 ()  ()A ()s ()i ()a ()/ ()S ()a ()i ()g ()o ()n ()) ()
- ()
- ()| ()  ()C ()o ()m ()m ()a ()n ()d ()  ()| ()  ()R ()e ()s ()u ()l ()t ()  ()| ()
- ()| ()- ()- ()- ()- ()- ()- ()- ()- ()- ()| ()- ()- ()- ()- ()- ()- ()- ()- ()| ()
- ()| ()  ()` ()n ()p ()m ()  ()r ()u ()n ()  ()b ()u ()i ()l ()d ()  ()- ()w ()  ()@ ()b ()i ()z ()m ()a ()t ()e ()/ ()w ()e ()b ()` ()  ()| ()  ()* ()* ()E ()X ()I ()T ()  ()0 ()* ()* ()  ()| ()
- ()| ()  ()` ()n ()p ()m ()  ()t ()e ()s ()t ()  ()- ()w ()  ()@ ()b ()i ()z ()m ()a ()t ()e ()/ ()r ()u ()n ()t ()i ()m ()e ()` ()  ()| ()  ()* ()* ()E ()X ()I ()T ()  ()0 ()* ()* ()  ()( ()1 ()2 ()/ ()1 ()2 ()) ()  ()| ()
- ()| ()  ()` ()c ()u ()r ()l ()  ()h ()t ()t ()p (): ()/ ()/ ()1 ()2 ()7 (). ()0 (). ()0 (). ()1 (): ()5 ()1 ()7 ()3 ()/ ()` ()  ()| ()  ()* ()* ()H ()T ()T ()P ()  ()2 ()0 ()0 ()* ()* ()  ()| ()
- ()| ()  ()` ()c ()u ()r ()l ()  ()h ()t ()t ()p (): ()/ ()/ ()l ()o ()c ()a ()l ()h ()o ()s ()t (): ()5 ()1 ()7 ()3 ()/ ()` ()  ()| ()  ()* ()* ()H ()T ()T ()P ()  ()2 ()0 ()0 ()* ()* ()  ()| ()
- ()| ()  ()` ()c ()u ()r ()l ()  ()… ()/ ()a ()s ()s ()e ()t ()s ()/ ()i ()n ()d ()e ()x ()- ()* (). ()c ()s ()s ()` ()  ()| ()  ()* ()* ()H ()T ()T ()P ()  ()2 ()0 ()0 ()* ()* ()  ()· ()  ()c ()o ()n ()t ()a ()i ()n ()s ()  ()` (). ()c ()h ()i ()p (){ ()… ()b ()o ()r ()d ()e ()r (): ()1 (). ()5 ()p ()x ()  ()s ()o ()l ()i ()d ()… ()} ()` ()  ()| ()
- ()| ()  ()H ()e ()a ()d ()l ()e ()s ()s ()  ()d ()u ()m ()p ()- ()d ()o ()m ()  ()| ()  ()C ()h ()i ()p ()s ()  ()` ()T ()ạ ()o ()  ()· ()  ()C ()h ()ấ ()m ()  ()· ()  ()D ()u ()y ()ệ ()t ()  ()· ()  ()C ()h ()ạ ()y ()` ()  ()s ()e ()p ()a ()r ()a ()t ()e (); ()  ()` ()# ()o ()p ()s ()- ()r ()a ()i ()l ()` ()  ()b ()e ()f ()o ()r ()e ()  ()G ()i ()á (); ()  ()c ()r ()i ()t ()i ()c ()a ()l ()  ()` ()< ()s ()t ()y ()l ()e ()> ()` ()  ()+ ()  ()s ()t ()y ()l ()e ()s ()h ()e ()e ()t ()  ()` ()< ()l ()i ()n ()k ()> ()` ()  ()p ()r ()e ()s ()e ()n ()t ()  ()| ()
- ()| ()  ()C ()h ()ạ ()y ()  ()m ()e ()t ()r ()i ()c ()s ()  ()| ()  ()V ()e ()r ()i ()f ()i ()e ()d ()  ()i ()n ()  ()s ()o ()u ()r ()c ()e (): ()  ()` ()r ()u ()n ()W ()i ()t ()h ()P ()r ()o ()g ()r ()e ()s ()s ()` ()  ()w ()r ()i ()t ()e ()s ()  ()` ()p ()e ()r ()s ()i ()s ()t ()_ ()o ()k ()` ()/ ()` ()a ()p ()p ()r ()o ()v ()e ()_ ()f ()a ()i ()l ()` ()  ()+ ()  ()` ()l ()a ()s ()t ()R ()u ()n ()M ()s ()` ()  ()+ ()  ()` ()# ()r ()u ()n ()- ()f ()e ()e ()d ()b ()a ()c ()k ()` ()  ()+ ()  ()` ()# ()o ()p ()s ()- ()m ()e ()t ()r ()i ()c ()s ()` ()  ()a ()r ()i ()a ()- ()l ()i ()v ()e (); ()  ()b ()u ()i ()l ()t ()  ()J ()S ()  ()c ()o ()n ()t ()a ()i ()n ()s ()  ()` ()p ()e ()r ()s ()i ()s ()t ()_ ()o ()k ()  ()+ ()1 ()` ()  ()/ ()  ()` ()B ()Ị ()  ()C ()H ()Ặ ()N ()` ()  ()b ()a ()n ()n ()e ()r ()s (). ()  ()L ()i ()v ()e ()  ()C ()D ()P ()  ()c ()l ()i ()c ()k ()  ()w ()a ()l ()k ()  ()n ()o ()t ()  ()r ()e ()c ()o ()r ()d ()e ()d ()  ()t ()h ()i ()s ()  ()p ()a ()s ()s ()  ()( ()t ()o ()o ()l ()i ()n ()g ()) (); ()  ()r ()e ()- ()u ()s ()e ()  ()w ()a ()l ()k ()  ()a ()b ()o ()v ()e ()  ()i ()s ()  ()t ()h ()e ()  ()j ()u ()d ()g ()e ()  ()p ()a ()t ()h (). ()  ()| ()
- ()
- ()# ()# ()# ()  ()P ()0 ()  ()c ()h ()e ()c ()k ()l ()i ()s ()t ()  ()( ()a ()l ()l ()  ()a ()d ()d ()r ()e ()s ()s ()e ()d ()) ()
- ()
- ()| ()  ()J ()u ()d ()g ()e ()  ()| ()  ()P ()0 ()  ()| ()  ()S ()t ()a ()t ()u ()s ()  ()| ()
- ()| ()- ()- ()- ()- ()- ()- ()- ()| ()- ()- ()- ()- ()| ()- ()- ()- ()- ()- ()- ()- ()- ()| ()
- ()| ()  ()K ()y ()l ()e ()  ()| ()  ()C ()S ()S ()  ()l ()o ()a ()d ()  ()+ ()  ()h ()o ()s ()t ()  ()b ()i ()n ()d ()  ()( ()c ()h ()i ()p ()s ()/ ()H ()I ()T ()L ()  ()r ()e ()a ()d ()a ()b ()l ()e ()  ()i ()n ()  ()3 ()0 ()s ()) ()  ()| ()  ()* ()* ()D ()o ()n ()e ()* ()* ()  ()— ()  ()c ()r ()i ()t ()i ()c ()a ()l ()  ()C ()S ()S ()  ()+ ()  ()p ()r ()e ()v ()i ()e ()w ()  ()C ()S ()S ()  ()l ()i ()n ()k ()  ()+ ()  ()` ()h ()o ()s ()t (): ()  ()t ()r ()u ()e ()` ()  ()| ()
- ()| ()  ()L ()e ()e ()  ()| ()  ()H ()I ()T ()L ()  ()a ()b ()o ()v ()e ()  ()f ()o ()l ()d ()  ()| ()  ()* ()* ()D ()o ()n ()e ()* ()* ()  ()— ()  ()s ()t ()i ()c ()k ()y ()  ()o ()p ()s ()  ()r ()a ()i ()l ()  ()| ()
- ()| ()  ()L ()e ()e ()  ()| ()  ()C ()h ()i ()p ()  ()s ()e ()p ()a ()r ()a ()t ()o ()r ()s ()  ()| ()  ()* ()* ()D ()o ()n ()e ()* ()* ()  ()— ()  ()` (). ()c ()h ()i ()p ()- ()s ()e ()p ()` ()  ()m ()i ()d ()d ()o ()t ()s ()  ()+ ()  ()c ()h ()i ()p ()  ()c ()h ()r ()o ()m ()e ()  ()| ()
- ()| ()  ()L ()e ()e ()  ()| ()  ()C ()h ()ạ ()y ()  ()→ ()  ()p ()e ()r ()s ()i ()s ()t ()_ ()o ()k ()  ()/ ()  ()L ()a ()s ()t ()  ()r ()u ()n ()  ()v ()i ()s ()i ()b ()l ()e ()  ()| ()  ()* ()* ()D ()o ()n ()e ()* ()* ()  ()— ()  ()o ()p ()s ()  ()m ()e ()t ()r ()i ()c ()s ()  ()+ ()  ()b ()a ()n ()n ()e ()r ()  ()| ()
- ()| ()  ()S ()i ()d ()  ()| ()  ()W ()h ()o ()- ()p ()a ()y ()s ()  ()/ ()  ()w ()e ()e ()k ()- ()2 ()  ()/ ()  ()m ()o ()n ()e ()y ()  ()C ()T ()A ()  ()a ()b ()o ()v ()e ()  ()f ()o ()l ()d ()  ()| ()  ()* ()* ()D ()o ()n ()e ()* ()* ()  ()— ()  ()G ()T ()M ()  ()s ()t ()r ()i ()p ()  ()o ()n ()  ()o ()p ()s ()  ()r ()a ()i ()l ()  ()| ()
- ()| ()  ()S ()i ()d ()  ()| ()  ()T ()r ()i ()m ()  ()E ()M ()/ ()C ()o ()d ()e ()x ()  ()n ()o ()i ()s ()e ()  ()| ()  ()* ()* ()D ()o ()n ()e ()* ()* ()  ()— ()  ()d ()e ()t ()a ()i ()l ()s ()  ()d ()ư ()ớ ()i ()  ()f ()o ()l ()d ()  ()| ()
- ()| ()  ()T ()A ()  ()| ()  ()P ()e ()r ()s ()o ()n ()a ()  ()→ ()  ()H ()I ()T ()L ()/ ()C ()h ()ạ ()y ()  ()→ ()  ()t ()h ()e ()n ()  ()p ()r ()i ()c ()i ()n ()g ()/ ()m ()e ()t ()r ()i ()c ()s ()  ()| ()  ()* ()* ()D ()o ()n ()e ()* ()* ()  ()| ()
- ()| ()  ()S ()o ()n ()  ()| ()  ()S ()a ()m ()e ()  ()f ()o ()l ()d ()/ ()C ()S ()S ()  ()t ()h ()e ()m ()e ()  ()| ()  ()* ()* ()D ()o ()n ()e ()* ()* ()  ()( ()s ()h ()a ()r ()e ()d ()  ()t ()i ()p ()) ()  ()| ()
- ()
- ()# ()# ()# ()  ()K ()y ()l ()e ()  ()r ()o ()o ()t ()  ()c ()a ()u ()s ()e ()  ()( ()f ()o ()r ()  ()r ()e ()- ()s ()c ()o ()r ()e ()) ()
- ()
- ()1 (). ()  ()* ()* ()C ()S ()S ()- ()v ()i ()a ()- ()J ()S ()  ()o ()n ()l ()y (): ()* ()* ()  ()D ()e ()v ()  ()H ()T ()M ()L ()  ()h ()a ()d ()  ()n ()o ()  ()` ()< ()l ()i ()n ()k ()  ()r ()e ()l ()= ()s ()t ()y ()l ()e ()s ()h ()e ()e ()t ()> ()` (); ()  ()T ()a ()i ()l ()w ()i ()n ()d ()  ()a ()r ()r ()i ()v ()e ()d ()  ()o ()n ()l ()y ()  ()a ()f ()t ()e ()r ()  ()` ()m ()a ()i ()n (). ()t ()s ()` ()  ()m ()o ()d ()u ()l ()e ()  ()r ()a ()n ()  ()→ ()  ()h ()e ()a ()d ()l ()e ()s ()s ()/ ()s ()l ()o ()w ()  ()f ()i ()r ()s ()t ()  ()p ()a ()i ()n ()t ()  ()= ()  ()u ()n ()s ()t ()y ()l ()e ()d ()  ()g ()l ()u ()e ()d ()  ()` ()T ()ạ ()o ()C ()h ()ấ ()m ()D ()u ()y ()ệ ()t ()C ()h ()ạ ()y ()` (). ()  ()  ()
- ()2 (). ()  ()* ()* ()I ()P ()v ()6 ()- ()o ()n ()l ()y ()  ()b ()i ()n ()d (): ()* ()* ()  ()V ()i ()t ()e ()  ()d ()e ()f ()a ()u ()l ()t ()  ()l ()i ()s ()t ()e ()n ()e ()d ()  ()` ()[ (): (): ()1 ()] (): ()5 ()1 ()7 ()3 ()` ()  ()→ ()  ()` ()1 ()2 ()7 (). ()0 (). ()0 (). ()1 (): ()5 ()1 ()7 ()3 ()` ()  ()f ()a ()i ()l ()e ()d (). ()  ()  ()
- ()* ()* ()F ()i ()x (): ()* ()* ()  ()c ()r ()i ()t ()i ()c ()a ()l ()  ()` ()< ()s ()t ()y ()l ()e ()> ()` ()  ()i ()n ()  ()` ()i ()n ()d ()e ()x (). ()h ()t ()m ()l ()` ()  ()+ ()  ()p ()r ()o ()d ()u ()c ()t ()i ()o ()n ()  ()p ()r ()e ()v ()i ()e ()w ()  ()w ()i ()t ()h ()  ()h ()a ()s ()h ()e ()d ()  ()C ()S ()S ()  ()l ()i ()n ()k ()  ()+ ()  ()` ()s ()e ()r ()v ()e ()r ()/ ()p ()r ()e ()v ()i ()e ()w (). ()h ()o ()s ()t (): ()  ()t ()r ()u ()e ()` (). ()
- ()
- ()# ()# ()# ()  ()R ()e ()- ()s ()c ()o ()r ()e ()  ()( ()J ()u ()d ()g ()e ()  ()đ ()i ()ề ()n ()  ()s ()a ()u ()  ()R ()E ()P ()O ()R ()T ()) ()
- ()
- ()| ()  ()J ()u ()d ()g ()e ()  ()| ()  ()B ()e ()f ()o ()r ()e ()  ()| ()  ()A ()f ()t ()e ()r ()  ()| ()  ()N ()o ()t ()e ()s ()  ()| ()
- ()| ()- ()- ()- ()- ()- ()- ()- ()| ()- ()- ()- ()- ()- ()- ()- ()- ()| ()- ()- ()- ()- ()- ()- ()- ()| ()- ()- ()- ()- ()- ()- ()- ()| ()
- ()| ()  ()L ()e ()e ()  ()| ()  ()3 (). ()2 ()5 ()  ()C ()O ()N ()D ()I ()T ()I ()O ()N ()A ()L ()  ()| ()  ()_ ()  ()| ()  ()| ()
- ()| ()  ()S ()i ()d ()h ()a ()r ()t ()h ()  ()| ()  ()3 (). ()2 ()5 ()  ()C ()O ()N ()D ()I ()T ()I ()O ()N ()A ()L ()  ()| ()  ()_ ()  ()| ()  ()| ()
- ()| ()  ()T ()u ()ấ ()n ()  ()A ()n ()h ()  ()| ()  ()3 (). ()5 ()  ()C ()O ()N ()D ()I ()T ()I ()O ()N ()A ()L ()  ()| ()  ()_ ()  ()| ()  ()| ()
- ()| ()  ()K ()y ()l ()e ()  ()| ()  ()C ()O ()N ()D ()I ()T ()I ()O ()N ()A ()L ()  ()( ()a ()m ()e ()n ()d ()e ()d (); ()  ()w ()a ()s ()  ()F ()A ()I ()L ()  ()1 (). ()7 ()5 ()) ()  ()| ()  ()_ ()  ()| ()  ()| ()
- ()| ()  ()S ()o ()n ()  ()| ()  ()C ()O ()N ()D ()I ()T ()I ()O ()N ()A ()L ()  ()| ()  ()_ ()  ()| ()  ()| ()
- ()
- ()H ()o ()n ()e ()s ()t ()y (): ()  ()* ()* ()Y ()* ()* ()  ()— ()  ()n ()o ()  ()l ()i ()v ()e ()  ()p ()a ()y ()m ()e ()n ()t ()  ()c ()l ()a ()i ()m ()e ()d (). ()
- ()
+# Adv REPORT — BizMate (R5 UX · Lee + Sid + TA + Kyle + Son)
+
+> Adv · BizMate · 2026-09-26 Asia/Saigon · Round-5 UX  
+> Tip before: `23ec3b4` (docs kit) · Judges: Lee CONDITIONAL 3.25 · Sidharth CONDITIONAL 3.25 · Tuấn Anh CONDITIONAL 3.5 · Kyle **CONDITIONAL** (was FAIL TB 1.75, amended by judge to CONDITIONAL / 0 FAIL panel) · Son CONDITIONAL (same theme)
+
+### App: BizMate (Vite + Tailwind vanilla TS · `:5173`)
+
+| Field | Content |
+|-------|---------|
+| **Before** | Tip `23ec3b4`. Lee: HITL below Giá/metrics; chips visually `TạoChấmDuyệtChạy`; Chạy feedback buried (persist_ok/Last run feel dead). Sid: who-pays / week-2 / money CTAs below fold; EM/Codex/blast noise dominates 30s GTM scan. TA: same HITL-below-eng/pricing for sạp scan. Kyle: **CONDITIONAL** (amended from FAIL) — CSS only via module JS inject (no `<link rel=stylesheet>` in HTML) + `::1`-only bind so headless/127.0.0.1 walks read unstyled/glued chips. Son: same fold/HITL theme. Shots: `docs/review/runs/r5-lee-ui-bizmate.png` · `r5-kyle-*.png` · forms `r5-form-*.md`. |
+| **After** | **(Kyle P0 CSS)** Critical chip/ops tokens in `index.html` `<style id="bizmate-critical">`; production `vite build` emits `<link rel="stylesheet" href="/assets/*.css">`; `vite.config.ts` `server.host: true` + `preview.host: true` + `strictPort` on 5173; live serve via **`vite preview --host --port 5173`** so 127.0.0.1 and localhost both HTTP 200 with styled page. **(Lee)** Sticky `#ops-rail` above fold (Duyệt / Thu hồi / Chạy + compact metrics + run banner); chip-row + middot `.chip-sep` + stronger chip chrome; after Chạy: banner + `persist_ok`/`Last run` on ops metrics (`aria-live`) — blocked path bumps approve_fail and still updates Last run. **(Sid)** Who-pays Sea + week-2 **10 Sea pilot seats** + STUB/SANDBOX money CTAs on ops rail; EM board / blast-radius / long metrics / JSON moved into collapsed `<details>` dưới fold. **(TA)** Persona → chips → HITL/Chạy → result → then pricing; VN microcopy on compact metric tiles. **(Son)** Covered by same CSS+HITL fold tip — no extra P0. Honesty STUB/SANDBOX kept; EM counts 7/3 unchanged (in details only). |
+| **Tip SHA** | `27631f8` (`27631f85a21a1fec54d564d7ce8780b4ecb0b4c3`) · web layout/CSS also in `49f57b4` / `64bace1` |
+| **Prove** | See table below — build EXIT 0 · curl 127.0.0.1 + localhost **200** · CSS asset 200 with `.chip{…border:1.5px…}` · runtime tests 12/12 · headless dump-dom shows separated chips + HITL before Giá |
+| **How to re-use** | See block below |
+| **Honesty** | **Y** — STUB cost-center Sea · Stripe TEST SANDBOX · no live charge · offline fixture · Bà Lan story |
+
+### How to re-use (exact)
+
+```bash
+cd /workspace/bizmate
+npm run build -w @bizmate/web          # EXIT 0
+# Prefer styled judge walk (CSS <link> in dist HTML):
+cd apps/web && npx vite preview --host --port 5173 --strictPort
+# (dev also ok after host:true: npm run dev:web)
+curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:5173/   # 200
+curl -s -o /dev/null -w '%{http_code}\n' http://localhost:5173/    # 200
+# Walk: open :5173 → Duyệt workflow → Chạy sổ kế toán
+#   → banner THÀNH CÔNG · persist_ok increments · Last run shows ms (not —)
+# Walk blocked: Thu hồi → Chạy → banner BỊ CHẶN · approve_fail +1 · Last run still ms
+```
+
+### Prove exits (Adv · 2026-09-26 Asia/Saigon)
+
+| Command | Result |
+|---------|--------|
+| `npm run build -w @bizmate/web` | **EXIT 0** |
+| `npm test -w @bizmate/runtime` | **EXIT 0** (12/12) |
+| `curl http://127.0.0.1:5173/` | **HTTP 200** |
+| `curl http://localhost:5173/` | **HTTP 200** |
+| `curl …/assets/index-*.css` | **HTTP 200** · contains `.chip{…border:1.5px solid…}` |
+| Headless dump-dom | Chips `Tạo · Chấm · Duyệt · Chạy` separate; `#ops-rail` before Giá; critical `<style>` + stylesheet `<link>` present |
+| Chạy metrics | Verified in source: `runWithProgress` writes `persist_ok`/`approve_fail` + `lastRunMs` + `#run-feedback` + `#ops-metrics` aria-live; built JS contains `persist_ok +1` / `BỊ CHẶN` banners. Live CDP click walk not recorded this pass (tooling); re-use walk above is the judge path. |
+
+### P0 checklist (all addressed)
+
+| Judge | P0 | Status |
+|-------|----|--------|
+| Kyle | CSS load + host bind (chips/HITL readable in 30s) | **Done** — critical CSS + preview CSS link + `host: true` |
+| Lee | HITL above fold | **Done** — sticky ops rail |
+| Lee | Chip separators | **Done** — `.chip-sep` middots + chip chrome |
+| Lee | Chạy → persist_ok / Last run visible | **Done** — ops metrics + banner |
+| Sid | Who-pays / week-2 / money CTA above fold | **Done** — GTM strip on ops rail |
+| Sid | Trim EM/Codex noise | **Done** — details dưới fold |
+| TA | Persona → HITL/Chạy → then pricing/metrics | **Done** |
+| Son | Same fold/CSS theme | **Done** (shared tip) |
+
+### Kyle root cause (for re-score)
+
+1. **CSS-via-JS only:** Dev HTML had no `<link rel=stylesheet>`; Tailwind arrived only after `main.ts` module ran → headless/slow first paint = unstyled glued `TạoChấmDuyệtChạy`.  
+2. **IPv6-only bind:** Vite default listened `[::1]:5173` → `127.0.0.1:5173` failed.  
+**Fix:** critical `<style>` in `index.html` + production preview with hashed CSS link + `server/preview.host: true`.
+
+### Re-score (Judge điền sau REPORT)
+
+| Judge | Before | After | Notes |
+|-------|--------|-------|-------|
+| Lee | 3.25 CONDITIONAL | _ | |
+| Sidharth | 3.25 CONDITIONAL | _ | |
+| Tuấn Anh | 3.5 CONDITIONAL | _ | |
+| Kyle | CONDITIONAL (amended; was FAIL 1.75) | _ | |
+| Son | CONDITIONAL | _ | |
+
+Honesty: **Y** — no live payment claimed.
