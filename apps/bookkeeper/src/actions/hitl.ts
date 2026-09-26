@@ -28,8 +28,8 @@ export async function actionPropose(text: string): Promise<ScreenState> {
   return proposeUtterance(text.trim());
 }
 
-export async function actionRefuse(): Promise<ScreenState> {
-  return refusePending();
+export async function actionRefuse(reason?: string): Promise<ScreenState> {
+  return refusePending(reason);
 }
 
 export async function actionApprove(): Promise<ScreenState> {

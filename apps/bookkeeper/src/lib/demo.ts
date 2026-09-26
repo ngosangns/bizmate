@@ -286,10 +286,12 @@ export function runDemoOnce(opts: DemoOptions = {}): DemoResult {
       refused = true;
       refuseBeforeDuyetCount += 1;
       out("▶ TỪ CHỐI: ghi sổ khi chưa Duyệt");
+      // HITL audit sample reason (R5) — demo fixed string for refuse trail
+      const hitlReason = "sai số tiền — demo HITL";
       const rejDetail =
-        err instanceof Error
-          ? err.message
-          : "Refuse to persist without a verified proposal";
+        `Human Từ chối: ${hitlReason} — chưa ghi sổ` +
+        (err instanceof Error ? ` · (${err.message})` : "");
+      out(`   Lý do Từ chối (HITL): ${hitlReason}`);
       appendAudit(audit, {
         type: "approve_rejected",
         utteranceId: u.id,

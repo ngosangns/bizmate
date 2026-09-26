@@ -49,6 +49,13 @@ let lastBilling:
   | { kind: "stub"; result: StubChargeResult }
   | null = null;
 let billingMode: BillingMode = "stripe_test";
+/** R5 Lee: banner after Chạy — success persist / blocked without Duyệt. */
+let lastRunFeedback:
+  | { kind: "ok"; text: string }
+  | { kind: "blocked"; text: string }
+  | null = null;
+/** R5 Lee: flash metrics strip once after run. */
+let flashMetrics = false;
 
 /** Son-B1: live board counts from apps/em/board.json (7 done / 3 todo) — do not invent. */
 const EM_BOARD_DONE = 7;
@@ -122,6 +129,92 @@ function progressBanner(): string {
       return "";
   }
   return `<div class="${alertVariants({ variant: "info", className: "mb-4 font-medium" })}" role="status">${msg}</div>`;
+}
+
+function chipRowHtml(): string {
+  const parts: string[] = [];
+  CHIP_LABELS.forEach((label, i) => {
+    if (i > 0) parts.push(`<span class="chip-sep" aria-hidden="true">·</span>`);
+    parts.push(`<span class="${chipClass(i)}" role="listitem">${label}</span>`);
+  });
+  return `<div class="chip-row" role="list" aria-label="Các bước">${parts.join("")}</div>`;
+}
+
+function compactMetricsHtml(): string {
+  const approveFail = webAudit.filter((e) => e.action === "approve_fail").length;
+  const approveOk = webAudit.filter((e) => e.action === "approve_ok").length;
+  const persistOk = webAudit.filter((e) => e.action === "persist_ok").length;
+  const ms = lastRunMs != null ? `${lastRunMs} ms` : "—";
+  const flash = flashMetrics ? " flash" : "";
+  return `
+    <div id="ops-metrics" class="metric-strip${flash}" aria-live="polite" aria-atomic="true">
+      <div class="metric-tile"><dt>Chưa duyệt / chặn</dt><dd>${approveFail}</dd></div>
+      <div class="metric-tile"><dt>Đã duyệt</dt><dd>${approveOk}</dd></div>
+      <div class="metric-tile"><dt>Ghi sổ OK</dt><dd>${persistOk}</dd></div>
+      <div class="metric-tile"><dt>Lần chạy gần nhất</dt><dd>${ms}</dd></div>
+    </div>
+    <p class="mt-2 font-mono text-[0.7rem] text-muted-foreground">
+      audit: approve_fail=${approveFail} · approve_ok=${approveOk} · persist_ok=${persistOk} · Last run ${ms}
+    </p>`;
+}
+
+function runFeedbackBanner(): string {
+  if (!lastRunFeedback) return "";
+  const ok = lastRunFeedback.kind === "ok";
+  const variant = ok ? "ok" : "warn";
+  return `<div class="${alertVariants({ variant, className: "mt-3 font-semibold" })}" role="status" id="run-feedback">
+    ${escapeHtml(lastRunFeedback.text)}
+  </div>`;
+}
+
+/** R5 Lee+Sid+TA: sticky ops rail — HITL + Chạy + metrics + who-pays above fold. */
+function opsRailHtml(busy: boolean): string {
+  const runLabel = domain === "accounting" ? "Chạy sổ kế toán" : "Chạy pipeline";
+  return `
+    <section class="ops-rail" id="ops-rail" aria-label="Vận hành HITL">
+      <div class="${card.content("space-y-3")}">
+        <div class="flex flex-wrap items-center gap-2">
+          <h2 class="text-sm font-semibold tracking-tight sm:text-base">Người duyệt (HITL) · chạy sổ</h2>
+          <span class="${badgeVariants({ variant: "outline" })}">above fold</span>
+        </div>
+
+        <div class="rounded-lg border border-border bg-background/50 p-3" id="gtm-strip">
+          <p class="text-sm font-semibold">
+            Who pays D-Day: <span class="text-primary">Sea internal tooling</span>
+            <span class="${badgeVariants({ variant: "secondary", className: "ml-1.5 align-middle" })}">cost-center</span>
+          </p>
+          <p class="mt-1 text-xs text-muted-foreground">
+            Week-2 sketch: <strong>10 Sea pilot seats</strong> · SME Pro = roadmap · không claim live charge.
+          </p>
+          <div class="mt-2 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+            <button type="button" class="${buttonVariants({ size: "sm" })}" id="btn-sea-stub" ${busy ? "disabled" : ""}>Cost-center Sea (STUB)</button>
+            <button type="button" class="${buttonVariants({ variant: "outline", size: "sm" })}" id="btn-stripe-sme" ${busy ? "disabled" : ""}>SME · Stripe TEST (SANDBOX)</button>
+            <button type="button" class="${buttonVariants({ variant: "outline", size: "sm" })}" id="btn-stripe-codex" ${busy ? "disabled" : ""}>Codex · Stripe TEST (SANDBOX)</button>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+          <button type="button" class="${buttonVariants()}" id="btn-approve" ${busy ? "disabled" : ""}>${approved ? "Đã duyệt ✓" : "Duyệt workflow"}</button>
+          <button type="button" class="${buttonVariants({ variant: "outline" })}" id="btn-revoke" ${approved && !busy ? "" : "disabled"}>Thu hồi</button>
+          <span class="${cn(
+            "text-sm",
+            approved ? "font-medium text-ok" : "text-muted-foreground"
+          )}">
+            ${approved ? "Đã mở khóa ghi sổ" : "Chờ duyệt trước khi persist"}
+          </span>
+        </div>
+
+        <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+          <button type="button" class="${buttonVariants()}" id="btn-run" ${busy ? "disabled" : ""}>${runLabel}</button>
+          <button type="button" class="${buttonVariants({ variant: "outline" })}" id="btn-regen" ${busy ? "disabled" : ""}>Tạo lại</button>
+          <button type="button" class="${buttonVariants({ variant: "dashed", size: "sm" })}" id="btn-reset" ${busy ? "disabled" : ""}>Reset · seed #${seed}</button>
+        </div>
+
+        ${runFeedbackBanner()}
+        ${compactMetricsHtml()}
+        <div id="run-out">${lastResult ? renderResult(lastResult) : '<p class="text-xs text-muted-foreground">Bấm <strong>Duyệt</strong> rồi <strong>Chạy</strong> để ghi sổ (fixture offline). Chạy chưa duyệt → bị chặn + Last run vẫn cập nhật.</p>'}</div>
+      </div>
+    </section>`;
 }
 
 function personaBlock(): string {
@@ -354,13 +447,9 @@ function pricingPanel(): string {
           <p class="${alertVariants({ variant: "warn", className: "font-semibold" })}">${escapeHtml(bannerStub)}</p>
           <p class="${alertVariants({ variant: "warn", className: "font-semibold" })}">${escapeHtml(bannerStripe)}</p>
         </div>
-        <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-          <button type="button" class="${buttonVariants()}" id="btn-sea-stub">Cost-center Sea (stub)</button>
-          <button type="button" class="${buttonVariants({ variant: "outline" })}" id="btn-stripe-sme">Checkout SME · Stripe TEST</button>
-          <button type="button" class="${buttonVariants({ variant: "outline" })}" id="btn-stripe-codex">Checkout Codex · Stripe TEST</button>
-        </div>
-        <p class="mt-3 text-xs text-muted-foreground">
-          Mode hiện tại CTA Stripe: <code>${billingMode}</code> · Sea path luôn <code>offline_stub</code>.
+        <p class="mb-3 text-xs text-muted-foreground">
+          Money CTAs nằm trên <strong>ops rail</strong> (above fold) · STUB / SANDBOX labeled.
+          Mode Stripe: <code>${billingMode}</code> · Sea path luôn <code>offline_stub</code>.
         </p>
         ${outcome}
       </div>
@@ -407,19 +496,11 @@ function render(): void {
 
     ${personaBlock()}
     ${transcriptBlock()}
+    ${chipRowHtml()}
+    ${progressBanner()}
+    ${opsRailHtml(busy)}
     ${aboveFoldLedger()}
 
-    <div class="mb-4 flex flex-wrap gap-2" role="list" aria-label="Các bước">
-      ${CHIP_LABELS.map(
-        (label, i) =>
-          `<span class="${chipClass(i)}" role="listitem">${label}</span>`
-      ).join("")}
-    </div>
-
-    ${progressBanner()}
-    ${blastRadiusCard()}
-    ${demoDerivedMetricsHtml()}
-    ${stageHonestyBlock()}
     ${pricingPanel()}
 
     <section class="${card.root("mb-4")}">
@@ -460,38 +541,13 @@ function render(): void {
       </div>
     </section>
 
-    <section class="${card.root("mb-4")}">
-      <div class="${card.content()}">
-        <h3 class="${card.title("mb-3")}">Người duyệt (HITL)</h3>
-        <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-          <button type="button" class="${buttonVariants()}" id="btn-approve" ${busy ? "disabled" : ""}>${approved ? "Đã duyệt ✓" : "Duyệt workflow"}</button>
-          <button type="button" class="${buttonVariants({ variant: "outline" })}" id="btn-revoke" ${approved && !busy ? "" : "disabled"}>Thu hồi</button>
-          <span class="${cn(
-            "text-sm",
-            approved ? "font-medium text-ok" : "text-muted-foreground"
-          )}">
-            ${approved ? "Đã mở khóa ghi sổ" : "Chờ duyệt trước khi persist"}
-          </span>
-        </div>
-      </div>
-    </section>
-
-    <section class="${card.root("mb-4")}">
-      <div class="${card.content()}">
-        <h3 class="${card.title("mb-3")}">Chạy offline</h3>
-        <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-          <button type="button" class="${buttonVariants()}" id="btn-run" ${busy ? "disabled" : ""}>Chạy ${domain === "accounting" ? "sổ kế toán" : "pipeline"}</button>
-          <button type="button" class="${buttonVariants({ variant: "outline" })}" id="btn-regen" ${busy ? "disabled" : ""}>Tạo lại</button>
-          <button type="button" class="${buttonVariants({ variant: "dashed", size: "sm" })}" id="btn-reset" ${busy ? "disabled" : ""}>Reset · seed #${seed}</button>
-        </div>
-        <div id="run-out" class="mt-3">${lastResult ? renderResult(lastResult) : '<p class="text-xs text-muted-foreground">Bấm Chạy để ghi sổ / cập nhật pipeline (fixture offline).</p>'}</div>
-      </div>
-    </section>
-
     <details class="mt-2 rounded-lg border border-border bg-background/40 p-3 open:pb-4">
       <summary class="cursor-pointer text-xs text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded">
-        Chi tiết kỹ thuật (workflow + verdict JSON)
+        Chi tiết kỹ thuật (EM / blast-radius / metrics / JSON) — dưới fold
       </summary>
+      ${blastRadiusCard()}
+      ${demoDerivedMetricsHtml()}
+      ${stageHonestyBlock()}
       <p class="mt-2 text-xs text-muted-foreground">Workflow ${escapeHtml(workflow.id)} v${escapeHtml(workflow.version)}</p>
       <pre class="mt-2 max-h-56 overflow-auto rounded-md bg-background p-3 font-mono text-[0.7rem] leading-snug text-muted-foreground">${escapeHtml(JSON.stringify(workflow, null, 2))}</pre>
       <pre class="mt-2 max-h-56 overflow-auto rounded-md bg-background p-3 font-mono text-[0.7rem] leading-snug text-muted-foreground">${escapeHtml(JSON.stringify(verdict, null, 2))}</pre>
@@ -516,6 +572,8 @@ function render(): void {
       lastRunMs = null;
       lastStepMs = [];
       animateChips = false;
+      lastRunFeedback = null;
+      flashMetrics = false;
       progress = "ready";
       render();
     });
@@ -609,6 +667,8 @@ function fullReset(): void {
   lastStepMs = [];
   animateChips = false;
   lastBilling = null;
+  lastRunFeedback = null;
+  flashMetrics = false;
   progress = "ready";
   render();
 }
@@ -649,6 +709,10 @@ async function runWithProgress(): Promise<void> {
       workflowId: wf.id,
       workflowVersion: wf.version,
     });
+    lastRunFeedback = {
+      kind: "blocked",
+      text: `BỊ CHẶN · chưa Duyệt — approve_fail +1 · Last run ${lastRunMs} ms (persist không ghi).`,
+    };
   } else {
     webAudit.push({
       action: "approve_ok",
@@ -664,9 +728,20 @@ async function runWithProgress(): Promise<void> {
       workflowId: wf.id,
       workflowVersion: wf.version,
     });
+    lastRunFeedback = {
+      kind: "ok",
+      text: `THÀNH CÔNG · persist_ok +1 · Last run ${lastRunMs} ms.`,
+    };
   }
+  flashMetrics = true;
   progress = "done";
   render();
+  requestAnimationFrame(() => {
+    document.getElementById("ops-metrics")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    window.setTimeout(() => {
+      flashMetrics = false;
+    }, 1200);
+  });
 }
 
 function renderResult(result: RunResult): string {

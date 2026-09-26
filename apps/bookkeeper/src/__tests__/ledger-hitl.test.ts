@@ -5,6 +5,7 @@ import {
   approvePending,
   bindTestLedger,
   clearUiSingleton,
+  getMemoryAudit,
   getScreenState,
   openProSandbox,
   proposeUtterance,
@@ -76,10 +77,18 @@ describe("HITL session (server-action lib)", () => {
     expect(screen.pending?.proposal.status).toBe("verified");
     const ytdBefore = screen.ytdRevenueVnd;
 
-    screen = refusePending();
+    screen = refusePending("sai số tiền");
     expect(screen.pending).toBeNull();
     expect(screen.ytdRevenueVnd).toBe(ytdBefore);
     expect(screen.lastStatus).toMatch(/Từ chối/i);
+    expect(screen.lastRejectReason).toBe("sai số tiền");
+    const auditRow = db
+      .listAudit()
+      .find((e) => e.type === "approve_rejected");
+    expect(auditRow?.detail).toMatch(/Human Từ chối: sai số tiền — chưa ghi sổ/);
+    expect(getMemoryAudit().some((e) => /sai số tiền/.test(e.detail))).toBe(
+      true
+    );
 
     screen = proposeUtterance("sáng nay bán 3 áo, mỗi cái 250 nghìn");
     screen = approvePending();
@@ -114,6 +123,117 @@ describe("HITL session (server-action lib)", () => {
       mode: "stripe_test",
     });
     expect(checkout.sessionId).toMatch(/cs_test_/);
+  });
+
+  it("refuse stores lastRejectReason and requires reason in audit detail", () => {
+    const db = openLedgerDb({ dbPath: ":memory:", reset: true });
+    bindTestLedger(db);
+    resetUiSession();
+
+    let screen = proposeUtterance("sáng nay bán 3 áo, mỗi cái 250 nghìn");
+    expect(screen.pending).not.toBeNull();
+    expect(screen.lastRejectReason).toBeNull();
+
+    screen = refusePending("  nhầm mặt hàng  ");
+    expect(screen.pending).toBeNull();
+    expect(screen.lastRejectReason).toBe("nhầm mặt hàng");
+    expect(screen.lastStatus).toMatch(/nhầm mặt hàng/);
+    expect(
+      db.listAudit().some(
+        (e) =>
+          e.type === "approve_rejected" &&
+          e.detail === "Human Từ chối: nhầm mặt hàng — chưa ghi sổ"
+      )
+    ).toBe(true);
+
+    // re-propose clears reject reason
+    screen = proposeUtterance("sáng nay bán 3 áo, mỗi cái 250 nghìn");
+    expect(screen.lastRejectReason).toBeNull();
+    expect(screen.crossedThresholdPending).toBe(false);
+  });
+
+  it("propose crossing 1B sets threshold note in lastStatus", () => {
+    const db = openLedgerDb({ dbPath: ":memory:", reset: true });
+    bindTestLedger(db);
+    const screen = proposeUtterance(
+      "cuối ngày bán 1 lô áo đặc biệt, 25000 nghìn"
+    );
+    expect(screen.crossedThresholdPending).toBe(true);
+    expect(screen.lastStatus).toMatch(/VƯỢT NGƯỠNG 1 TỶ/);
+  });
+
+  it("reset seed is deterministic across two mutations", () => {
+    const db = openLedgerDb({ dbPath: ":memory:", reset: true });
+    bindTestLedger(db);
+    const seedYtd = db.seed.ytdRevenueVnd;
+
+    let a = resetUiSession();
+    expect(a.ytdRevenueVnd).toBe(seedYtd);
+    expect(a.ledgerCount).toBe(0);
+    expect(a.pending).toBeNull();
+    expect(a.lastRejectReason).toBeNull();
+    expect(a.postOneBLocked).toBe(false);
+    expect(a.proSandboxOpened).toBe(false);
+    expect(a.lastStatus).toMatch(/RESET.*980/);
+
+    // mutate: propose + approve crossing sale
+    a = proposeUtterance("cuối ngày bán 1 lô áo đặc biệt, 25000 nghìn");
+    a = approvePending();
+    expect(a.ytdRevenueVnd).toBeGreaterThanOrEqual(1_000_000_000);
+    expect(a.postOneBLocked).toBe(true);
+
+    const r1 = resetUiSession();
+    expect(r1.ytdRevenueVnd).toBe(seedYtd);
+    expect(r1.ledgerCount).toBe(0);
+    expect(r1.pending).toBeNull();
+    expect(r1.lastRejectReason).toBeNull();
+    expect(r1.postOneBLocked).toBe(false);
+    expect(r1.proSandboxOpened).toBe(false);
+
+    // mutate again differently then reset — must match r1 exactly on seed fields
+    let b = proposeUtterance("sáng nay bán 3 áo, mỗi cái 250 nghìn");
+    b = refusePending("demo");
+    b = proposeUtterance("sáng nay bán 3 áo, mỗi cái 250 nghìn");
+    b = approvePending();
+    expect(b.ytdRevenueVnd).not.toBe(seedYtd);
+
+    const r2 = resetUiSession();
+    expect(r2.ytdRevenueVnd).toBe(r1.ytdRevenueVnd);
+    expect(r2.ledgerCount).toBe(r1.ledgerCount);
+    expect(r2.pending).toBeNull();
+    expect(r2.ytdCrossedOneB).toBe(false);
+    expect(r2.postOneBLocked).toBe(false);
+    expect(r2.lastStatus).toMatch(/deterministic/i);
+  });
+
+  it("post-1B lock gates propose until Pro sandbox; copy explains why", () => {
+    const db = openLedgerDb({ dbPath: ":memory:", reset: true });
+    bindTestLedger(db);
+    resetUiSession();
+
+    let screen = proposeUtterance(
+      "cuối ngày bán 1 lô áo đặc biệt, 25000 nghìn"
+    );
+    expect(screen.crossedThresholdPending).toBe(true);
+    expect(screen.postOneBLocked).toBe(false);
+
+    screen = approvePending();
+    expect(screen.ytdCrossedOneB).toBe(true);
+    expect(screen.postOneBLocked).toBe(true);
+    expect(screen.proSandboxOpened).toBe(false);
+
+    const locked = proposeUtterance("sáng nay bán 3 áo, mỗi cái 250 nghìn");
+    expect(locked.pending).toBeNull();
+    expect(locked.postOneBLocked).toBe(true);
+    expect(locked.lastStatus).toMatch(/KHÓA sau 1B/i);
+
+    const { screen: unlocked } = openProSandbox();
+    expect(unlocked.proSandboxOpened).toBe(true);
+    expect(unlocked.postOneBLocked).toBe(false);
+    expect(unlocked.lastStatus).toMatch(/unlocked|Pro sandbox/i);
+
+    const after = proposeUtterance("sáng nay bán 3 áo, mỗi cái 250 nghìn");
+    expect(after.pending).not.toBeNull();
   });
 
   it("getScreenState returns Bà Lan seed", () => {
