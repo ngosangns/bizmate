@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Bookkeeper — Bà Lan · sạp vải An Đông (demo)</title>
+  <style>
+    :root {
+      --bg: #f6f1e8;
+      --card: #fffdf8;
+      --ink: #1a1a1a;
+      --muted: #5c5c5c;
+      --accent: #0d6e4f;
+      --warn: #b45309;
+      --danger: #b91c1c;
+      --ok: #047857;
+      --border: #e5ddd0;
+      --radius: 14px;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100dvh;
+      display: flex;
+      justify-content: center;
+    }
+    .phone {
+      width: 100%;
+      max-width: 390px;
+      min-height: 100dvh;
+      padding: 16px 16px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    header {
+      background: var(--accent);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 14px 16px;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+    header .ytd {
+      margin-top: 6px;
+      font-size: 0.9rem;
+      opacity: 0.95;
+    }
+    .banner {
+      font-size: 0.75rem;
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fcd34d;
+      border-radius: 10px;
+      padding: 8px 10px;
+      line-height: 1.35;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+    }
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+    }
+    .utterance {
+      font-size: 1rem;
+      line-height: 1.4;
+      margin: 0 0 10px;
+    }
+    .proposal {
+      font-size: 0.95rem;
+      line-height: 1.45;
+      margin: 0;
+    }
+    .warn {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      background: #fff7ed;
+      border: 1px solid #fdba74;
+      color: var(--warn);
+      font-size: 0.88rem;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    button {
+      appearance: none;
+      border: none;
+      border-radius: 12px;
+      padding: 16px 12px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      min-height: 56px;
+    }
+    button:active { transform: scale(0.98); }
+    button.refuse {
+      background: #fee2e2;
+      color: var(--danger);
+      border: 2px solid #fecaca;
+    }
+    button.approve {
+      background: #d1fae5;
+      color: var(--ok);
+      border: 2px solid #a7f3d0;
+    }
+    button:disabled {
+      opacity: 0.55;
+      cursor: default;
+    }
+    .citations {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.4;
+      margin: 0;
+    }
+    .status {
+      min-height: 1.4em;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-align: center;
+      color: var(--accent);
+    }
+    footer {
+      margin-top: auto;
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <header>
+      <h1>📒 Sạp An Đông — Bà Lan</h1>
+      <div class="ytd">YTD (doanh thu năm): <strong id="ytd">980.000.000₫</strong></div>
+    </header>
+
+    <div class="banner">
+      Demo offline — không kết nối cơ quan thuế. HITL tĩnh (seed); không ghi sổ thật.
+    </div>
+
+    <section class="card">
+      <h2>Lời nói gần nhất</h2>
+      <p class="utterance" id="utterance">“cuối ngày bán 1 lô áo đặc biệt, 25000 nghìn”</p>
+      <h2>Đề xuất ghi sổ</h2>
+      <p class="proposal" id="proposal">
+        1 lô áo đặc biệt × 25.000.000₫ = <strong>25.000.000₫</strong>
+        <br />YTD sau duyệt (giả lập): <strong>1.006.110.000₫</strong>
+      </p>
+      <div class="warn" id="threshold-warn">
+        ⚠️ Cảnh báo 1B: Giao dịch này sẽ vượt ngưỡng miễn thuế <strong>1 tỷ</strong> đồng/năm. Cần bạn <strong>Duyệt</strong> trước khi ghi sổ.
+      </div>
+    </section>
+
+    <section class="card" id="paywall" style="border-color:#fcd34d;background:#fffbeb;">
+      <h2 style="color:#b45309;">Pro kê khai (fixture)</h2>
+      <p class="proposal" style="margin:0;font-size:0.9rem;">
+        💎 Vượt 1 tỷ — mở gói <strong>Pro kê khai</strong> để xuất HĐ + kê khai có căn cứ.
+        <br /><span style="color:#92400e;font-size:0.8rem;">Không thu phí trong demo · không billing live.</span>
+      </p>
+    </section>
+
+    <div class="actions">
+      <button type="button" class="refuse" id="btn-refuse" aria-label="Từ chối ghi sổ">Từ chối</button>
+      <button type="button" class="approve" id="btn-approve" aria-label="Duyệt ghi sổ">Duyệt</button>
+    </div>
+    <p class="status" id="status" aria-live="polite"></p>
+
+    <section class="card">
+      <h2>Căn cứ (citation)</h2>
+      <p class="citations" id="citations">
+        Nghị định 141/2026/NĐ-CP (demo) · Luật 09/2026 (demo) — ngưỡng miễn thuế hộ KD 1 tỷ/năm (fixture).
+      </p>
+    </section>
+
+    <footer>
+      Bookkeeper · BizMate · seed An Đông<br />
+      Mở file này hoặc chạy <code>npx serve apps/bookkeeper/ui</code>
+    </footer>
+  </div>
+  <script>
+    /* Static demo HITL — no network. Seed numbers match CLI demo story. */
+    (function () {
+      var status = document.getElementById("status");
+      var refuse = document.getElementById("btn-refuse");
+      var approve = document.getElementById("btn-approve");
+      var ytd = document.getElementById("ytd");
+      var decided = false;
+
+      function lock() {
+        decided = true;
+        refuse.disabled = true;
+        approve.disabled = true;
+      }
+
+      refuse.addEventListener("click", function () {
+        if (decided) return;
+        lock();
+        status.textContent = "⛔ Đã Từ chối — chưa ghi sổ (demo HITL)";
+        status.style.color = "#b91c1c";
+      });
+
+      approve.addEventListener("click", function () {
+        if (decided) return;
+        lock();
+        ytd.textContent = "1.006.110.000₫";
+        status.textContent = "✓ Đã Duyệt · YTD mới (demo seed)";
+        status.style.color = "#047857";
+      });
+    })();
+  </script>
+</body>
+</html>

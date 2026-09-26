@@ -33,10 +33,10 @@ Kyle / Son domain notes: filed — `domain-kyle.md` · `domain-son.md`. Son R1d 
 
 | # | Source | Improvement | Priority | Status |
 |---|--------|-------------|----------|--------|
-| K1 | Tuấn Anh | Màn mobile VN riêng (ngoài CLI) nếu pitch live UI — Bà Lan one-screen | P1 product | Open |
-| K2 | Lee | E-invoice **fixture** thật hơn (vẫn offline; không live API) | P2 domain | Open |
-| K3 | Sidharth | Week-2 metric hypothesis đo được trên demo seed (số lần Duyệt, lần gần 1B) — honest, không on-call | P1 GTM | Open |
-| K4 | Sidharth / Son | Codex task evidence mỏng — 1–2 task `.scratch` + commit tách | P1 craft | Open |
+| K1 | Tuấn Anh | Màn mobile VN riêng (ngoài CLI) nếu pitch live UI — Bà Lan one-screen | P1 product | Done |
+| K2 | Lee | E-invoice **fixture** thật hơn (vẫn offline; không live API) | P2 domain | Done |
+| K3 | Sidharth | Week-2 metric hypothesis đo được trên demo seed (số lần Duyệt, lần gần 1B) — honest, không on-call | P1 GTM | Done |
+| K4 | Sidharth / Son | Codex task evidence mỏng — 1–2 task `.scratch` + commit tách | P1 craft | Done |
 
 ## Shield — Adv · Shield
 
@@ -52,9 +52,24 @@ Kyle / Son domain notes: filed — `domain-kyle.md` · `domain-son.md`. Son R1d 
 | # | Source | Improvement | Priority | Status |
 |---|--------|-------------|----------|--------|
 | F1 | Tuấn Anh | Tin nhắn buyer khi dời đơn (copy VN ngắn trong demo) | P1 seller | ✅ Done |
-| F2 | Tuấn Anh | Local-knowledge shipper vào demo sau (không chặn PASS) | P2 | Open / sau |
-| F3 | Lee | Live flood feed / capacity — post-hackathon roadmap slide | P2 roadmap | ✅ Done |
-| F4 | Sidharth | Codex scratch note dày hơn (Son bar) — không chặn GTM | P1 craft | ✅ Done |
+| F2 | Tuấn Anh | Local-knowledge shipper đầy đủ | P2 | Open / sau (light stub = TA-F3) |
+| F3 | Lee | Live flood feed / capacity — post-hackathon roadmap | P2 roadmap | ✅ Done |
+| F4 | Sidharth | Codex scratch note dày hơn (Son bar) | P1 craft | ✅ Done |
+| Sid-F1 | Sidharth | COD at-risk flash header · ước tính fixture | P1 | ✅ Done |
+| Sid-F2 | Sidharth | Champion org escalation one-liner | P1 | ✅ Done |
+| Sid-F3 | Sidharth | Policy-v2 Mate→Judge→load | P1 | ✅ Done |
+| Lee-F1 | Lee | COD-at-risk header (same Sid-F1) | P1 | ✅ Done |
+| Lee-F2 | Lee | `--replay` human decide from JSONL | P1 | ✅ Done |
+| Lee-F3 | Lee | Roadmap 1 dòng post-hackathon | P2 | ✅ Done |
+| TA-F1 | Tuấn Anh | Shop An Đông 3 dòng chủ shop | P1 | ✅ Done |
+| TA-F2 | Tuấn Anh | Phí 2 chiều ước tính cạnh Duyệt hoàn | P1 | ✅ Done |
+| TA-F3 | Tuấn Anh | Local-knowledge ngách xe máy → hold | P2 | ✅ Done |
+| Kyle-F1 | Kyle | HUMAN+COD cùng dòng ORD-1003 | P0 | ✅ Done |
+| Kyle-F2 | Kyle | Wave ①②③ status line | P1 | ✅ Done |
+| Kyle-F3 | Kyle | Shop glance 3 dòng | P1 | ✅ Done |
+| Son-F1 | Son | Honesty 2 câu real vs stub | P1 | ✅ Done |
+| Son-F2 | Son | Schema flood-decision flash 10s | P1 | ✅ Done |
+| Son-F3 | Son | Policy evolve offline (align Sid-F3) | P2 | ✅ Done |
 
 ## Judge ask (pending packets)
 

@@ -11,6 +11,8 @@ npm run build -w @bizmate/contracts   # after schema changes
 ```bash
 npm run demo:bookkeeper
 npm run demo:bookkeeper -- --reset    # ↺ reload seed YTD 980tr + full story
+npm run demo:ui -w @bizmate/bookkeeper
+# or open apps/bookkeeper/ui/index.html / npx serve apps/bookkeeper/ui
 ```
 
 Optional:
@@ -19,25 +21,35 @@ npm test -w @bizmate/bookkeeper
 npm run validate:contracts
 ```
 
-No API key. Offline only.
+No API key. Offline only. No live tax / e-invoice portal.
 
 ## Success (exit 0)
 1. Banner: Bà Lan — sạp vải chợ An Đông, YTD hiện tại 980.000.000₫
-2. Buyer one-liner (hypothesis freemium→paid) visible
-3. Each bước: `Bạn nói:` → `Đề xuất ghi sổ:` → **HITL** `Từ chối ghi sổ khi chưa Duyệt` → `Người duyệt: Bà Lan → Duyệt` → `Đã duyệt · YTD mới`
-4. Large sale → cảnh báo vượt ngưỡng miễn thuế 1 tỷ (tiếng Việt)
-5. YTD after ≈ 1.006.110.000₫
-6. Tax Q&A: còn 0₫; “rule engine, không phải LLM”; `Căn cứ:` titles (ND / Luật demo)
-7. With `--reset`: line `↺ Reset seed · YTD về 980.000.000₫` then full story again
+2. Buyer one-liner + **Week-2 kênh: nhóm tiểu thương chợ An Đông**
+3. Each sale bước: `Bạn nói:` → `Đề xuất ghi sổ:` → **HITL** `Từ chối ghi sổ khi chưa Duyệt` → `Người duyệt: Bà Lan → Duyệt` → `Đã duyệt · YTD mới`
+4. “hôm nay không bán” → no-op (không ghi sổ)
+5. Large sale → cảnh báo 1B + **Pro kê khai** soft paywall (fixture)
+6. Sửa sai / idempotent: same id different amounts → reject
+7. YTD after ≈ 1.006.110.000₫
+8. Tax Q&A + e-invoice summary + citation **đoạn/excerpt**
+9. **WEEK-2 METRICS (hypothesis on this seed)**: Duyệt · Từ chối-before-Duyệt · cảnh báo 1B · citation hits · YTD final · remainingExemption
+10. **AUDIT**: at least one `approve_rejected` + `approve_committed` + `idempotency_conflict`
+11. `--reset`: `↺ Reset seed · YTD về 980.000.000₫`
 
-## Week-2 metrics (planned, not live)
-% parsed · time-to-approve · threshold alerts acknowledged — see BOOKKEEPER-FIX.md.
+## Week-2 metric names (seed counts — not production KPIs)
+- `approveCount` / số lần Duyệt
+- `refuseBeforeDuyetCount` / số lần Từ chối-before-Duyệt
+- `thresholdWarningCount` / số lần cảnh báo gần/vượt 1B
+- `citationHits`
+- `finalYtdVnd` / YTD final
+- `remainingExemptionVnd` / YTD gap to 1B
 
 ## Key paths
-- `apps/bookkeeper/src/{demo,agent,rules,parse-utterance}.ts`
-- `apps/bookkeeper/fixtures/vendor-an-dong.json`
+- `apps/bookkeeper/src/{demo,agent,rules,parse-utterance,metrics,audit}.ts`
+- `apps/bookkeeper/ui/index.html`
+- `apps/bookkeeper/fixtures/{vendor-an-dong,e-invoice-sample,pro-ke-khai-upsell}.json`
 - `packages/core/src/money.ts` (1B threshold)
 - `packages/contracts/schemas/ledger-proposal.v0.1.schema.json`
 
 ## Fix note
-See `docs/review/BOOKKEEPER-FIX.md` if older judge packets still cite demo FAIL.
+See `docs/review/BOOKKEEPER-FIX.md`.
