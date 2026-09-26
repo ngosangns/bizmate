@@ -57,7 +57,7 @@ export function formatWeek2SeedMetricsBlock(m: Week2SeedMetrics): string[] {
  * Soft paywall VN copy when crossedThreshold — fixture upsell, no live billing.
  */
 export const PRO_KE_KHAI_PAYWALL_VN =
-  "💎 Pro kê khai (fixture): Vượt 1 tỷ — mở gói Pro để xuất HĐ + kê khai có căn cứ. Không thu phí trong demo · không billing live.";
+  "💎 Pro kê khai (fixture · 99.000₫/tháng hypothesis): Vượt 1 tỷ — mở gói Pro để xuất HĐ + kê khai có căn cứ. Sandbox/stub only · không billing live.";
 
 export function formatSoftPaywallLine(): string {
   return PRO_KE_KHAI_PAYWALL_VN;

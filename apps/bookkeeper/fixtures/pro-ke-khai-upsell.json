@@ -2,11 +2,42 @@
   "_meta": {
     "kind": "soft-paywall-fixture",
     "demo": true,
-    "note": "No live billing. Shown when crossedThreshold on demo seed."
+    "note": "No live billing. Shown when crossedThreshold. Prices HYPOTHESIS only. Uses @bizmate/billing plan ids."
   },
   "productName": "Pro kê khai",
+  "planId": "bookkeeper-pro",
   "trigger": "crossedThreshold",
-  "copyVn": "Vượt 1 tỷ — mở gói Pro để xuất HĐ + kê khai có căn cứ. Không thu phí trong demo · không billing live.",
-  "priceHypothesisVnd": null,
-  "billingLive": false
+  "tiers": [
+    {
+      "tier": "free",
+      "planId": "bookkeeper-free",
+      "name": "Free — nhật ký bán",
+      "priceVndMonthly": 0,
+      "priceLabel": "0₫/tháng (fixture)",
+      "features": [
+        "Nhật ký bán (voice/sổ stub)",
+        "YTD + cảnh báo ngưỡng 1B",
+        "Citations demo"
+      ]
+    },
+    {
+      "tier": "pro",
+      "planId": "bookkeeper-pro",
+      "name": "Pro kê khai",
+      "priceVndMonthly": 99000,
+      "priceLabel": "99.000₫/tháng (hypothesis — chưa đo ARPU)",
+      "features": [
+        "Tất cả Free",
+        "Hỗ trợ kê khai / e-invoice assist (fixture)",
+        "Soft unlock khi vượt 1B"
+      ]
+    }
+  ],
+  "copyVn": "Vượt 1 tỷ — mở gói Pro kê khai (99.000₫/tháng, hypothesis) để xuất HĐ + kê khai có căn cứ. Sandbox/stub only · không billing live · không cổng thuế.",
+  "priceVndMonthly": 99000,
+  "priceHypothesisVnd": 99000,
+  "priceHypothesisLabel": "99.000₫/tháng — HYPOTHESIS, chưa đo ARPU",
+  "billingLive": false,
+  "billingModeDefault": "offline_stub",
+  "cta": "Mở Pro (sandbox)"
 }

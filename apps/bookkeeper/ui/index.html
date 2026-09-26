@@ -122,9 +122,49 @@
       color: var(--ok);
       border: 2px solid #a7f3d0;
     }
+    button.pro {
+      width: 100%;
+      margin-top: 10px;
+      background: #0d6e4f;
+      color: #fff;
+      border: 2px solid #0a5a41;
+      font-size: 0.95rem;
+    }
     button:disabled {
       opacity: 0.55;
       cursor: default;
+    }
+    .pricing {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .tier {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      background: #fff;
+    }
+    .tier.pro-tier {
+      border-color: #fcd34d;
+      background: #fffbeb;
+    }
+    .tier .name { font-weight: 700; font-size: 0.85rem; margin: 0 0 4px; }
+    .tier .price { font-size: 0.8rem; color: var(--accent); font-weight: 700; margin: 0 0 6px; }
+    .tier ul { margin: 0; padding-left: 1.1em; font-size: 0.72rem; color: var(--muted); line-height: 1.35; }
+    .billing-out {
+      margin-top: 10px;
+      font-size: 0.78rem;
+      line-height: 1.4;
+      color: #92400e;
+      background: #fff7ed;
+      border: 1px dashed #fdba74;
+      border-radius: 8px;
+      padding: 8px;
+      display: none;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
     .citations {
       font-size: 0.82rem;
@@ -156,7 +196,7 @@
     </header>
 
     <div class="banner">
-      Demo offline — không kết nối cơ quan thuế. HITL tĩnh (seed); không ghi sổ thật.
+      Demo offline — không kết nối cơ quan thuế. HITL tĩnh (seed); không ghi sổ thật. Billing = sandbox/stub only.
     </div>
 
     <section class="card">
@@ -173,11 +213,30 @@
     </section>
 
     <section class="card" id="paywall" style="border-color:#fcd34d;background:#fffbeb;">
-      <h2 style="color:#b45309;">Pro kê khai (fixture)</h2>
-      <p class="proposal" style="margin:0;font-size:0.9rem;">
-        💎 Vượt 1 tỷ — mở gói <strong>Pro kê khai</strong> để xuất HĐ + kê khai có căn cứ.
-        <br /><span style="color:#92400e;font-size:0.8rem;">Không thu phí trong demo · không billing live.</span>
+      <h2 style="color:#b45309;">Free / Pro (fixture)</h2>
+      <div class="pricing">
+        <div class="tier">
+          <p class="name">Free</p>
+          <p class="price">0₫/tháng</p>
+          <ul>
+            <li>Nhật ký bán</li>
+            <li>Cảnh báo ngưỡng 1B</li>
+          </ul>
+        </div>
+        <div class="tier pro-tier">
+          <p class="name">Pro kê khai</p>
+          <p class="price">99.000₫/tháng*</p>
+          <ul>
+            <li>Kê khai / e-invoice assist</li>
+            <li>Unlock khi vượt 1B</li>
+          </ul>
+        </div>
+      </div>
+      <p class="proposal" style="margin:10px 0 0;font-size:0.82rem;color:#92400e;">
+        *Hypothesis — chưa đo ARPU · planId=<code>bookkeeper-pro</code> · không billing live · không cổng thuế.
       </p>
+      <button type="button" class="pro" id="btn-pro" aria-label="Mở Pro sandbox">Mở Pro (sandbox)</button>
+      <div class="billing-out" id="billing-out" aria-live="polite"></div>
     </section>
 
     <div class="actions">
@@ -199,11 +258,13 @@
     </footer>
   </div>
   <script>
-    /* Static demo HITL — no network. Seed numbers match CLI demo story. */
+    /* Static demo HITL — no network. Billing mirror of @bizmate/billing stub/stripe_test. */
     (function () {
       var status = document.getElementById("status");
       var refuse = document.getElementById("btn-refuse");
       var approve = document.getElementById("btn-approve");
+      var pro = document.getElementById("btn-pro");
+      var billingOut = document.getElementById("billing-out");
       var ytd = document.getElementById("ytd");
       var decided = false;
 
@@ -226,6 +287,32 @@
         ytd.textContent = "1.006.110.000₫";
         status.textContent = "✓ Đã Duyệt · YTD mới (demo seed)";
         status.style.color = "#047857";
+      });
+
+      pro.addEventListener("click", function () {
+        var t = Date.now().toString(36);
+        var r = Math.random().toString(36).slice(2, 8);
+        var sessionId = "cs_test_" + t + r;
+        var chargeId = "ch_stub_" + t + r;
+        var honestyStub =
+          "⚠️ STUB · Offline stub / cost-center nội bộ — không gọi cổng thanh toán / offline stub only";
+        var honestyStripe =
+          "⚠️ SANDBOX · Stripe TEST mode — không phải thanh toán thật / not live payment";
+        var url =
+          "https://checkout.stripe.com/c/pay/" + sessionId + "#fid_sandbox_fixture";
+        billingOut.style.display = "block";
+        billingOut.textContent =
+          honestyStub +
+          "\n" +
+          "stubCharge: " + chargeId + " · planId=bookkeeper-pro · 99.000₫/tháng (hypothesis)" +
+          "\n" +
+          honestyStripe +
+          "\n" +
+          "createCheckout(stripe_test): " + sessionId +
+          "\n" +
+          "url: " + url +
+          "\n" +
+          "NEVER live billing / NEVER live tax portal.";
       });
     })();
   </script>

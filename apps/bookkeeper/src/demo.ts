@@ -6,6 +6,11 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { createProposal } from "@bizmate/core";
+import {
+  createCheckout,
+  honestyBanner,
+  stubCharge,
+} from "@bizmate/billing";
 import { answerTaxQuestion, proposeLedgerEntry } from "./rules.js";
 import {
   commitApproved,
@@ -329,8 +334,36 @@ export function runDemoOnce(opts: DemoOptions = {}): DemoResult {
   }
 
   if (crossedThreshold) {
-    out("── Soft paywall (fixture, no billing) ──");
+    out("── Soft paywall + billing path (sandbox/stub) ──");
     out(formatSoftPaywallLine());
+    out(`planId=bookkeeper-pro · Free vs Pro · 99.000₫/tháng (hypothesis — chưa đo ARPU)`);
+    out(honestyBanner("offline_stub"));
+    const charge = stubCharge({
+      appId: "bookkeeper",
+      planId: "bookkeeper-pro",
+      amountDisplay: "99.000 ₫ / tháng (fixture · hypothesis)",
+    });
+    out(
+      `stubCharge: ${charge.chargeId} · ${charge.detail} · live=false · labeled=${charge.mode}`
+    );
+    const checkout = createCheckout({
+      appId: "bookkeeper",
+      planId: "bookkeeper-pro",
+      mode: "stripe_test",
+    });
+    out(checkout.honestyBanner);
+    out(
+      `createCheckout(stripe_test): session=${checkout.sessionId}` +
+        (checkout.url ? ` · url=${checkout.url}` : "") +
+        ` · ${checkout.detail}`
+    );
+    out("NEVER live billing / NEVER live tax portal.");
+    appendAudit(audit, {
+      type: "soft_paywall_shown",
+      utteranceId: "billing-path",
+      detail: `stubCharge ${charge.chargeId} + checkout ${checkout.sessionId} (sandbox)`,
+      ytdVnd: state.ytdRevenueVnd,
+    });
     out("");
   }
 
