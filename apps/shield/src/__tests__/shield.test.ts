@@ -313,3 +313,34 @@ describe("shield", () => {
     expect(v.action).toBe("block");
   });
 });
+
+
+describe("billing wire (BR2/BR3)", () => {
+  it("listPlans(shield) exposes Free / Family Care / Family Plus fixtures", async () => {
+    const { listPlans } = await import("@bizmate/billing");
+    const plans = listPlans("shield");
+    expect(plans.map((p) => p.id)).toEqual([
+      "shield-free",
+      "shield-family-care",
+      "shield-family-plus",
+    ]);
+    expect(plans.find((p) => p.id === "shield-family-care")?.priceDisplay).toMatch(
+      /99\.000/
+    );
+  });
+
+  it("createCheckout prints honesty and never claims live", async () => {
+    const { createCheckout, honestyBanner } = await import("@bizmate/billing");
+    const banner = honestyBanner("stripe_test");
+    expect(banner).toMatch(/SANDBOX|TEST/i);
+    expect(banner.toLowerCase()).toMatch(/not live|không phải thanh toán thật/);
+    const r = createCheckout({
+      appId: "shield",
+      planId: "shield-family-care",
+      mode: "stripe_test",
+    });
+    expect(r.ok).toBe(true);
+    expect(r.honestyBanner).toBe(banner);
+    expect(r.sessionId).toMatch(/^cs_test_/);
+  });
+});

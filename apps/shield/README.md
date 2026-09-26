@@ -96,6 +96,29 @@ npm run demo -w @bizmate/shield -- --once
 5. HUMAN OVERRIDE + FP SLA line.
 6. RESET REPLAY (skip with `--once`).
 
+
+## Business / pricing / payment honesty (BR1–BR3)
+
+Full write-up: [`docs/review/SHIELD-BUSINESS.md`](../../docs/review/SHIELD-BUSINESS.md).
+
+| Item | Fact |
+|------|------|
+| **Buyer** | Family B2C — child pays for elders. Sea = **distribution only**, not payer. |
+| **Plans** | `listPlans("shield")` → Free (1 elder) / Family Care **99k₫/mo** (2 elders + SMS) / Family Plus **199k₫/mo** (4 elders + priority). Fixture only. |
+| **Fixture** | `fixtures/family-plans.json` mirrors billing catalog. |
+| **Payment** | `@bizmate/billing` `createCheckout` (`stripe_test` or `offline_stub`). **Always** print `honestyBanner`. Never live payment. |
+| **Unit economics** | Demo-derived fixture prices + `demoSubscribeCount=1` only — **no invented ARR/ARPU**. |
+| **Risk engine** | Unchanged — rule-based. Billing is packaging only. |
+
+```bash
+npm run demo:shield
+npm run demo -w @bizmate/shield -- --subscribe --once
+# optional offline stub mode:
+npm run demo -w @bizmate/shield -- --subscribe --once --offline-stub
+```
+
+Demo ends with a **BILLING** section (pricing table + sandbox checkout CTA + honesty banner).
+
 ## Khoảng trống còn lại
 
 - Chưa nối kênh thật (SMS gateway / Zalo OA / QR scanner on-device).

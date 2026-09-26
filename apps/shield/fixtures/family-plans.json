@@ -1,0 +1,42 @@
+{
+  "honesty": "Fixture catalog only — not live pricing / not ARR. Mirrors @bizmate/billing listPlans(\"shield\").",
+  "buyer": "family B2C (child pays for elders)",
+  "seaRole": "distribution wedge only — not payer",
+  "currency": "VND",
+  "interval": "month",
+  "plans": [
+    {
+      "id": "shield-free",
+      "name": "Free",
+      "nameVi": "Miễn phí",
+      "priceVnd": 0,
+      "priceDisplay": "0 ₫ / tháng (fixture)",
+      "elders": 1,
+      "features": ["1 elder (ba/mẹ)", "Rule-based inbox scan", "Family alert on block"]
+    },
+    {
+      "id": "shield-family-care",
+      "name": "Family Care",
+      "nameVi": "Chăm sóc gia đình",
+      "priceVnd": 99000,
+      "priceDisplay": "99.000 ₫ / tháng (fixture)",
+      "elders": 2,
+      "features": ["2 elders", "SMS alert to child payer", "Backup 30s demo path"]
+    },
+    {
+      "id": "shield-family-plus",
+      "name": "Family Plus",
+      "nameVi": "Gia đình Plus",
+      "priceVnd": 199000,
+      "priceDisplay": "199.000 ₫ / tháng (fixture)",
+      "elders": 4,
+      "features": ["4 elders", "SMS alert + priority review queue", "Human override path"]
+    }
+  ],
+  "demoUnitEconomics": {
+    "note": "Demo-derived only — no invented live ARR/ARPU",
+    "fixturePlanPricesVnd": [0, 99000, 199000],
+    "demoSubscribeCount": 1,
+    "demoSubscribePlanId": "shield-family-care"
+  }
+}

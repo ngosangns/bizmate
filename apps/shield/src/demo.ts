@@ -13,6 +13,12 @@ import {
   type IncomingMessage,
   type ShieldVerdict,
 } from "./engine.js";
+import {
+  createCheckout,
+  honestyBanner,
+  listPlans,
+  type BillingMode,
+} from "@bizmate/billing";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const inbox = JSON.parse(
@@ -21,6 +27,11 @@ const inbox = JSON.parse(
 
 /** Kyle-S2: `--once` skips RESET REPLAY; default keeps full reset loop. */
 const ONCE = process.argv.includes("--once");
+/** BR3: `--subscribe` emphasizes checkout CTA (BILLING section always prints). */
+const SUBSCRIBE = process.argv.includes("--subscribe");
+const BILLING_MODE: BillingMode = process.argv.includes("--offline-stub")
+  ? "offline_stub"
+  : "stripe_test";
 
 function printHeader(): void {
   console.log(`\n🛡️  Shield demo — hộp thư của ${inbox.elderName}`);
@@ -143,6 +154,47 @@ function printAuditSummary(verdicts: ShieldVerdict[]): void {
   }
 }
 
+
+function printBillingSection(): void {
+  console.log("—— BILLING (BR2/BR3 · packaging only) ——");
+  console.log("  Buyer: family B2C (child pays). Sea = distribution only — not payer.");
+  console.log("  Source: @bizmate/billing listPlans(\"shield\") + fixtures/family-plans.json");
+  console.log("  Unit economics: fixture prices only — no invented live ARR/ARPU.");
+  console.log();
+  console.log("  —— pricing table (fixture) ——");
+  const plans = listPlans("shield");
+  for (const p of plans) {
+    console.log(
+      `  · ${p.name} (${p.id}) — ${p.priceDisplay} — ${p.features.join("; ")}`
+    );
+  }
+  console.log();
+  const planId = "shield-family-care";
+  const mode = BILLING_MODE;
+  console.log(
+    SUBSCRIBE
+      ? `  CTA: --subscribe → createCheckout(${planId}, mode=${mode})`
+      : `  CTA: demo subscribe (Family Care) → createCheckout(${planId}, mode=${mode})`
+  );
+  console.log(`  ${honestyBanner(mode)}`);
+  const checkout = createCheckout({
+    appId: "shield",
+    planId,
+    mode,
+  });
+  console.log(`  honestyBanner: ${checkout.honestyBanner}`);
+  console.log(
+    `  sessionId=${checkout.sessionId}  ok=${checkout.ok}  stub=${checkout.stub}`
+  );
+  if (checkout.url) console.log(`  url=${checkout.url}`);
+  else console.log(`  url=(none · offline stub)`);
+  console.log(`  detail: ${checkout.detail}`);
+  console.log(
+    `  demoSubscribeCount=1 (this CTA) · plan=${planId} · NOT live payment`
+  );
+  console.log();
+}
+
 clearAuditLog();
 printHeader();
 
@@ -189,3 +241,5 @@ if (ONCE) {
   printAuditSummary(replay);
   console.log();
 }
+
+printBillingSection();
