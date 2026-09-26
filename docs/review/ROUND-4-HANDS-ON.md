@@ -4,27 +4,24 @@
 > **Bắt buộc sau STACK-REBUILD 4/4 Verified.** Judge phải **dùng app đã rebuild** như user thật (UI/PWA/demo/billing), không docs-only.  
 > Tech R1 · Business R2 · Hands-on R3 giữ riêng — vòng này = stack-fit UX trên tip mới.
 
+## Judging kit (t19)
+
+| File | Role |
+|------|------|
+| [`ROUND-4-RUBRIC.md`](./ROUND-4-RUBRIC.md) | Criteria C1–C5 · scale 1–5 · PASS / CONDITIONAL / FAIL map |
+| [`ROUND-4-CHECKLISTS.md`](./ROUND-4-CHECKLISTS.md) | Per-app hands-on: happy + edge + billing honesty |
+| [`ROUND-4-FEEDBACK-FORM.md`](./ROUND-4-FEEDBACK-FORM.md) | Scores · notes · verdict · must-fix · Adv REPORT |
+| [`ROUND-4-ENV.md`](./ROUND-4-ENV.md) | VM/judge ports · smoke matrix · ENV gate |
+| [`UI-POLISH.md`](./UI-POLISH.md) | Parallel P0 polish tracking (4 Advs) |
+
 ## STACK GATE (prerequisite)
 
 **MET** · `docs/review/STACK-REBUILD.md` · 4/4 Orchestrator Verified.
 
 ## ENV GATE (prerequisite)
 
-_PENDING_ · `docs/review/ROUND-4-ENV.md` — VM/judge environment. **Không chấm hands-on UI until Orchestrator marks ENV green.**
-
-
-## Kit (Pstack/User — incoming)
-
-Expect under `docs/review/` (paths land when Pstack pushes):
-
-| Doc | Role |
-|-----|------|
-| `ROUND-4-RUBRIC.md` | Scoring rubric for rebuilt stacks |
-| `ROUND-4-CHECKLISTS.md` | Per-app use checklists |
-| `ROUND-4-FEEDBACK-FORM.md` | Judge fill **after** use |
-| `ROUND-4-ENV.md` | VM/judge env — **HOLD until green** |
-
-**Flow:** ENV green → USE (checklist) → fill FEEDBACK-FORM → Orchestrator routes CONDITIONAL/FAIL → Adv fix → Adv **REPORT** → judge re-score form + app → loop to gate.
+_PENDING_ · `docs/review/ROUND-4-ENV.md` — VM/judge environment.  
+**CLI demo+build** scoring OK khi PENDING. **Full UI walk (C2 deep)** chờ Orchestrator marks ENV green.
 
 ## Per-app tip + how to use
 
@@ -37,15 +34,21 @@ Expect under `docs/review/` (paths land when Pstack pushes):
 
 Pull tip per app (or latest main containing all four) before scoring. Honesty: stub/sandbox labeled; no fake live SPX/tax/pay.
 
-## Protocol (Pstack/User P0)
+## Protocol loop (Pstack/User P0)
 
-1. **ENV green** — follow `docs/review/ROUND-4-ENV.md` (VM/judge env).
-2. Judge **USE** rebuilt apps as real users (Next UI / PWA / Vite / demos / billing) — happy + 1 edge.
-3. Judge **fill** `ROUND-4-FEEDBACK-FORM.md` (when landed) + score PASS/CONDITIONAL/FAIL → matrix + optional `r4-hands-<judge>.md`.
-4. CONDITIONAL/FAIL → Orchestrator route Adv → **fix** → tip + prove.
-5. Adv **REPORT** to judges (before/after · tip · how to re-use) — not silent.
-6. Judges **score the report** too (clarity / honesty / re-use path) + re-use app if needed.
-7. Loop until **≥4/5 PASS · 0 FAIL** per app on both use-score and report-score as required.
+```
+USE (checklist) → score FEEDBACK-FORM → route Adv (if CONDITIONAL/FAIL)
+    → Adv fix + REPORT (before/after · tip SHA) → judge re-use → re-score
+    → repeat until gate
+```
+
+1. **ENV** — follow `ROUND-4-ENV.md` (green for full UI; PENDING = CLI/demo+build OK).
+2. Judge **USE** rebuilt apps — tick `ROUND-4-CHECKLISTS.md` (happy + edge + billing honesty).
+3. Judge **score** per `ROUND-4-RUBRIC.md` → fill `ROUND-4-FEEDBACK-FORM.md` → matrix + optional `r4-hands-<judge>.md`.
+4. **CONDITIONAL/FAIL** → Orchestrator route Adv → **fix** → tip + prove.
+5. Adv **REPORT** (form § Adv REPORT: before/after · tip SHA · how to re-use) — not silent.
+6. Judges **score the report** (C4) + re-use app if needed → new form pass.
+7. Loop until **≥4/5 PASS · 0 FAIL** per app (use-score + report-score as required).
 
 ## Score matrix
 
@@ -62,8 +65,8 @@ Pull tip per app (or latest main containing all four) before scoring. Honesty: s
 |-----|-------|--------|-----|-----------|
 | FloodOps | Lee | **CONDITIONAL** | `build:web` Next `./web` missing `.next/server/pages/_app.js` (App Router packaging) | _pending Adv_ |
 
-Routed → Adv · FloodOps · 2026-09-26 19:03 ICT. After fix: tip + prove + **REPORT** Lee (before/after) → Lee re-use.
-Also: UI-POLISH P0 parallel — `docs/review/UI-POLISH.md` (env HOLD remains).
+Routed → Adv · FloodOps · 2026-09-26 19:03 ICT. After fix: tip + prove + **REPORT** Lee (before/after) → Lee re-use.  
+Also: UI-POLISH P0 parallel — `docs/review/UI-POLISH.md` (ENV HOLD remains).
 
 ## GATE STATUS
 

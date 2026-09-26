@@ -1,56 +1,152 @@
-# ROUND-4 — Feedback form (một form / judge / app)
+# ROUND-4 — FEEDBACK FORM (template)
 
-Copy block dưới → `docs/review/r4-form-<judge>-<app>.md` hoặc paste Judging Room.
-
-```md
-## Meta
-- Judge: 
-- App: BizMate | Bookkeeper | Shield | FloodOps
-- Tip SHA: 
-- ENV: (link / ports từ ROUND-4-ENV.md)
-- Thời gian (Asia/Saigon): 
-
-## Checklist
-- [ ] Đã chạy checklist trong ROUND-4-CHECKLISTS.md (happy + edge)
-
-## Điểm (1–5) — xem ROUND-4-RUBRIC.md
-| Tiêu chí | Điểm | Ghi chú ngắn |
-|----------|------|----------------|
-| Chức năng |  |  |
-| UI/UX |  |  |
-| Code quality |  |  |
-| Báo cáo |  | (N/A vòng đầu nếu chưa có Adv REPORT) |
-| Độ hoàn thiện |  |  |
-| **Trung bình** |  |  |
-
-## Verdict
-- [ ] PASS
-- [ ] CONDITIONAL
-- [ ] FAIL
-
-## Must-fix (cho Adv) — numbered, actionable
-1. 
-2. 
-3. 
-
-## Nice-to-have
-- 
-
-## Honesty check
-- [ ] Không claim live SPX / thuế / payment production giả
-```
+> Copy section dưới → `docs/review/r4-hands-<judge>.md` hoặc paste vào packet.  
+> Rubric: `ROUND-4-RUBRIC.md` · Checklists: `ROUND-4-CHECKLISTS.md`.
 
 ---
 
-## Adv REPORT (sau khi Orchestrator route)
+## Meta
 
-```md
-## Adv REPORT — <app> · tip <SHA>
-- Before: (judge must-fix)
-- After: (đã làm gì)
-- Prove: demo/tests/UI EXIT 0 + paths
-- Re-use: lệnh/URL cho judge
-- Honesty: 
-```
+| Field | Value |
+|-------|-------|
+| **Judge** | _tên_ |
+| **Date** | 2026-09-26 Asia/Saigon |
+| **Tip SHA (HEAD hoặc per-app)** | `_sha_` |
+| **ENV** | green / PENDING (CLI-only) |
+| **Round** | ROUND-4 hands-on (stack rebuild) |
+| **Pass #** | 1st score / re-score after Adv REPORT |
 
-Judge **chấm lại app + chấm báo cáo** (tiêu chí Báo cáo) sau REPORT.
+---
+
+## Per-app scores
+
+Scale **1–5** (xem descriptors trong rubric). C4 = **N/A** nếu chưa có Adv REPORT.
+
+### BizMate (Vite)
+
+| Criterion | Score | Notes |
+|-----------|-------|-------|
+| C1 Chức năng | _/_ | |
+| C2 UI/UX | _/_ | |
+| C3 Code quality | _/_ | |
+| C4 Báo cáo (Adv) | _/_ \| N/A | |
+| C5 Độ hoàn thiện | _/_ | |
+| **Avg** | _._ | |
+| **Verdict** | PASS \| CONDITIONAL \| FAIL | |
+
+**Must-fix (Adv)** — chỉ khi CONDITIONAL/FAIL:
+
+1. _
+2. _
+
+**Evidence:** commands chạy · log path · screenshot notes
+
+---
+
+### Shield (PWA)
+
+| Criterion | Score | Notes |
+|-----------|-------|-------|
+| C1 Chức năng | _/_ | |
+| C2 UI/UX | _/_ | |
+| C3 Code quality | _/_ | |
+| C4 Báo cáo (Adv) | _/_ \| N/A | |
+| C5 Độ hoàn thiện | _/_ | |
+| **Avg** | _._ | |
+| **Verdict** | PASS \| CONDITIONAL \| FAIL | |
+
+**Must-fix (Adv):**
+
+1. _
+
+**Evidence:**
+
+---
+
+### Bookkeeper (Next + SQLite)
+
+| Criterion | Score | Notes |
+|-----------|-------|-------|
+| C1 Chức năng | _/_ | |
+| C2 UI/UX | _/_ | |
+| C3 Code quality | _/_ | |
+| C4 Báo cáo (Adv) | _/_ \| N/A | |
+| C5 Độ hoàn thiện | _/_ | |
+| **Avg** | _._ | |
+| **Verdict** | PASS \| CONDITIONAL \| FAIL | |
+
+**Must-fix (Adv):**
+
+1. _
+
+**Evidence:**
+
+---
+
+### FloodOps (Next + Leaflet)
+
+| Criterion | Score | Notes |
+|-----------|-------|-------|
+| C1 Chức năng | _/_ | |
+| C2 UI/UX | _/_ | |
+| C3 Code quality | _/_ | |
+| C4 Báo cáo (Adv) | _/_ \| N/A | |
+| C5 Độ hoàn thiện | _/_ | |
+| **Avg** | _._ | |
+| **Verdict** | PASS \| CONDITIONAL \| FAIL | |
+
+**Must-fix (Adv):**
+
+1. _
+
+**Evidence:**
+
+---
+
+## Board (fill after all 4)
+
+| App | Avg | Verdict | Must-fix P0? |
+|-----|-----|---------|---------------|
+| BizMate | | | Y/N |
+| Shield | | | Y/N |
+| Bookkeeper | | | Y/N |
+| FloodOps | | | Y/N |
+
+**Judge total:** _ PASS · _ CONDITIONAL · _ FAIL
+
+---
+
+## Adv REPORT section (Adv điền khi được route)
+
+> Bắt buộc khi judge = CONDITIONAL hoặc FAIL. Ping Orchestrator + judges — **không silent**.
+
+### App: ________
+
+| Field | Content |
+|-------|---------|
+| **Before** | Triệu chứng judge thấy (quote verdict + tip cũ) |
+| **After** | Đã sửa gì (files / behavior) |
+| **Tip SHA** | `_full_or_short_sha_` |
+| **Prove** | Commands EXIT 0 (demo / build / test) + log path |
+| **How to re-use** | Exact commands judge chạy lại |
+| **Honesty** | Stub/sandbox labels giữ? (Y/N + note) |
+| **UI-POLISH?** | Có gộp polish cùng tip không? → `UI-POLISH.md` |
+
+### Re-score (Judge điền sau REPORT)
+
+| Criterion | Before | After | Notes |
+|-----------|--------|-------|-------|
+| C1 | | | |
+| C2 | | | |
+| C3 | | | |
+| C4 | N/A hoặc _ | | chấm luôn REPORT |
+| C5 | | | |
+| **Avg / Verdict** | | **PASS \| CONDITIONAL \| FAIL** | |
+
+---
+
+## Loop reminder
+
+`USE (checklist) → score form → [CONDITIONAL/FAIL → Adv fix + REPORT] → re-use → re-score`  
+Lặp until **PASS** (avg ≥ 4, no FAIL criterion) hoặc Orchestrator đóng gate.
+
