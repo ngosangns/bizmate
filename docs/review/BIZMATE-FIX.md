@@ -7,7 +7,7 @@
 
 | Judge | Item | Before | After |
 |-------|------|--------|-------|
-| **Tuấn Anh** FAIL-as-hero | Pitch platform/Evoloop clone | Hero-shaped platform pitch | `PITCH-bizmate.md` ≤45s **meta**; stage hero = seller-finance (Bà Lan) or FloodOps |
+| **Tuấn Anh** FAIL-as-hero | Pitch platform/Evoloop clone | Hero-shaped platform pitch | `PITCH-bizmate.md` ≤45s **meta**; stage hero = **accounting / Bà Lan only** |
 | **Tuấn Anh / Kyle** | Web English JSON wall | Big workflow/verdict `<pre>` on first paint | VN story: persona Bà Lan, transcript, chips **Tạo→Chấm→Duyệt→Chạy**, score badge, Duyệt/Thu hồi, Reset seed; JSON in `<details>` only; `@media (max-width:480px)` |
 | **Kyle** P0 | Progress + reset | No generating/judging/running | Staged UI timeouts + **Reset seed** |
 | **Lee** | Audit approve/persist + version pin | White-box JSON only | `apps/runtime/src/audit.ts` in-memory + **JSONL** `apps/runtime/.audit/events.jsonl`; engine wires approve_ok/fail + persist_ok/fail; demo prints AUDIT SUMMARY; vitest coverage |
