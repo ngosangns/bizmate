@@ -1,7 +1,7 @@
 # FLOODOPS-STACK-PROVE — STACK-REBUILD
 
 > Adv · FloodOps · 2026-09-26 11:56 Asia  
-> Baseline tip: `fd56e9a` · Prove tip: `83c02fd`  
+> Baseline tip: `fd56e9a` · Prove tip: `6e4542c` (feat commit) · stamp commit follows
 > Orchestrator owns `STACK-REBUILD.md` status matrix — this is the prove packet only.
 
 ## Stack chosen (one-liner)
@@ -9,6 +9,10 @@
 **Next.js App Router ops dashboard + Leaflet HCMC ward map + event-driven Node worker + JSON order state (`data/orders.json`) + immutable audit JSONL** — engine stays pure TS (zero-LLM); billing via `@bizmate/billing` seats (`listPlans` / `createCheckout(offline_stub)`).
 
 Pick note: **JSON** for order state (sandbox-labeled) over SQLite for D-Day pragmatism; SQLite optional on roadmap. Audit remains append-only JSONL.
+
+## Tip SHA
+
+`6e4542c` — `feat(floodops): STACK-REBUILD Next.js ops dashboard + Leaflet + worker`
 
 ## Commands + EXIT 0 evidence
 
