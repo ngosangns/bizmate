@@ -31,7 +31,7 @@
 
 | App | Adv | Stack chosen | Tip SHA | Demo | Tests | Docs | Status |
 |-----|-----|--------------|---------|------|-------|------|--------|
-| Bookkeeper | Adv · Bookkeeper | **Next App Router + SQLite** (chosen; tRPC/API) | `fd56e9a` baseline | — | — | — | **In progress** |
+| Bookkeeper | Adv · Bookkeeper | **Next App Router + Route Handlers/Server Actions + better-sqlite3** (not tRPC/Prisma) | tip pending prove | pending | pending | README+BUSINESS+runbook+PROVE | **In progress** (Adv implementing) |
 | Shield | Adv · Shield | **PWA + Service Worker (+ Vite)** | `d751cef` | EXIT 0 | EXIT 0 | `SHIELD-STACK.md` | **Done** (Adv claim) |
 | FloodOps | Adv · FloodOps | **Next + Leaflet + Node worker** (chosen) | `fd56e9a` baseline | — | — | — | **In progress** |
 | BizMate | Adv · BizMate | **Vite + TS monorepo** (not Next) | `124e0f7` | EXIT 0 | EXIT 0 | `docs/review/BIZMATE-STACK.md` | **Done** (Adv claim) |

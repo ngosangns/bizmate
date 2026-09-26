@@ -3,19 +3,29 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./src/index.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "dev": "next dev --port 3010",
+    "build": "next build",
+    "start": "next start --port 3010",
     "test": "vitest run",
-    "demo": "tsx src/demo.ts",
-    "demo:ui": "node -e \"console.log(\\\"Mobile UI (offline): apps/bookkeeper/ui/index.html\\\"); console.log(\\\"Or: npx serve apps/bookkeeper/ui\\\");\""
+    "demo": "tsx src/lib/demo.ts",
+    "demo:ui": "next dev --port 3010"
   },
   "dependencies": {
-    "@bizmate/core": "0.1.0",
+    "@bizmate/billing": "0.1.0",
     "@bizmate/contracts": "0.1.0",
-    "@bizmate/billing": "0.1.0"
+    "@bizmate/core": "0.1.0",
+    "better-sqlite3": "^11.7.0",
+    "next": "^15.5.26",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "tsx": "^4.19.2",
     "typescript": "^5.6.3",
     "vitest": "^2.1.4"

@@ -32,6 +32,7 @@ import {
   type Week2SeedMetrics,
 } from "./metrics.js";
 import { isNoSaleUtterance, parseUtterance } from "./parse-utterance.js";
+import { openLedgerDb, DEFAULT_DB_PATH, type LedgerDb } from "./ledger-db.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -80,6 +81,8 @@ export interface DemoOptions {
   log?: (line: string) => void;
   fixturePath?: string;
   eInvoicePath?: string;
+  /** SQLite path. Default: :memory: when opts provided by tests; file DB for CLI. */
+  dbPath?: string;
 }
 
 export interface DemoResult {
@@ -94,14 +97,14 @@ export interface DemoResult {
 function loadFixture(fixturePath?: string): VendorFixture {
   const p =
     fixturePath ??
-    path.join(__dirname, "../fixtures/vendor-an-dong.json");
+    path.join(__dirname, "../../fixtures/vendor-an-dong.json");
   return JSON.parse(fs.readFileSync(p, "utf8")) as VendorFixture;
 }
 
 function loadEInvoice(eInvoicePath?: string): EInvoiceFixture | null {
   const p =
     eInvoicePath ??
-    path.join(__dirname, "../fixtures/e-invoice-sample.json");
+    path.join(__dirname, "../../fixtures/e-invoice-sample.json");
   try {
     return JSON.parse(fs.readFileSync(p, "utf8")) as EInvoiceFixture;
   } catch {
@@ -151,11 +154,47 @@ export function runDemoOnce(opts: DemoOptions = {}): DemoResult {
     process.argv.includes("--reset") ||
     process.env.BOOKKEEPER_RESET === "1";
 
-  if (reset) {
-    out(`↺ RESET (top) · seed YTD về ${vnd(fixture.ytdRevenueVnd)}`);
+  // SQLite ledger (better-sqlite3). CLI uses file DB; tests default :memory:.
+  const isCli =
+    opts.log === undefined &&
+    (opts.dbPath !== undefined || process.argv[1]?.includes("demo"));
+  const dbPath =
+    opts.dbPath ??
+    (isCli || process.env.BOOKKEEPER_DB
+      ? process.env.BOOKKEEPER_DB ?? DEFAULT_DB_PATH
+      : ":memory:");
+  let ledgerDb: LedgerDb | null = null;
+  try {
+    ledgerDb = openLedgerDb({
+      dbPath,
+      fixturePath: opts.fixturePath,
+      reset,
+    });
+  } catch (err) {
+    out(
+      `⚠️ SQLite open failed (${err instanceof Error ? err.message : err}) — falling back to in-memory only`
+    );
+    ledgerDb = null;
   }
 
-  let state = createVendorState(fixture.vendorId, fixture.ytdRevenueVnd);
+  if (reset) {
+    out(`↺ RESET (top) · seed YTD về ${vnd(fixture.ytdRevenueVnd)}`);
+    if (ledgerDb) out(`   SQLite ledger: ${ledgerDb.path} (better-sqlite3 · offline)`);
+  } else if (ledgerDb) {
+    out(`SQLite ledger: ${ledgerDb.path} (better-sqlite3 · offline)`);
+  }
+
+  let state = ledgerDb
+    ? ledgerDb.loadState(fixture.vendorId)
+    : createVendorState(fixture.vendorId, fixture.ytdRevenueVnd);
+  // Ensure vendor id matches fixture even if DB was empty-seeded
+  if (state.vendorId !== fixture.vendorId) {
+    state = createVendorState(fixture.vendorId, fixture.ytdRevenueVnd);
+  }
+  if (reset || !ledgerDb) {
+    state = createVendorState(fixture.vendorId, fixture.ytdRevenueVnd);
+    if (ledgerDb && reset) ledgerDb.saveState(state);
+  }
   const cites = fixture.officialDocs.map((d) => d.id);
   const titleById = Object.fromEntries(
     fixture.officialDocs.map((d) => [d.id, d.title])
@@ -197,6 +236,7 @@ export function runDemoOnce(opts: DemoOptions = {}): DemoResult {
 
     const ingested = ingestUtterance(state, u.id, u.text, cites);
     state = ingested.state;
+    if (ledgerDb) ledgerDb.saveState(state);
     const proposal = ingested.proposal;
 
     if (proposal.status === "rejected") {
@@ -246,15 +286,24 @@ export function runDemoOnce(opts: DemoOptions = {}): DemoResult {
       refused = true;
       refuseBeforeDuyetCount += 1;
       out("▶ TỪ CHỐI: ghi sổ khi chưa Duyệt");
+      const rejDetail =
+        err instanceof Error
+          ? err.message
+          : "Refuse to persist without a verified proposal";
       appendAudit(audit, {
         type: "approve_rejected",
         utteranceId: u.id,
-        detail:
-          err instanceof Error
-            ? err.message
-            : "Refuse to persist without a verified proposal",
+        detail: rejDetail,
         ytdVnd: state.ytdRevenueVnd,
       });
+      if (ledgerDb) {
+        ledgerDb.appendAudit({
+          type: "approve_rejected",
+          utteranceId: u.id,
+          detail: rejDetail,
+          ytdVnd: state.ytdRevenueVnd,
+        });
+      }
     }
     if (!refused) {
       throw new Error("Expected refuse path for unverified draft");
@@ -270,6 +319,15 @@ export function runDemoOnce(opts: DemoOptions = {}): DemoResult {
       detail: `YTD → ${state.ytdRevenueVnd}`,
       ytdVnd: state.ytdRevenueVnd,
     });
+    if (ledgerDb) {
+      ledgerDb.saveState(state);
+      ledgerDb.appendAudit({
+        type: "approve_committed",
+        utteranceId: u.id,
+        detail: `YTD → ${state.ytdRevenueVnd}`,
+        ytdVnd: state.ytdRevenueVnd,
+      });
+    }
     out(`✓ Đã duyệt · YTD mới: ${vnd(state.ytdRevenueVnd)}`);
     out("");
   }
@@ -384,6 +442,11 @@ export function runDemoOnce(opts: DemoOptions = {}): DemoResult {
   }
   out("");
 
+  if (ledgerDb) {
+    out(`✓ SQLite persisted · entries=${state.ledger.length} · path=${ledgerDb.path}`);
+    ledgerDb.close();
+  }
+
   return {
     state,
     lines,
@@ -407,5 +470,5 @@ function isCliEntry(): boolean {
 if (isCliEntry()) {
   const reset =
     process.argv.includes("--reset") || process.env.BOOKKEEPER_RESET === "1";
-  runDemoOnce({ reset });
+  runDemoOnce({ reset, dbPath: process.env.BOOKKEEPER_DB ?? DEFAULT_DB_PATH });
 }

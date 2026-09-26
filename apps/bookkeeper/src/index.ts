@@ -1,12 +1,13 @@
-export * from "./parse-utterance.js";
-export * from "./rules.js";
-export * from "./agent.js";
-export * from "./metrics.js";
-export * from "./audit.js";
-export { runDemoOnce } from "./demo.js";
+export * from "./lib/parse-utterance.js";
+export * from "./lib/rules.js";
+export * from "./lib/agent.js";
+export * from "./lib/metrics.js";
+export * from "./lib/audit.js";
+export * from "./lib/ledger-db.js";
+export { runDemoOnce } from "./lib/demo.js";
 export type {
   DemoOptions,
   DemoResult,
   VendorFixture,
   EInvoiceFixture,
-} from "./demo.js";
+} from "./lib/demo.js";

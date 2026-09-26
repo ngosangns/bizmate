@@ -1,0 +1,8 @@
+# SQLite ledger (seed on --reset / first run)
+data/*.db
+data/*.db-*
+.data/
+.next/
+out/
+dist/
+*.tsbuildinfo

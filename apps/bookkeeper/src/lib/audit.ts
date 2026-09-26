@@ -41,7 +41,7 @@ export function appendAudit(
 /** Format audit for CLI end — short lines, not JSON dump wall. */
 export function formatAuditBlock(log: AuditEvent[]): string[] {
   const lines = [
-    "── AUDIT (in-memory seed) ──",
+    "── AUDIT (SQLite + in-memory seed) ──",
     `  ${log.length} event(s) · includes approve_rejected on Từ chối-before-Duyệt`,
   ];
   for (const e of log) {

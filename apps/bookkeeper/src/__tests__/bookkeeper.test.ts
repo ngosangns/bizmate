@@ -11,14 +11,14 @@ import {
   fingerprintLedgerPayload,
   ingestUtterance,
   verifyLedgerProposal,
-} from "../agent.js";
-import { runDemoOnce } from "../demo.js";
+} from "../lib/agent.js";
+import { runDemoOnce } from "../lib/demo.js";
 import {
   buildWeek2SeedMetrics,
   formatWeek2SeedMetricsBlock,
-} from "../metrics.js";
-import { isNoSaleUtterance, parseUtterance } from "../parse-utterance.js";
-import { proposeLedgerEntry } from "../rules.js";
+} from "../lib/metrics.js";
+import { isNoSaleUtterance, parseUtterance } from "../lib/parse-utterance.js";
+import { proposeLedgerEntry } from "../lib/rules.js";
 
 function goodPayload(overrides: Partial<LedgerProposal> = {}): LedgerProposal {
   return {
@@ -183,6 +183,7 @@ describe("bookkeeper", () => {
     const captured: string[] = [];
     const result = runDemoOnce({
       reset: true,
+      dbPath: ":memory:",
       log: (line) => captured.push(line),
     });
 
@@ -220,6 +221,7 @@ describe("bookkeeper", () => {
     expect(text).toMatch(/approve_rejected/);
     expect(text).toMatch(/nhóm tiểu thương chợ An Đông/);
     expect(text).toMatch(/regex stub/i);
+    expect(text).toMatch(/better-sqlite3|SQLite/i);
     expect(text).not.toMatch(/"ytdBefore":/);
     expect(text).not.toMatch(/"crossedThreshold":/);
   });
