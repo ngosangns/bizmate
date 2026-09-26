@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bizmate.dev/schemas/workflow.v0.1.schema.json",
+  "title": "BizMateWorkflow",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "version", "domain", "name", "steps", "invariants"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "domain": { "type": "string", "enum": ["accounting", "sales"] },
+    "name": { "type": "string", "minLength": 1 },
+    "description": { "type": "string" },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "kind", "label"],
+        "properties": {
+          "id": { "type": "string" },
+          "kind": {
+            "type": "string",
+            "enum": ["intake", "classify", "compute", "emit", "approve", "persist"]
+          },
+          "label": { "type": "string" },
+          "requiresHuman": { "type": "boolean" },
+          "ruleRefs": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "expression", "severity"],
+        "properties": {
+          "id": { "type": "string" },
+          "expression": { "type": "string" },
+          "severity": { "type": "string", "enum": ["error", "warn"] }
+        }
+      }
+    },
+    "generation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "generation": { "type": "integer", "minimum": 0 },
+        "parentId": { "type": ["string", "null"] },
+        "feedbackDigest": { "type": "string" }
+      }
+    }
+  }
+}

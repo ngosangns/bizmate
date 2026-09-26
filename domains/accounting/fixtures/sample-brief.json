@@ -1,0 +1,5 @@
+{
+  "domain": "accounting",
+  "intent": "SME bookkeeping voucher flow for VN household business",
+  "constraints": ["amounts non-negative", "human approve before persist", "exemption threshold"]
+}

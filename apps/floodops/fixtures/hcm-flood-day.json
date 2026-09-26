@@ -1,0 +1,25 @@
+{
+  "city": "TP.HCM",
+  "wards": [
+    { "id": "q5-andong", "name": "Chợ An Đông", "floodCm": 45, "status": "flooded" },
+    { "id": "q1-bnghe", "name": "Bến Nghé", "floodCm": 5, "status": "clear" },
+    { "id": "q10-hoahung", "name": "Hòa Hưng", "floodCm": 30, "status": "flooded" },
+    { "id": "thu-duc", "name": "Thủ Đức", "floodCm": 0, "status": "clear" }
+  ],
+  "orders": [
+    { "id": "ORD-1001", "wardId": "q5-andong", "codVnd": 350000, "slaHoursLeft": 4 },
+    { "id": "ORD-1002", "wardId": "q1-bnghe", "codVnd": 120000, "slaHoursLeft": 8 },
+    { "id": "ORD-1003", "wardId": "q10-hoahung", "codVnd": 2_500_000, "slaHoursLeft": 2 },
+    { "id": "ORD-1004", "wardId": "thu-duc", "codVnd": 89000, "slaHoursLeft": 12 },
+    { "id": "ORD-1005", "wardId": "q5-andong", "codVnd": 50000, "slaHoursLeft": 1 }
+  ],
+  "events": [
+    { "type": "flood_alert", "wardId": "q5-andong", "floodCm": 45 },
+    { "type": "flood_alert", "wardId": "q10-hoahung", "floodCm": 30 },
+    { "type": "courier_cancel", "wardId": "q5-andong" }
+  ],
+  "policy": {
+    "autoRescheduleMaxCodVnd": 500000,
+    "refundRequiresHumanAboveVnd": 1000000
+  }
+}

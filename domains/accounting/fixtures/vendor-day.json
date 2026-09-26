@@ -1,0 +1,66 @@
+{
+  "eventId": "vendor-day-001",
+  "domain": "accounting",
+  "source": "voice-note",
+  "transcript": "Hôm nay bán 3 thùng nước mỗi thùng 2 triệu và 1 máy lạnh 15 triệu.",
+  "structured": {
+    "items": [
+      { "sku": "nuoc-thung", "qty": 3, "unitPriceVnd": 2000000 },
+      { "sku": "may-lanh", "qty": 1, "unitPriceVnd": 15000000 }
+    ],
+    "ytdRevenueVnd": 985000000
+  },
+  "workflow": {
+    "id": "wf-accounting-vendor-day",
+    "version": "0.1.0",
+    "domain": "accounting",
+    "name": "Vendor day bookkeeping",
+    "description": "Voice-note sale → ledger entry + 1B VND exemption threshold",
+    "steps": [
+      {
+        "id": "intake-sale",
+        "kind": "intake",
+        "label": "Accept structured sale from voice note"
+      },
+      {
+        "id": "compute-ledger",
+        "kind": "compute",
+        "label": "Sum sale and exemption status",
+        "ruleRefs": ["money.sumVnd", "money.remainingExemption", "money.crossesExemption"]
+      },
+      {
+        "id": "approve-persist",
+        "kind": "approve",
+        "label": "Human approve before ledger persist",
+        "requiresHuman": true
+      },
+      {
+        "id": "persist-ledger",
+        "kind": "persist",
+        "label": "Write ledger entry"
+      },
+      {
+        "id": "emit-status",
+        "kind": "emit",
+        "label": "Emit threshold alert if crossed"
+      }
+    ],
+    "invariants": [
+      {
+        "id": "inv-money-deterministic",
+        "expression": "saleTotalVnd == sum(items.qty * items.unitPriceVnd)",
+        "severity": "error"
+      },
+      {
+        "id": "inv-approve-before-persist",
+        "expression": "persist requires prior human approve",
+        "severity": "error"
+      }
+    ],
+    "generation": {
+      "generation": 1,
+      "parentId": null,
+      "feedbackDigest": "offline-fixture"
+    }
+  }
+}

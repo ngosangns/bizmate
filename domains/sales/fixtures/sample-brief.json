@@ -1,0 +1,5 @@
+{
+  "domain": "sales",
+  "intent": "Simple sales pipeline for SME quotes and deals",
+  "constraints": ["deal amount non-negative", "human approve before persist", "discount cap"]
+}

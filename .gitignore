@@ -1,0 +1,16 @@
+node_modules/
+dist/
+build/
+.next/
+.turbo/
+*.log
+.env
+.env.local
+.DS_Store
+coverage/
+*.tsbuildinfo
+.scratch/tmp/
+apps/*/.registry/*
+!apps/*/.registry/.gitkeep
+apps/*/node_modules/
+packages/*/node_modules/

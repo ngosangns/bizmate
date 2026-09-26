@@ -1,0 +1,248 @@
+:root {
+  color-scheme: dark;
+  --bg: #0f1419;
+  --panel: #1a2332;
+  --border: #2d3a4f;
+  --text: #e7ecf3;
+  --muted: #8b9bb4;
+  --accent: #5b9fd4;
+  --ok: #3ecf8e;
+  --warn: #e6b84d;
+  --fail: #e85d5d;
+  --mono: "SF Mono", "Fira Code", ui-monospace, monospace;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+#app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 3rem;
+}
+
+header {
+  margin-bottom: 1.75rem;
+}
+
+header h1 {
+  margin: 0 0 0.35rem;
+  font-size: 1.6rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+header p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: #243044;
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+section.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.1rem 1.2rem;
+  margin-bottom: 1rem;
+}
+
+section.panel h2 {
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.domain-pills {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.domain-pills button {
+  flex: 1;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #121a26;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.domain-pills button:hover {
+  border-color: var(--accent);
+}
+
+.domain-pills button.active {
+  border-color: var(--accent);
+  background: #1c2d44;
+  color: var(--accent);
+}
+
+pre.json {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  background: #0c1017;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  overflow: auto;
+  max-height: 280px;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: #c5d0e0;
+}
+
+.verdict-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.verdict-meta span strong {
+  color: var(--muted);
+  font-weight: 500;
+  margin-right: 0.35rem;
+}
+
+.passed {
+  color: var(--ok);
+  font-weight: 600;
+}
+
+.failed {
+  color: var(--fail);
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+}
+
+button.primary {
+  padding: 0.65rem 1.15rem;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
+  color: #0a1220;
+  font-weight: 650;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+button.primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+button.secondary {
+  padding: 0.65rem 1.15rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.status-pill {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.status-pill.approved {
+  color: var(--ok);
+}
+
+.step-list {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+}
+
+.step-list li {
+  display: flex;
+  gap: 0.6rem;
+  padding: 0.35rem 0;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  border-bottom: 1px solid #222b3a;
+}
+
+.step-list li:last-child {
+  border-bottom: none;
+}
+
+.tag-ok {
+  color: var(--ok);
+}
+
+.tag-fail {
+  color: var(--fail);
+}
+
+.ledger-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.65rem;
+  margin-top: 0.75rem;
+}
+
+.ledger-grid div {
+  background: #0c1017;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.65rem 0.75rem;
+}
+
+.ledger-grid dt {
+  margin: 0;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.ledger-grid dd {
+  margin: 0.2rem 0 0;
+  font-family: var(--mono);
+  font-size: 0.9rem;
+}
+
+.hint {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}

@@ -1,0 +1,21 @@
+{
+  "vendorId": "vendor-an-dong-fabric",
+  "displayName": "Bà Lan — sạp vải chợ An Đông",
+  "ytdRevenueVnd": 980_000_000,
+  "utterances": [
+    { "id": "u1", "text": "sáng nay bán 3 áo, mỗi cái 250 nghìn", "ts": "2026-09-26T08:15:00+07:00" },
+    { "id": "u2", "text": "chiều bán thêm 2 mét vải, 180 nghìn một mét", "ts": "2026-09-26T15:40:00+07:00" }
+  ],
+  "officialDocs": [
+    {
+      "id": "ND-141-2026",
+      "title": "Nghị định 141/2026/NĐ-CP (demo citation)",
+      "excerpt": "Hộ kinh doanh chuyển từ thuế khoán sang kê khai; ngưỡng doanh thu miễn thuế theo quy định."
+    },
+    {
+      "id": "LUAT-09-2026",
+      "title": "Luật 09/2026 (demo citation)",
+      "excerpt": "Ngưỡng doanh thu miễn thuế hộ kinh doanh: 1 tỷ đồng/năm (fixture demo)."
+    }
+  ]
+}

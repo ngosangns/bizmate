@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bizmate.dev/schemas/em-task.v0.1.schema.json",
+  "title": "BizMateEmTask",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "title", "owner", "status", "acceptance", "blockedBy"],
+  "properties": {
+    "id": { "type": "string" },
+    "title": { "type": "string" },
+    "owner": { "type": "string", "enum": ["mate", "judge", "runtime", "web", "em", "human"] },
+    "status": { "type": "string", "enum": ["todo", "in_progress", "blocked", "done", "cancelled"] },
+    "acceptance": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "blockedBy": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "hitl": { "type": "boolean" },
+    "pillar": { "type": "string" }
+  }
+}

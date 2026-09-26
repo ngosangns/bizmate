@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bizmate.dev/schemas/judge-verdict.v0.1.schema.json",
+  "title": "BizMateJudgeVerdict",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["workflowId", "passed", "score", "findings", "mode"],
+  "properties": {
+    "workflowId": { "type": "string" },
+    "passed": { "type": "boolean" },
+    "score": { "type": "number", "minimum": 0, "maximum": 100 },
+    "mode": { "type": "string", "enum": ["offline", "live"] },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["severity", "code", "message"],
+        "properties": {
+          "severity": { "type": "string", "enum": ["error", "warn", "info"] },
+          "code": { "type": "string" },
+          "message": { "type": "string" },
+          "path": { "type": "string" }
+        }
+      }
+    },
+    "highLevelSummary": { "type": "string" }
+  }
+}

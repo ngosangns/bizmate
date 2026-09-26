@@ -1,0 +1,32 @@
+{
+  "id": "wf-acct-bad-no-approve",
+  "version": "0.1.0",
+  "domain": "accounting",
+  "name": "Invoice persist without approve",
+  "description": "Bad draft that persists money to ledger without human approve",
+  "steps": [
+    {
+      "id": "intake-invoice",
+      "kind": "intake",
+      "label": "Intake vendor invoice"
+    },
+    {
+      "id": "compute-tax",
+      "kind": "compute",
+      "label": "Compute tax amount",
+      "ruleRefs": ["vn-vat-10"]
+    },
+    {
+      "id": "persist-ledger",
+      "kind": "persist",
+      "label": "Persist money to ledger"
+    }
+  ],
+  "invariants": [
+    {
+      "id": "inv-threshold",
+      "expression": "amount_vnd <= threshold",
+      "severity": "warn"
+    }
+  ]
+}

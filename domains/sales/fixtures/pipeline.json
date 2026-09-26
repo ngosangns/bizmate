@@ -1,0 +1,73 @@
+{
+  "eventId": "pipeline-001",
+  "domain": "sales",
+  "leads": [
+    {
+      "id": "lead-cafe-hoa",
+      "name": "Cafe Hoa",
+      "stage": "lead",
+      "amountVnd": 5000000,
+      "notes": "Wants POS + inventory for 2 branches"
+    },
+    {
+      "id": "lead-tap-hoa-minh",
+      "name": "Tạp hóa Minh",
+      "stage": "quote",
+      "amountVnd": 2500000,
+      "notes": "Quoted starter pack"
+    }
+  ],
+  "workflow": {
+    "id": "wf-sales-pipeline",
+    "version": "0.1.0",
+    "domain": "sales",
+    "name": "SME sales pipeline",
+    "description": "Advance leads lead → quote → order",
+    "steps": [
+      {
+        "id": "intake-leads",
+        "kind": "intake",
+        "label": "Load pipeline leads"
+      },
+      {
+        "id": "classify-stage",
+        "kind": "classify",
+        "label": "Classify current stage"
+      },
+      {
+        "id": "compute-advance",
+        "kind": "compute",
+        "label": "Advance stage one step",
+        "ruleRefs": ["sales.advanceStage"]
+      },
+      {
+        "id": "approve-order",
+        "kind": "approve",
+        "label": "Human approve when moving to order",
+        "requiresHuman": true
+      },
+      {
+        "id": "persist-pipeline",
+        "kind": "persist",
+        "label": "Persist updated pipeline"
+      },
+      {
+        "id": "emit-pipeline",
+        "kind": "emit",
+        "label": "Emit pipeline snapshot"
+      }
+    ],
+    "invariants": [
+      {
+        "id": "inv-stage-order",
+        "expression": "stage in [lead, quote, order] and only advances forward",
+        "severity": "error"
+      }
+    ],
+    "generation": {
+      "generation": 1,
+      "parentId": null,
+      "feedbackDigest": "offline-fixture"
+    }
+  }
+}

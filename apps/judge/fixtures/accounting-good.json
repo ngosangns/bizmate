@@ -1,0 +1,57 @@
+{
+  "id": "wf-acct-invoice-v1",
+  "version": "0.1.0",
+  "domain": "accounting",
+  "name": "Invoice booking with threshold approval",
+  "description": "Book vendor invoices, compute tax amounts in VND, require human approve above money threshold before persist",
+  "steps": [
+    {
+      "id": "intake-invoice",
+      "kind": "intake",
+      "label": "Intake vendor invoice"
+    },
+    {
+      "id": "classify-expense",
+      "kind": "classify",
+      "label": "Classify expense category"
+    },
+    {
+      "id": "compute-tax",
+      "kind": "compute",
+      "label": "Compute VAT and money totals",
+      "ruleRefs": ["vn-vat-10", "rounding-vnd"]
+    },
+    {
+      "id": "emit-journal",
+      "kind": "emit",
+      "label": "Emit draft journal entry"
+    },
+    {
+      "id": "approve-threshold",
+      "kind": "approve",
+      "label": "Human approve when amount exceeds threshold",
+      "requiresHuman": true
+    },
+    {
+      "id": "persist-ledger",
+      "kind": "persist",
+      "label": "Persist to ledger"
+    }
+  ],
+  "invariants": [
+    {
+      "id": "inv-threshold",
+      "expression": "amount_vnd <= threshold OR approved == true",
+      "severity": "error"
+    },
+    {
+      "id": "inv-money-balance",
+      "expression": "debit_total == credit_total",
+      "severity": "error"
+    }
+  ],
+  "generation": {
+    "generation": 0,
+    "parentId": null
+  }
+}

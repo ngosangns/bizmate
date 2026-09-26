@@ -1,0 +1,34 @@
+{
+  "elderName": "Ông Minh",
+  "familyContact": "con gái Hương (+84…)",
+  "messages": [
+    {
+      "id": "m1",
+      "channel": "sms",
+      "from": "Vietcombank",
+      "body": "TK của quý khách bất thường. Nhấn link http://vcb-secure-login.xyz để xác minh ngay hoặc bị khóa.",
+      "meta": { "senderSpoof": true }
+    },
+    {
+      "id": "m2",
+      "channel": "zalo",
+      "from": "Cháu nội (deepfake voice note)",
+      "body": "[voice] Bà ơi cháu bị tai nạn, chuyển gấp 20 triệu giúp cháu qua số này",
+      "meta": { "deepfakeScore": 0.97, "knownContactMismatch": true }
+    },
+    {
+      "id": "m3",
+      "channel": "qr",
+      "from": "shipper",
+      "body": "Quét QR nhận hoàn tiền đơn Shopee",
+      "meta": { "qrBlacklisted": true }
+    },
+    {
+      "id": "m4",
+      "channel": "sms",
+      "from": "Con gái Hương",
+      "body": "Ba nhớ uống thuốc huyết áp nhé, chiều con ghé.",
+      "meta": {}
+    }
+  ]
+}
