@@ -13,7 +13,7 @@ Keep stub/sandbox labels. No fake live SPX / tax / payment. Shared `@bizmate/con
 
 | App | Adv | Current UI | Polish target | Tip SHA | Demo | Build | Tests | Docs | Status |
 |-----|-----|------------|---------------|---------|------|-------|-------|------|--------|
-| BizMate | Adv · BizMate | Vite SPA `apps/web` | Tailwind + shadcn-style (hand-roll) · story + billing **Giá** panel | 5da6e5b | ☑ | ☑ | ☑ demo:offline | ☑ `BIZMATE-UI-POLISH.md` | **Prove filed** |
+| BizMate | Adv · BizMate | Vite SPA `apps/web` | Tailwind + shadcn-style (hand-roll) · story + billing **Giá** panel | d2ca575 | ☑ | ☑ | ☑ demo:offline | ☑ `BIZMATE-UI-POLISH.md` | **Prove filed** |
 | Bookkeeper | Adv · Bookkeeper | Next App Router | Tailwind + shadcn/Radix · HITL Duyệt/Từ chối · ledger cards | — | ☐ | ☐ | ☐ | ☐ | **In progress** |
 | Shield | Adv · Shield | PWA + Vite `:5174` | Tailwind + a11y elder/family · SW notifs labeled · Care CTA | — | ☐ | ☐ | ☐ | ☐ | **In progress** |
 | FloodOps | Adv · FloodOps | Next + Leaflet `:3011` | Tailwind + shadcn · map/orders/billing · **fix Lee+Sid R4 `build:web`** first | — | ☐ | ☐ | ☐ | ☐ | **In progress** (+ R4 CONDITIONAL) |
