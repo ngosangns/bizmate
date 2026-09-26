@@ -3,7 +3,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
   root: ".",
   server: {
-    host: true, // 0.0.0.0 — judges on 127.0.0.1 and localhost both work (:5173)
+    host: true, // R5 Adv tip — 0.0.0.0 so 127.0.0.1 and localhost both work (:5173)
     port: 5173,
     strictPort: true,
   },
