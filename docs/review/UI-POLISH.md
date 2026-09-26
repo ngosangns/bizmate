@@ -14,7 +14,7 @@ Keep stub/sandbox labels. No fake live SPX / tax / payment. Shared `@bizmate/con
 | App | Adv | Current UI | Polish target | Tip SHA | Demo | Build | Tests | Docs | Status |
 |-----|-----|------------|---------------|---------|------|-------|-------|------|--------|
 | BizMate | Adv · BizMate | Vite SPA `apps/web` | Tailwind + shadcn/Radix · story + billing **Giá** panel | `ddd5276` / `d2ca575` | ☑ | ☑ | ☑ | ☑ | **Verified** |
-| Bookkeeper | Adv · Bookkeeper | Next App Router | Tailwind + shadcn/Radix · HITL Duyệt/Từ chối · ledger cards | — | ☐ | ☐ | ☐ | ☐ | **In progress** |
+| Bookkeeper | Adv · Bookkeeper | Next App Router | Tailwind + shadcn/Radix · HITL Duyệt/Từ chối · ledger cards · `.next-build` race fix | `53c147f` | ☑ | ☑ | ☑ | ☑ | **Done (Adv claim)** |
 | Shield | Adv · Shield | PWA + Vite `:5174` | Tailwind + a11y elder/family · SW notifs labeled · Care CTA | `52972a1` | ☑ | ☑ | ☑ | ☑ | **Done (Adv claim)** |
 | FloodOps | Adv · FloodOps | Next + Leaflet `:3011` | Tailwind + shadcn · map/orders/billing · **fix Lee+Sid R4 `build:web`** first | — | ☐ | ☐ | ☐ | ☐ | **In progress** (+ R4 CONDITIONAL) |
 
@@ -45,3 +45,5 @@ Orchestrator → 4 Advs · 2026-09-26 ~19:03 ICT.
 ## Orchestrator verify log
 
 - **BizMate** · tip `ddd5276` · 2026-09-26 19:08 ICT · web build / demo:offline / runtime 12/12 EXIT 0 · honesty OK · **Verified**
+
+- **Bookkeeper** · tip `53c147f` · 2026-09-26 Asia/Saigon · build/test/demo EXIT 0 · curl :3010 HTTP 200 · Son R4 REPORT filed · **Adv claim** (await Orchestrator verify)
