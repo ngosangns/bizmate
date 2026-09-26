@@ -16,6 +16,27 @@ let progress: Progress = "ready";
 let seed = 1;
 /** Lightweight client-side audit mirror (optional Lee ask). */
 const webAudit: Array<{ action: string; at: string; detail: string }> = [];
+let lastRunMs: number | null = null;
+
+function demoDerivedMetricsHtml(): string {
+  const approveFail = webAudit.filter((e) => e.action === "approve_fail").length;
+  const approveOk = webAudit.filter((e) => e.action === "approve_ok").length;
+  const persistOk = webAudit.filter((e) => e.action === "persist_ok").length;
+  const ms = lastRunMs != null ? `${lastRunMs} ms` : "—";
+  return `
+    <section class="panel metrics-demo">
+      <h2>Chỉ số <span class="badge">demo-derived</span></h2>
+      <p class="hint">Từ audit phiên offline — không phải baseline field study.</p>
+      <div class="ledger-hero">
+        <div class="metric"><dt>approve_fail</dt><dd>${approveFail}</dd></div>
+        <div class="metric"><dt>approve_ok</dt><dd>${approveOk}</dd></div>
+        <div class="metric"><dt>persist_ok</dt><dd>${persistOk}</dd></div>
+        <div class="metric"><dt>Last run</dt><dd>${ms}</dd></div>
+      </div>
+      <p class="hint">Payer D-Day: <strong>Sea internal tooling</strong> · SME = roadmap.</p>
+    </section>`;
+}
+
 
 const app = document.querySelector("#app")!;
 
@@ -124,7 +145,7 @@ function render(): void {
   app.innerHTML = `
     <header>
       <h1>Biz Mate <span class="badge">offline</span></h1>
-      <p class="tagline">AI đề xuất → code kiểm → người quyết. Runtime không LLM trên tiền.</p>
+      <p class="tagline">AI đề xuất → code kiểm → người quyết. Mate = creation-time · runtime deterministic · registry = EM + human. Payer D-Day: Sea internal.</p>
     </header>
 
     ${personaBlock()}
@@ -138,6 +159,7 @@ function render(): void {
     </div>
 
     ${progressBanner()}
+    ${demoDerivedMetricsHtml()}
 
     <section class="panel">
       <h3>Domain</h3>
@@ -199,7 +221,7 @@ function render(): void {
     if (busy) return;
     approved = true;
     webAudit.push({
-      action: "approve_ok",
+      action: "human_approve",
       at: new Date().toISOString(),
       detail: `${workflow.id}@${workflow.version}`,
     });
@@ -231,6 +253,7 @@ function resetSeed(rerunProgress: boolean): void {
   approved = false;
   lastResult = null;
   webAudit.length = 0;
+  lastRunMs = null;
   progress = "ready";
   if (rerunProgress) {
     void simulateGenerateJudge();
@@ -254,14 +277,28 @@ async function runWithProgress(): Promise<void> {
   progress = "running";
   render();
   await sleep(350);
+  const t0 = performance.now();
   lastResult = runDomain(domain, approved);
-  webAudit.push({
-    action: lastResult.ok ? "persist_ok" : "approve_fail",
-    at: new Date().toISOString(),
-    detail: lastResult.ok
-      ? `${lastResult.workflowId} persisted`
-      : "gate blocked persist",
-  });
+  lastRunMs = Math.round(performance.now() - t0);
+  const at = new Date().toISOString();
+  if (!approved || !lastResult.ok) {
+    webAudit.push({
+      action: "approve_fail",
+      at,
+      detail: `${lastResult.workflowId} — gate blocked persist`,
+    });
+  } else {
+    webAudit.push({
+      action: "approve_ok",
+      at,
+      detail: `${lastResult.workflowId} human Duyệt`,
+    });
+    webAudit.push({
+      action: "persist_ok",
+      at,
+      detail: `${lastResult.workflowId} ledger/pipeline persisted`,
+    });
+  }
   progress = "done";
   render();
 }

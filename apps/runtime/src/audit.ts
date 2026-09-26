@@ -117,7 +117,7 @@ export function auditSummary(): AuditSummary {
 
 export function formatAuditSummary(summary: AuditSummary = auditSummary()): string {
   const lines = [
-    "AUDIT SUMMARY",
+    "AUDIT SUMMARY (demo-derived — offline seed, not field baseline)",
     `  total=${summary.total} approve_ok=${summary.approveOk} approve_fail=${summary.approveFail} persist_ok=${summary.persistOk} persist_fail=${summary.persistFail}`,
   ];
   for (const e of summary.events) {

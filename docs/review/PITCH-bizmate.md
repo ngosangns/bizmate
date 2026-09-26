@@ -16,8 +16,9 @@ Chat-LLM trên tiền/thuế không audit được. Biz Mate: **creation = agent
 
 | Probe | Answer |
 |-------|--------|
-| Who pays / WTP | Sea seller-finance tooling *or* SME add-on — **WTP chưa đo** |
-| Week 2 | 10 pilot users; metric candidates time-to-ledger / gate errors (TBD); rollback = unpin workflow version |
+| Who pays (D-Day) | **Sea internal tooling only** — SME add-on = roadmap (no “hoặc” on stage) |
+| Week 2 | 10 Sea pilot users; metrics from AUDIT JSONL (*demo-derived*); rollback = unpin |
+| Partnership 20s | Mate = creation-time; runtime deterministic; registry = EM + human |
 | Why VN | ND-141 / 1B threshold 2026 |
 
 ## Proof commands
@@ -33,3 +34,23 @@ No live tax/payments; WTP unmeasured; SLM stub.
 
 - Real parallel tasks: `.scratch/002–004` checked + EM board **7 done / 3 todo** (landed: em-001, mate-001, mate-002, judge-001, judge-002, runtime-001, web-001; planned HITL/evolve: human-001, mate-003, human-002).
 - **Stub callout:** `BIZMATE_MODE=live` Mate/Judge SLM remain heuristics — on stage we demo **offline rules**, not frontier SLM.
+
+
+## Demo-derived metrics (Sid-B2 — offline seed)
+
+From `npm run demo:offline` / `apps/runtime/.audit/events.jsonl` (**label: demo-derived**, not field study):
+
+| Metric | Last `npm run demo:offline` (demo-derived) |
+|--------|---------------------------------------------|
+| `approve_fail` | **1** (deny path before Duyệt) |
+| `approve_ok` | **1** (human approved) |
+| `persist_ok` | **1** (ledger) |
+| `persist_fail` | **0** |
+| Hot-path | CLI step list; web “Last run” ms (*demo-derived*) |
+
+Web: panel **Chỉ số demo-derived** mirrors session audit counts.
+
+
+## Partnership 20s (Sid-B3)
+
+Mate = **creation-time** Codex path. Runtime = **deterministic**. Registry owner = **EM + human**. Full line: `docs/hackathon/pitch/bizmate-partnership-20s.md`.

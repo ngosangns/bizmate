@@ -12,7 +12,7 @@
 | **Kyle** P0 | Progress + reset | No generating/judging/running | Staged UI timeouts + **Reset seed** |
 | **Lee** | Audit approve/persist + version pin | White-box JSON only | `apps/runtime/src/audit.ts` in-memory + **JSONL** `apps/runtime/.audit/events.jsonl`; engine wires approve_ok/fail + persist_ok/fail; demo prints AUDIT SUMMARY; vitest coverage |
 | **Lee** | EM money auto-done | `advancePolicy` allowed auto `done` on accounting | `touchesMoney` + force HITL when domain=accounting or title/tags money/ledger/tax; tests extended |
-| **Sidharth** GTM | Who pays / week 2 / why VN | Skeleton | Pitch + this doc: **one vertical** seller-finance; WTP hypothesis (unmeasured); week-2 **10** users / metric candidates / rollback; Codex evidence counts below |
+| **Sidharth** GTM | Who pays / week 2 / why VN | **Sid-B1–B3 Done** | D-Day payer = **Sea internal tooling** (SME roadmap); demo-derived AUDIT metrics; partnership 20s (Mate creation-time / runtime deterministic / EM+human registry) |
 | **Son Lê / Sidharth** | Codex 60s proof | Vague | Real counts: git commits, `.scratch` cards, EM board tasks, `AGENTS.md` |
 
 ## Files changed (this Adv pass)
@@ -28,7 +28,7 @@
 ## GTM slide (Sidharth) — honest placeholders
 
 1. **Vertical hero:** seller-finance accounting (Bà Lan / 1B threshold). Sales = backup domain in UI.
-2. **Who pays / WTP:** Hypothesis only — Sea internal tooling **or** SME add-on. No invented ARR/conversion.
+2. **Who pays (D-Day):** **Sea internal tooling only**. SME add-on = roadmap — never “hoặc” on stage. No invented ARR/conversion.
 3. **Week-2 pilot:** 10 users; metric candidates `time-to-ledger` / gate error rate (baselines **TBD**); owner Adv · BizMate; rollback = unpin workflow version in registry.
 4. **Why VN:** tax threshold 2026 local hook + builder talent.
 
@@ -67,3 +67,12 @@ BIZMATE_MODE=offline npm run judge -- --file <path-from-generate>
 - WTP / pilot metrics unmeasured
 - Live SLM stub; no multi-tenant production registry
 - Web progress states are simulated timeouts (offline demo)
+
+
+### Sid-B1–B3 (2026-09-26)
+
+| ID | Status | Artifact |
+|----|--------|----------|
+| Sid-B1 P0 | Done | `docs/hackathon/pitch/bizmate-wtp-slide.md` |
+| Sid-B2 P1 | Done | Web panel + `PITCH-bizmate.md` demo-derived table |
+| Sid-B3 P1 | Done | `docs/hackathon/pitch/bizmate-partnership-20s.md` |

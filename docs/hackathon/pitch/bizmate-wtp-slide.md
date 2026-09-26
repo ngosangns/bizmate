@@ -1,12 +1,13 @@
-# Slide — WTP hypothesis (BizMate / Sidharth B2)
+# Slide — Who pays? (BizMate / Sid-B1 P0)
 
-**Title:** Who pays? (hypothesis only)
+**D-Day primary payer (ONE):** **Sea internal tooling** — seller-finance / ops budget · Codex partnership path.
 
-| Option | Buyer | What they buy | Signal we will test |
-|--------|-------|---------------|---------------------|
-| **A — Sea internal** | Seller-finance / ops tooling budget inside Sea | Deterministic workflow runtime + HITL gates for accounting thresholds | Adoption inside 1 pilot squad (not ARR) |
-| **B — SME add-on** | Tiểu thương / bookkeeper partner | Offline-first ledger + 1B gate + Duyệt | Willingness to pay for *trust* vs free chat-LLM |
+| Field | Answer |
+|-------|--------|
+| **Who signs?** | Sea engineering / seller-finance ops owner (internal tooling) |
+| **What they buy** | Creation-time Mate + deterministic runtime + HITL registry gates |
+| **Roadmap (not D-Day)** | SME add-on / Bà Lan freemium — **after** week-2 pilot, not the “or” on stage |
 
-**Not claimed:** ARR, conversion %, CAC, revenue forecast.
+**Banned on stage:** “Sea *hoặc* SME”.  
 
-**Next:** week-2 pilot (see `bizmate-week2-pilot.md`) picks A vs B by qualitative interviews + Duyệt completion — still no invented money metrics.
+**Not claimed:** ARR, conversion %, CAC.
