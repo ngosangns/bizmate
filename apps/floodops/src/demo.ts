@@ -222,7 +222,7 @@ console.log(
   "   Who pays: ops org / Express-analog internal budget (champion) — not live SPX pay."
 );
 console.log(
-  `   Value sketch (fixture): COD at-risk ${atRisk.toLocaleString("vi-VN")}₫ ≠ product payment.`
+  `   Value sketch (fixture): COD at-risk ${atRisk.toLocaleString("vi-VN")}₫ ≠ product invoice (fixture estimate vs ops seat charge).`
 );
 console.log("   Plans listPlans(\"floodops\"):");
 for (const p of floodPlans) {
@@ -246,7 +246,7 @@ const charge = stubCharge({
   appId: "floodops",
   planId: "floodops-site",
   costCenter: "SEA-FLOODOPS-OPS",
-  amountDisplay: "ops seat / site (fixture)",
+  amountDisplay: "1.500.000 ₫ / site / tháng (fixture · internal)",
 });
 console.log(`   stubCharge: ${charge.honestyBanner}`);
 console.log(

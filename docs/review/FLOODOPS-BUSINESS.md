@@ -46,8 +46,8 @@ Tiers (fixtures in `@bizmate/billing` → `listPlans("floodops")`) **and** print
 
 | Plan id | Name | Price display (fixture) | Notes |
 |---------|------|-------------------------|--------|
-| `floodops-site` | Per-site ops | ops seat / site (fixture) | D-Day primary — internal budget |
-| `floodops-wave` | Per-wave ops seat | ops seat / wave (fixture) | Optional wave-scoped seat |
+| `floodops-site` | Per-site ops | 1.500.000 ₫ / site / tháng (fixture · internal) | D-Day primary — internal budget |
+| `floodops-wave` | Per-wave ops seat | 500.000 ₫ / wave (fixture · internal) | Optional wave-scoped seat |
 
 Honesty on each plan: ops org internal budget stub — **không claim live SPX pay**.
 

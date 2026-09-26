@@ -21,8 +21,8 @@ Ai trả tiền? Internal cost-avoidance (COD loss + phí 2 chiều) — champio
 
 | Plan id | Name | Price (fixture) | Notes |
 |---------|------|-----------------|--------|
-| `floodops-site` | Per-site ops | ops seat / site | D-Day primary — Sea / Express-analog **internal budget** |
-| `floodops-wave` | Per-wave ops seat | ops seat / wave | Optional wave-scoped seat |
+| `floodops-site` | Per-site ops | 1.500.000 ₫ / site / tháng (fixture · internal) | D-Day primary — Sea / Express-analog **internal budget** |
+| `floodops-wave` | Per-wave ops seat | 500.000 ₫ / wave (fixture · internal) | Optional wave-scoped seat |
 
 Source of truth: `@bizmate/billing` → `listPlans("floodops")`. Demo section ④ prints tiers + honesty.
 
