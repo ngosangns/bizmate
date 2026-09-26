@@ -1,14 +1,19 @@
 /**
- * Browser-side mirror of runtime handlers — deterministic, uses @bizmate/core money.
+ * Thin browser adapter over @bizmate/runtime executeWorkflow.
+ * Keeps RunResult shape for the UI; no duplicated accounting/sales logic.
  */
+import type { Workflow } from "@bizmate/contracts";
 import {
-  assertNonNegativeVnd,
-  crossesExemption,
-  remainingExemption,
-  sumVnd,
-} from "@bizmate/core";
+  executeWorkflow,
+  type ExecutionResult,
+  type StepResult as RuntimeStepResult,
+} from "@bizmate/runtime";
 import type { Domain } from "./samples.js";
-import { pipelineFixture, vendorDayFixture, workflowFor } from "./samples.js";
+import {
+  pipelineFixture,
+  vendorDayFixture,
+  workflowFor,
+} from "./samples.js";
 
 export interface StepResult {
   stepId: string;
@@ -28,212 +33,63 @@ export interface RunResult {
   summary: Record<string, unknown>;
 }
 
-type Stage = "lead" | "quote" | "order";
-const ORDER: Stage[] = ["lead", "quote", "order"];
-
-function advance(stage: Stage): Stage | null {
-  const i = ORDER.indexOf(stage);
-  return i >= 0 && i < ORDER.length - 1 ? ORDER[i + 1]! : null;
-}
-
-function failRest(
-  steps: StepResult[],
-  remaining: Array<{ stepId: string; kind: string }>
-): void {
-  for (const r of remaining) {
-    steps.push({
-      stepId: r.stepId,
-      kind: r.kind,
-      ok: false,
-      skipped: true,
-      error: "skipped after prior failure",
-    });
-  }
-}
-
-function runAccounting(approved: boolean): RunResult {
-  const workflow = workflowFor("accounting");
-  const { structured } = vendorDayFixture;
-  const steps: StepResult[] = [];
-
-  steps.push({
-    stepId: "intake-sale",
-    kind: "intake",
-    ok: true,
-    output: { transcript: vendorDayFixture.transcript },
-  });
-
-  const lineTotals = structured.items.map((item) => {
-    assertNonNegativeVnd(item.unitPriceVnd);
-    return item.unitPriceVnd * item.qty;
-  });
-  const saleTotalVnd = sumVnd(lineTotals);
-  const ytdBefore = assertNonNegativeVnd(structured.ytdRevenueVnd);
-  const compute = {
-    saleTotalVnd,
-    ytdBeforeVnd: ytdBefore,
-    ytdAfterVnd: ytdBefore + saleTotalVnd,
-    remainingExemptionVnd: remainingExemption(ytdBefore + saleTotalVnd),
-    crossedExemption: crossesExemption(ytdBefore, saleTotalVnd),
-  };
-  steps.push({
-    stepId: "compute-ledger",
-    kind: "compute",
-    ok: true,
-    output: compute,
-  });
-
-  if (!approved) {
-    steps.push({
-      stepId: "approve-persist",
-      kind: "approve",
-      ok: false,
-      error: "Step approve-persist requires human approval",
-    });
-    failRest(steps, [
-      { stepId: "persist-ledger", kind: "persist" },
-      { stepId: "emit-status", kind: "emit" },
-    ]);
-    return {
-      workflowId: workflow.id,
-      domain: "accounting",
-      ok: false,
-      approved,
-      steps,
-      summary: { compute, persisted: false },
-    };
-  }
-
-  steps.push({
-    stepId: "approve-persist",
-    kind: "approve",
-    ok: true,
-    output: { approved: true },
-  });
-  const ledger = { id: "ledger-web-001", ...compute, persisted: true };
-  steps.push({
-    stepId: "persist-ledger",
-    kind: "persist",
-    ok: true,
-    output: ledger,
-  });
-  steps.push({
-    stepId: "emit-status",
-    kind: "emit",
-    ok: true,
-    output: { crossedExemption: compute.crossedExemption, ledger },
-  });
-
+function mapStep(s: RuntimeStepResult): StepResult {
   return {
-    workflowId: workflow.id,
-    domain: "accounting",
-    ok: true,
-    approved,
-    steps,
-    summary: { ledger },
+    stepId: s.stepId,
+    kind: s.kind,
+    ok: s.ok,
+    skipped: s.skipped,
+    output: s.output,
+    error: s.error,
   };
 }
 
-function runSales(approved: boolean): RunResult {
-  const workflow = workflowFor("sales");
-  const steps: StepResult[] = [];
-
-  steps.push({
-    stepId: "intake-leads",
-    kind: "intake",
-    ok: true,
-    output: { count: pipelineFixture.leads.length },
-  });
-  steps.push({
-    stepId: "classify-stage",
-    kind: "classify",
-    ok: true,
-    output: { domain: "sales" },
-  });
-
-  const advanced: Array<{ id: string; from: Stage; to: Stage }> = [];
-  const blocked: Array<{ id: string; reason: string }> = [];
-  const leads = pipelineFixture.leads.map((lead) => {
-    const to = advance(lead.stage);
-    if (!to) {
-      blocked.push({ id: lead.id, reason: "already at order" });
-      return { ...lead };
+/** Map ExecutionResult.finalState → UI summary (ledger / compute / leads). */
+function summaryFrom(exec: ExecutionResult, domain: Domain): Record<string, unknown> {
+  const s = exec.finalState;
+  if (domain === "accounting") {
+    if (s.ledger) {
+      return { ledger: s.ledger, compute: s.compute };
     }
-    if (to === "order" && !approved) {
-      blocked.push({
-        id: lead.id,
-        reason: "human approval required before order",
-      });
-      return { ...lead };
-    }
-    advanced.push({ id: lead.id, from: lead.stage, to });
-    return { ...lead, stage: to };
-  });
-
-  steps.push({
-    stepId: "compute-advance",
-    kind: "compute",
-    ok: true,
-    output: { advanced, blocked },
-  });
-
-  // Matches runtime engine: approve step with requiresHuman needs the flag.
-  if (!approved) {
-    steps.push({
-      stepId: "approve-order",
-      kind: "approve",
-      ok: false,
-      error: "Step approve-order requires human approval",
-    });
-    failRest(steps, [
-      { stepId: "persist-pipeline", kind: "persist" },
-      { stepId: "emit-pipeline", kind: "emit" },
-    ]);
-    return {
-      workflowId: workflow.id,
-      domain: "sales",
-      ok: false,
-      approved,
-      steps,
-      summary: {
-        leads: pipelineFixture.leads,
-        advanced,
-        blocked,
-        persisted: false,
-      },
-    };
+    return { compute: s.compute, persisted: false };
   }
 
-  steps.push({
-    stepId: "approve-order",
-    kind: "approve",
-    ok: true,
-    output: { approved: true },
-  });
-  const pipeline = { leads, advanced, blocked, persisted: true };
-  steps.push({
-    stepId: "persist-pipeline",
-    kind: "persist",
-    ok: true,
-    output: pipeline,
-  });
-  steps.push({
-    stepId: "emit-pipeline",
-    kind: "emit",
-    ok: true,
-    output: pipeline,
-  });
+  const pipeline = s.pipeline as Record<string, unknown> | undefined;
+  if (pipeline) return { ...pipeline };
 
+  const compute = s.compute as
+    | {
+        leads?: unknown;
+        advanced?: unknown;
+        blocked?: unknown;
+      }
+    | undefined;
+  const event = s.event as { leads?: unknown } | undefined;
   return {
-    workflowId: workflow.id,
-    domain: "sales",
-    ok: true,
-    approved,
-    steps,
-    summary: pipeline,
+    leads: compute?.leads ?? event?.leads,
+    advanced: compute?.advanced,
+    blocked: compute?.blocked,
+    persisted: false,
+  };
+}
+
+function toRunResult(exec: ExecutionResult, domain: Domain): RunResult {
+  return {
+    workflowId: exec.workflowId,
+    domain,
+    ok: exec.ok,
+    approved: exec.approved,
+    steps: exec.steps.map(mapStep),
+    summary: summaryFrom(exec, domain),
   };
 }
 
 export function runDomain(domain: Domain, approved: boolean): RunResult {
-  return domain === "accounting" ? runAccounting(approved) : runSales(approved);
+  const workflow = workflowFor(domain) as Workflow;
+  const event = domain === "accounting" ? vendorDayFixture : pipelineFixture;
+  const exec = executeWorkflow(workflow, event, {
+    approved,
+    entryId: domain === "accounting" ? "ledger-web-001" : undefined,
+  });
+  return toRunResult(exec, domain);
 }
