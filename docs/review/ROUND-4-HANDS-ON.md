@@ -20,8 +20,8 @@
 
 ## ENV GATE (prerequisite)
 
-_PENDING_ · `docs/review/ROUND-4-ENV.md` — VM/judge environment.  
-**CLI demo+build** scoring OK khi PENDING. **Full UI walk (C2 deep)** chờ Orchestrator marks ENV green.
+**MET · GREEN** · `docs/review/ROUND-4-ENV.md` · tip `be24bb6` · 2026-09-26 19:06 ICT.  
+4 demos + builds EXIT 0 · UIs :5173 / :5174 / :3010 / :3011 HTTP 200. **Full UI walk (C2)** open.
 
 ## Per-app tip + how to use
 
@@ -70,7 +70,7 @@ Also: UI-POLISH P0 parallel — `docs/review/UI-POLISH.md` (ENV HOLD remains).
 
 ## GATE STATUS
 
-_OPEN (partial)_ — Sidharth CLI/demo+build filed. **ENV** (`ROUND-4-ENV.md`) vẫn PENDING cho full UI walk; panel khác chờ ENV green hoặc chạy demo+build như Sidharth.
+_OPEN_ — **ENV GREEN** (`ROUND-4-ENV.md` · tip `be24bb6`). Full UI walk open. FloodOps Lee CONDITIONAL (`build:web`) chờ Adv. TA/Kyle/Son còn. Gate ≥4/5 PASS · 0 FAIL.
 
 ### Sidharth filed
 `docs/review/r4-hands-sidharth.md` — **4/4 PASS** trên HEAD `55758e1` (demo+build EXIT 0 ×4). Runs `r4-sid-*.txt`.
