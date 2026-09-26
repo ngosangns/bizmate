@@ -1,4 +1,6 @@
 import "./style.css";
+
+/** Adv · BizMate R5 UX — ops-rail / chips / Chạy metrics / who-pays (Lee+Sid+TA+Kyle+Son). */
 import {
   type Domain,
   verdictFor,
