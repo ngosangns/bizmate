@@ -13,7 +13,7 @@
 |-------|---------|
 | **Before** | `npm run build:web -w @bizmate/floodops` = `next build ./web` → **EXIT 1**. Symptoms varied by stale `.next` / packaging: missing `pages/_app.js` (Lee), `PageNotFoundError /_document` / next-font-manifest (Sidharth · Son), missing `./ui/card\|badge\|separator` mid-polish (Tuấn Anh), build race with ENV `next dev` on same `.next` (Kyle probe). Sid walk `:3011` also saw **HTTP 500** on stale/broken tree. |
 | **After** | Packaging = build from Next project root + clean `.next` hygiene: `rm -rf web/.next && cd web && next build`. UI shards present under `web/components/ui/` (Card · Badge · Button · Separator). Leaflet map kept client-only. Stub/sandbox + COD≠invoice banners kept. Port **3011**. |
-| **Tip SHA** | `c93ea43` |
+| **Tip SHA** | `213d6ae` (push HEAD; fix commit `c93ea43`) |
 | **Prove** | `npm test -w @bizmate/floodops` · `npm run demo:floodops` · `npm run worker -w @bizmate/floodops` · `npm run build:web -w @bizmate/floodops` — all **EXIT 0**. Fresh `npm run dev -w @bizmate/floodops` → `:3011` **HTTP 200**. |
 | **How to re-use** | See commands below. Prefer clean build (script already `rm -rf web/.next`). If `:3011` looks stale after WIP, restart `npm run dev -w @bizmate/floodops`. |
 | **Honesty** | **Y** — SANDBOX/STUB · COD≠invoice · no fake live SPX · `@bizmate/billing` offline_stub · engine HUMAN+COD · §④ VND seats. |
@@ -37,7 +37,7 @@ npm run dev -w @bizmate/floodops         # :3011 — curl -s -o /dev/null -w '%{
 |-------|---------|
 | **Before** | R4 board: demo/worker PASS · `build:web` FAIL · `Cannot find module '.../web/.next/server/pages/_app.js'` after `next build ./web` (App Router-only). Log: `docs/review/runs/r4-lee-floodops.txt`. |
 | **After** | `cd web && next build` (+ clean `.next`) → EXIT 0. No fake `pages/_app.js`. |
-| **Tip SHA** | `c93ea43` |
+| **Tip SHA** | `213d6ae` |
 | **Prove** | build:web EXIT 0 · test 24/24 · demo · worker |
 | **How to re-use** | commands above |
 | **Honesty** | Y |
@@ -62,7 +62,7 @@ npm run dev -w @bizmate/floodops         # :3011 — curl -s -o /dev/null -w '%{
 |-------|---------|
 | **Before** | Re-check `build:web` EXIT 1 · `PageNotFoundError: /_document` / next-font-manifest (same packaging class as Lee). Stale capture that once said EXIT 0 discarded. Walk `:3011` → HTTP 500 on broken/stale tree. Logs: `r4-sid-floodops-build-recheck.txt`. |
 | **After** | Clean `rm -rf web/.next && cd web && next build` EXIT 0 · fresh dev `:3011` HTTP 200. |
-| **Tip SHA** | `c93ea43` |
+| **Tip SHA** | `213d6ae` |
 | **Prove** | build + HTTP 200 + demo/worker |
 | **How to re-use** | commands above · restart dev if `.next` stale |
 | **Honesty** | Y · COD≠invoice / who-pays CLI kept |
@@ -87,7 +87,7 @@ npm run dev -w @bizmate/floodops         # :3011 — curl -s -o /dev/null -w '%{
 |-------|---------|
 | **Before** | `build:web` FAIL · missing `./ui/card` · `./ui/badge` · `./ui/separator` (half-polish imports without files). Tip noted `b54a2d8`. Log: `r4-tuananh-floodops-build.txt`. |
 | **After** | Real components at `apps/floodops/web/components/ui/{card,badge,button,separator}.tsx` · build EXIT 0. |
-| **Tip SHA** | `c93ea43` |
+| **Tip SHA** | `213d6ae` |
 | **Prove** | build resolves ui/* · test/demo/worker |
 | **How to re-use** | commands above |
 | **Honesty** | Y |
@@ -112,7 +112,7 @@ npm run dev -w @bizmate/floodops         # :3011 — curl -s -o /dev/null -w '%{
 |-------|---------|
 | **Before** | `build:web` EXIT 1 under concurrent ENV `next dev` writing same `web/.next` (ENOENT pages-manifest / intermittent). Probe logs under `docs/review/runs/r4-kyle-*` when present. |
 | **After** | Hygiene: script **always** `rm -rf web/.next` before `cd web && next build`. Bookkeeper lesson applied. |
-| **Tip SHA** | `c93ea43` |
+| **Tip SHA** | `213d6ae` |
 | **Prove** | two clean builds EXIT 0 when no mid-rm race from other agents |
 | **How to re-use** | commands above · avoid parallel `next build` + deleting `.next` from another shell |
 | **Honesty** | Y |
@@ -137,7 +137,7 @@ npm run dev -w @bizmate/floodops         # :3011 — curl -s -o /dev/null -w '%{
 |-------|---------|
 | **Before** | `build:web` EXIT 1 · App Router /404 Html / `_document` class error on tip `687e652` (same packaging / stale `.next` family). |
 | **After** | `rm -rf web/.next && cd web && next build` EXIT 0. |
-| **Tip SHA** | `c93ea43` |
+| **Tip SHA** | `213d6ae` |
 | **Prove** | build:web · test · demo · worker |
 | **How to re-use** | commands above |
 | **Honesty** | Y |
