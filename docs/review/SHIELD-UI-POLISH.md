@@ -2,7 +2,7 @@
 
 > Adv · Shield · 2026-09-26 Asia/Saigon  
 > Matrix: [`UI-POLISH.md`](./UI-POLISH.md)  
-> Baseline tip: `be24bb6` · Stack tip Verified: `d751cef` · **UI-POLISH tip: `2d95eb6`** (filled after push)
+> Baseline tip: `be24bb6` · Stack tip Verified: `d751cef` · **UI-POLISH tip: `52972a1`** (filled after push)
 
 ## Stack picks
 
@@ -56,7 +56,7 @@ npm run build -w @bizmate/shield   # tsc + vite PWA (Tailwind)
 | `npm run demo -w @bizmate/shield -- --once` | **0** | allow=1 flag=2 block=3 + BILLING honesty |
 | `npm run build -w @bizmate/shield` | **0** | tsc + vite `web/dist/` with Tailwind CSS |
 
-Evidence: `docs/review/runs/shield-ui-polish-2d95eb6.txt`  
+Evidence: `docs/review/runs/shield-ui-polish-52972a1.txt`  
 Screenshot (optional): `docs/review/runs/shield-ui-polish-preview.png`
 
 ## Docs touched

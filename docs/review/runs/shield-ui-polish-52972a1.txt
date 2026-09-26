@@ -1,6 +1,6 @@
 === Shield UI-POLISH evidence ===
 Date: Sat, 26 Sep 2026 12:10:37 +0000
-Tip SHA: 2d95eb6
+Tip SHA: 52972a1
 
 === npm run test -w @bizmate/shield ===
 
