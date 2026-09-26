@@ -1,22 +1,108 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { judgeMessage } from "./engine.js";
+import {
+  BLACKLIST_VERSION,
+  applyHumanOverride,
+  auditLog,
+  blacklistDomainsHash,
+  clearAuditLog,
+  judgeMessage,
+  type IncomingMessage,
+  type ShieldVerdict,
+} from "./engine.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const inbox = JSON.parse(
   fs.readFileSync(path.join(__dirname, "../fixtures/scam-inbox.json"), "utf8")
 );
 
-console.log(`\n🛡️  Shield demo — hộp thư của ${inbox.elderName}`);
-console.log(`Family alert → ${inbox.familyContact}\n`);
-
-for (const m of inbox.messages) {
-  const v = judgeMessage(m);
-  const icon = v.action === "block" ? "🚫" : v.action === "flag" ? "⚠️" : "✅";
-  console.log(`${icon} [${m.channel}] ${m.from}`);
-  console.log(`   ${m.body.slice(0, 80)}${m.body.length > 80 ? "…" : ""}`);
-  console.log(`   → ${v.action.toUpperCase()} (${v.risk}): ${v.reasons.join("; ") || "clean"}`);
-  if (v.familyAlert) console.log(`   📱 ${v.familyAlert}`);
-  console.log(`   💬 ${v.elderExplanation}\n`);
+function printHeader(): void {
+  console.log(`\n🛡️  Shield demo — hộp thư của ${inbox.elderName}`);
+  console.log(
+    `Payer: family B2C (con trả cho ba/mẹ). Sea/Shopee = distribution only — fake QR refund / phishing adjacent; no live SPX.`
+  );
+  console.log(`Family alert → ${inbox.familyContact}`);
+  if (inbox.trustedContacts?.length) {
+    console.log(`Trusted contacts → ${inbox.trustedContacts.join(", ")}`);
+  }
+  console.log(
+    `Blacklist ${BLACKLIST_VERSION} (hash=${blacklistDomainsHash()}) · mode=enforce`
+  );
+  console.log();
 }
+
+function runInboxPass(
+  label: string,
+  messages: IncomingMessage[]
+): ShieldVerdict[] {
+  console.log(`—— ${label} ——`);
+  const verdicts: ShieldVerdict[] = [];
+  const total = messages.length;
+  for (let i = 0; i < total; i++) {
+    const m = messages[i];
+    const step = i + 1;
+    const v = judgeMessage(m);
+    verdicts.push(v);
+    const icon = v.action === "block" ? "🚫" : v.action === "flag" ? "⚠️" : "✅";
+    console.log(`STEP ${step}/${total}  ${icon} [${m.channel}] ${m.from}`);
+    console.log(`   ${m.body.slice(0, 80)}${m.body.length > 80 ? "…" : ""}`);
+    if (m.meta?.deepfakeScore !== undefined) {
+      console.log(
+        `   deepfakeScore=fixture (upstream detector stub) value=${m.meta.deepfakeScore}`
+      );
+    }
+    console.log(
+      `   → ${v.action.toUpperCase()} (${v.risk}): ${v.reasons.join("; ") || "clean"}`
+    );
+    if (v.detector) console.log(`   detector: ${v.detector}`);
+    if (v.familyAlert) console.log(`   📱 ${v.familyAlert}`);
+    console.log(`   💬 ${v.elderExplanation}\n`);
+  }
+  return verdicts;
+}
+
+function printAuditSummary(): void {
+  const counts = { allow: 0, flag: 0, block: 0 };
+  for (const e of auditLog) {
+    counts[e.action]++;
+  }
+  console.log("—— AUDIT SUMMARY ——");
+  console.log(
+    `  blacklistVersion=${BLACKLIST_VERSION}  hash=${blacklistDomainsHash()}`
+  );
+  console.log(
+    `  allow=${counts.allow}  flag=${counts.flag}  block=${counts.block}  (total entries=${auditLog.length})`
+  );
+}
+
+clearAuditLog();
+printHeader();
+
+const messages = inbox.messages as IncomingMessage[];
+const verdicts = runInboxPass(`INBOX PASS 1 (${messages.length} messages)`, messages);
+
+printAuditSummary();
+
+// Example human override on a blocked message (false-positive story path)
+const blocked = verdicts.find((v) => v.action === "block");
+if (blocked) {
+  console.log("\n—— HUMAN OVERRIDE EXAMPLE (false positive → allow) ——");
+  console.log(`  Before: ${blocked.messageId} → ${blocked.action} (${blocked.risk})`);
+  console.log(`    reasons: ${blocked.reasons.join("; ")}`);
+  const overridden = applyHumanOverride(blocked, "allow", "Con gái Hương");
+  console.log(`  After:  ${overridden.messageId} → ${overridden.action} (${overridden.risk})`);
+  console.log(`    reasons: ${overridden.reasons.join("; ")}`);
+  console.log(`    💬 ${overridden.elderExplanation}`);
+}
+
+console.log("\n—— RESET ——");
+console.log(
+  `  To restart the 90s demo: clear auditLog + re-judge the same fixture (done below).`
+);
+console.log(`  CLI: npm run demo:shield   (idempotent offline replay)\n`);
+
+clearAuditLog();
+runInboxPass("RESET REPLAY (inbox from scratch)", messages);
+printAuditSummary();
+console.log();

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bizmate.dev/schemas/shield-verdict.v0.1.schema.json",
+  "title": "ShieldVerdict",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "messageId",
+    "risk",
+    "reasons",
+    "action",
+    "elderExplanation",
+    "explanationDraftSource",
+    "blacklistVersion"
+  ],
+  "properties": {
+    "messageId": { "type": "string" },
+    "risk": { "type": "string", "enum": ["safe", "warn", "block"] },
+    "reasons": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "action": { "type": "string", "enum": ["allow", "flag", "block"] },
+    "elderExplanation": { "type": "string" },
+    "familyAlert": { "type": "string" },
+    "explanationDraftSource": { "type": "string", "enum": ["template"] },
+    "blacklistVersion": { "type": "string" },
+    "blacklistHash": { "type": "string" },
+    "detector": { "type": "string", "enum": ["fixture"] },
+    "mode": { "type": "string", "enum": ["enforce", "shadow"] }
+  }
+}

@@ -1,6 +1,7 @@
 {
   "elderName": "Ông Minh",
   "familyContact": "con gái Hương (+84…)",
+  "trustedContacts": ["Con gái Hương", "Con trai Nam", "Cháu nội An"],
   "messages": [
     {
       "id": "m1",
@@ -28,6 +29,20 @@
       "channel": "sms",
       "from": "Con gái Hương",
       "body": "Ba nhớ uống thuốc huyết áp nhé, chiều con ghé.",
+      "meta": {}
+    },
+    {
+      "id": "m5",
+      "channel": "sms",
+      "from": "1900-xxxx",
+      "body": "CSKH Vietcombank gọi xác minh thông tin tài khoản của quý khách. Vui lòng nghe máy.",
+      "meta": {}
+    },
+    {
+      "id": "m6",
+      "channel": "zalo",
+      "from": "Ngân hàng hỗ trợ",
+      "body": "Quý khách vui lòng chia sẻ mã OTP vừa nhận để chúng tôi xác minh giao dịch.",
       "meta": {}
     }
   ]
