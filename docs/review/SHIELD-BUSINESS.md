@@ -65,3 +65,14 @@ Expect: all EXIT 0; pricing table + honesty banner visible; no live ARR claims.
 - Live Stripe / VN pay / real card charge
 - Seller KPI framing / Sea-as-payer pitch
 - Changing risk engine (stays rule-based)
+
+
+## Stack (STACK-REBUILD)
+
+**Chosen: PWA + Service Worker (+ Vite)** — not Expo.
+
+- Rule engine stays pure TS (`src/engine.ts` / `blacklist.ts`) shared by CLI `demo` and PWA UI.
+- Local notifications via SW / Notification API (`honesty: local-sw-stub`) — not remote push.
+- Optional on-device ML = `detector-stub.ts` labeled **fixture**.
+- Why not Expo: monorepo must prove `demo` + `test` EXIT 0 in Node/CI without Expo Go/simulator.
+- Prove packet: [`SHIELD-STACK.md`](./SHIELD-STACK.md) · matrix: [`STACK-REBUILD.md`](./STACK-REBUILD.md).

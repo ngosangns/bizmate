@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["vite/client"],
+    "paths": {
+      "@shield/engine": ["../src/engine.ts"],
+      "@shield/blacklist": ["../src/blacklist.ts"],
+      "@shield/notify": ["../src/notify.ts"],
+      "@shield/detector": ["../src/detector-stub.ts"]
+    }
+  },
+  "include": ["src/**/*", "../src/engine.ts", "../src/blacklist.ts", "../src/notify.ts", "../src/detector-stub.ts"]
+}

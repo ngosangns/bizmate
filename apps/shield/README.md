@@ -2,6 +2,29 @@
 
 > **Stage posture:** `30s backup · ba/mẹ mua Shopee` / `backup 30s · family B2C`. Shield is a **30s backup** demo (not the hero; not seller KPI). Lead with FloodOps / Bookkeeper / BizMate unless GTM is crystal-clear.
 
+## Stack choice — PWA + Service Worker (+ Vite), NOT Expo
+
+| Option | Why / why not |
+|--------|----------------|
+| **PWA + SW + Vite (chosen)** | Family installs to home screen; local notifications via Service Worker + Notification API; **monorepo proves `demo` + `test` EXIT 0 in Node/CI without Expo Go / iOS-Android simulator**. Rule engine stays pure TS shared by CLI demo and PWA UI. |
+| React Native / Expo | Better native push ceramics later — but needs Expo Go / simulator for prove path; breaks Offline/CI EXIT 0 gate for this hackathon track. |
+
+Prove packet: [`docs/review/SHIELD-STACK.md`](../../docs/review/SHIELD-STACK.md) · matrix: [`docs/review/STACK-REBUILD.md`](../../docs/review/STACK-REBUILD.md).
+
+### Layout
+
+```
+apps/shield/
+  src/engine.ts blacklist.ts   # shared rule core (CLI + PWA)
+  src/detector-stub.ts         # optional on-device ML stub — always labeled fixture
+  src/notify.ts                # local SW / Notification payload builders
+  src/demo.ts                  # offline CLI scam-inbox + billing (judges prove path)
+  web/                         # Vite PWA (elder/family UI + SW)
+    public/sw.js               # local notification stub (NOT remote push)
+    public/manifest.webmanifest
+  fixtures/                    # scam-inbox + family-plans
+```
+
 ## Who pays (ONE payer)
 
 **Primary payer = family (B2C).** Con/cháu trả subscription bảo vệ ba/mẹ — child pays for parents’ shield.
@@ -46,11 +69,12 @@ Mỗi entry trong `SCRIPT_PATTERNS` mang:
 
 - **Not Mate codegen:** Shield is a **rule engine + fixture score** (blacklist / patterns / meta stubs). Codex leverage = contracts + audit schema — **do not claim** Mate generated Shield verdicts or policy in this demo.
 
-
 - Demo opener bắt buộc (above-the-fold): `detector: fixture` + `deepfakeScore=fixture` + `HONESTY: deepfakeScore = fixture meta (not a live detector)`.
 - `deepfakeScore` trong fixture / `msg.meta` là **upstream detector stub**, không phải live ML. Engine gắn `detector: "fixture"` trên verdict + audit; machine reason ghi `[detector: fixture]`. Demo in `deepfakeScore=fixture (upstream detector stub)` trên m2.
+- Optional module `src/detector-stub.ts` = same honesty contract for PWA UI.
 - Elder / familyAlert copy luôn tiếng Việt thường, **không** lộ jargon / “Deepfake score 97%” / “fixture”.
 - On-device / PII: rules chạy local trên tin nhắn; không gửi nội dung lên cloud trong bản offline này.
+- **Local notifications** = Service Worker + Notification API stub (`honesty: local-sw-stub`) — **not** a remote push gateway / FCM.
 
 ## False-positive SLA + shadow policy
 
@@ -70,7 +94,7 @@ Mỗi entry trong `SCRIPT_PATTERNS` mang:
 
 Schema: `packages/contracts/schemas/shield-verdict.v0.1.schema.json` (required fields khớp `ShieldVerdict`).
 
-## Chạy demo offline
+## Chạy demo offline (CLI — judges / Orchestrator prove path)
 
 ```bash
 npm run demo -w @bizmate/shield
@@ -87,6 +111,21 @@ npm run demo -w @bizmate/shield -- --once
 - **Kyle-S1:** mỗi STEP = icon + pill + 💬 một câu elder; machine `reasons[]` chỉ trong **AUDIT SUMMARY**.
 - **Kyle-S3:** pill `STEP k/N · block|flag|allow` + `live allow=… flag=… block=…` chạy theo từng tin.
 
+## Chạy PWA (family UI + local notifications)
+
+```bash
+# Dev (Vite on :5174)
+npm run dev -w @bizmate/shield
+
+# Production build (tsc rule core + vite PWA)
+npm run build -w @bizmate/shield
+npm run preview -w @bizmate/shield
+```
+
+PWA UI: scam-inbox demo, elder VN copy, human override, Family Care sandbox checkout, **Bật thông báo local** → SW shows notification on BLOCK/FLAG (labeled `local-sw-stub`).
+
+Install: open preview URL → browser “Add to Home Screen” / Install app (manifest present).
+
 ## Script demo ~30s backup slot
 
 1. Opener: `30s backup · ba/mẹ mua Shopee` + `backup 30s · family B2C` + `detector: fixture` + honesty + Sea wedge + ENGINE not-Mate-codegen (no seller KPI).
@@ -95,7 +134,6 @@ npm run demo -w @bizmate/shield -- --once
 4. AUDIT SUMMARY (version + hash + deepfake=fixture + machine reasons[]).
 5. HUMAN OVERRIDE + FP SLA line.
 6. RESET REPLAY (skip with `--once`).
-
 
 ## Business / pricing / payment honesty (BR1–BR3)
 
@@ -124,6 +162,6 @@ Demo ends with a **BILLING** section (pricing table + sandbox checkout CTA + hon
 - Chưa nối kênh thật (SMS gateway / Zalo OA / QR scanner on-device).
 - Deepfake = fixture meta stub — chưa có model phát hiện giọng.
 - Blacklist thủ công; chưa sync threat-intel (có semver + hash để audit).
-- Chưa có UI / push notification thật tới người thân.
+- Local SW notifications only — chưa remote push / FCM.
 - Chưa persistence audit (in-memory module log).
 - Chưa cover đa ngôn ngữ ngoài tiếng Việt.
