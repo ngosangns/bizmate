@@ -31,5 +31,5 @@ No live tax/payments; WTP unmeasured; SLM stub.
 
 ## 60s Codex honesty (Son B7)
 
-- Real parallel tasks: `.scratch/002–004` checked + EM board statuses synced to landed offline work (see `CODEX-EVIDENCE-bizmate.md`).
+- Real parallel tasks: `.scratch/002–004` checked + EM board **7 done / 3 todo** (landed: em-001, mate-001, mate-002, judge-001, judge-002, runtime-001, web-001; planned HITL/evolve: human-001, mate-003, human-002).
 - **Stub callout:** `BIZMATE_MODE=live` Mate/Judge SLM remain heuristics — on stage we demo **offline rules**, not frontier SLM.

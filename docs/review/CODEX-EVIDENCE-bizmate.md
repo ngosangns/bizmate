@@ -6,7 +6,7 @@
 |----------|----------------|
 | `git rev-list --count HEAD` | **8** commits on `main` |
 | `.scratch/*.md` task cards | **5** (BizMate core: `001-template` … `004-runtime`; plus peer cards) |
-| EM `apps/em/board.json` | **10** tasks (Mate→Judge→Human→Runtime→Web) |
+| EM `apps/em/board.json` | **10** tasks — **7 landed (done)** / **3 planned HITL/evolve** (`em-001, mate-001, mate-002, judge-001, judge-002, runtime-001, web-001` vs `human-001, mate-003, human-002`) |
 | Constitution | `AGENTS.md` pillars + AI proposes → code verifies → human decides |
 | Contracts | Ajv schemas via `npm run validate:contracts` |
 | Parallel ownership | workspaces `apps/mate|judge|em|runtime|web` + `packages/contracts|core` |
@@ -30,3 +30,13 @@ edee3ab fix(shield): clear Round-1 CONDITIONAL — honesty, version, shadow, dem
 2. Point at `.scratch/002`–`004` + EM board = parallel Codex tasks.  
 3. `git log --oneline` = proof of iterate-after-judge (e.g. `cd03ae2` audit/web).  
 4. Live: `npm run demo:offline` deny→Duyệt→1B + AUDIT JSONL.
+
+
+## Landed vs planned (Son R1d — after board sync)
+
+| Bucket | N | IDs |
+|--------|--:|-----|
+| **Landed / done** | 7 | em-001, mate-001, mate-002, judge-001, judge-002, runtime-001, web-001 |
+| **Still todo (HITL / evolve)** | 3 | human-001, mate-003, human-002 |
+
+**60s line:** “7 Codex pillar tasks landed offline (mate/judge/runtime/web); 3 remain HITL publish + evolve. Stub fail: live SLM = heuristics.”
