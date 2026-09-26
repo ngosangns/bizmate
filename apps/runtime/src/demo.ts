@@ -14,6 +14,38 @@ import {
   formatUnpinBlast,
 } from "./audit.js";
 import { executeWorkflow } from "./engine.js";
+import {
+  honestyBanner,
+  listPlans,
+  stubCharge,
+} from "@bizmate/billing";
+
+/** Sidharth R3 hands-on: who-pays + cost-center stub on main demo:offline path. */
+function printBusinessReadyCli(): void {
+  const seaPlan = listPlans("bizmate").find((p) => p.id === "bizmate-sea-seat");
+  const charge = stubCharge({
+    appId: "bizmate",
+    planId: "bizmate-sea-seat",
+    costCenter: "SEA-INTERNAL-TOOLING",
+  });
+  console.log("--- BUSINESS-READY (demo-derived / sandbox honesty) ---");
+  console.log(
+    "Who pays (D-Day): Sea internal tooling — seller-finance / ops seat (SME = roadmap only)"
+  );
+  if (seaPlan) {
+    console.log(
+      `  Seat sketch: ${seaPlan.name} · ${seaPlan.priceDisplay} (${seaPlan.id})`
+    );
+  }
+  console.log(
+    `Cost-center stub: ${charge.detail} · chargeId=${charge.chargeId}`
+  );
+  console.log(`  ${charge.honestyBanner}`);
+  console.log(
+    "Giá / checkout → web UI (npm run dev:web) hoặc @bizmate/billing — không live pay"
+  );
+  console.log("");
+}
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturePath = path.resolve(
@@ -59,6 +91,7 @@ function main(): void {
   console.log(`exemption threshold: ${EXEMPTION_THRESHOLD_VND.toLocaleString("vi-VN")} VND`);
   console.log("");
 
+  printBusinessReadyCli();
   proveEmMoneyGate();
   console.log("");
 

@@ -22,7 +22,8 @@
   },
   "dependencies": {
     "@bizmate/contracts": "0.1.0",
-    "@bizmate/core": "0.1.0"
+    "@bizmate/core": "0.1.0",
+    "@bizmate/billing": "0.1.0"
   },
   "devDependencies": {
     "tsx": "^4.19.2",
