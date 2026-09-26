@@ -7,11 +7,11 @@ Implement `@bizmate/mate` so a domain brief (accounting / sales) becomes a workf
 mate
 
 ## Acceptance checklist
-- [ ] `validateWorkflow` passes for accounting + sales drafts
-- [ ] Every workflow has an `approve` step before `persist`
-- [ ] Offline fixtures load with `BIZMATE_MODE=offline` (no network)
-- [ ] `generation` metadata supports parentId for evolve gen+1
-- [ ] Unit tests cover happy path + missing-approve rejection path (via judge contract)
+- [x] `validateWorkflow` passes for accounting + sales drafts
+- [x] Every workflow has an `approve` step before `persist`
+- [x] Offline fixtures load with `BIZMATE_MODE=offline` (no network)
+- [x] `generation` metadata supports parentId for evolve gen+1
+- [x] Unit tests cover happy path + missing-approve rejection path (via judge contract)
 
 ## Blocked by
 - em-001 (MVP scope freeze)
@@ -27,3 +27,6 @@ mate
 ## Notes
 - Money/tax numbers come from `@bizmate/core` deterministic helpers — never from the model
 - Do not reintroduce dropped ideas (see `docs/product/DROPPED.md`)
+
+## Status
+- [x] Acceptance checked off against offline tree (2026-09-26 Adv · BizMate). Honest: live SLM/Mate live remain stubs.

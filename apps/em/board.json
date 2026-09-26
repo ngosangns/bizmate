@@ -1,6 +1,6 @@
 {
-  "goal": "Biz Mate MVP — offline generate → judge → approve → run for accounting + sales",
-  "updatedAt": "2026-09-26T11:07:14.376Z",
+  "goal": "Biz Mate MVP \u2014 offline generate \u2192 judge \u2192 approve \u2192 run for accounting + sales",
+  "updatedAt": "2026-09-26T11:23:20.126Z",
   "tasks": [
     {
       "id": "em-001",
@@ -10,7 +10,7 @@
       "pillar": "em",
       "acceptance": [
         "DEVELOPMENT_RULES MVP scope locked (accounting + sales)",
-        "Owner → deliverable → done-when table published",
+        "Owner \u2192 deliverable \u2192 done-when table published",
         "Offline demo path named in README"
       ],
       "blockedBy": []
@@ -19,7 +19,7 @@
       "id": "mate-001",
       "title": "Mate: generate accounting workflow from domain brief",
       "owner": "mate",
-      "status": "todo",
+      "status": "done",
       "pillar": "mate",
       "acceptance": [
         "Workflow JSON passes validateWorkflow",
@@ -28,13 +28,14 @@
       ],
       "blockedBy": [
         "em-001"
-      ]
+      ],
+      "doneNote": "Landed: offline generate accounting + approve-before-persist + tests (cd03ae2 era)."
     },
     {
       "id": "mate-002",
       "title": "Mate: generate sales pipeline workflow",
       "owner": "mate",
-      "status": "todo",
+      "status": "done",
       "pillar": "mate",
       "acceptance": [
         "Workflow JSON passes validateWorkflow",
@@ -43,28 +44,30 @@
       ],
       "blockedBy": [
         "em-001"
-      ]
+      ],
+      "doneNote": "Landed: sales generate + fixtures; UI marks sales as backup domain."
     },
     {
       "id": "judge-001",
       "title": "Judge: offline Laya rules + verdict schema",
       "owner": "judge",
-      "status": "todo",
+      "status": "done",
       "pillar": "judge",
       "acceptance": [
         "Verdict validates against judge-verdict schema",
-        "Missing human-approve step → fail",
+        "Missing human-approve step \u2192 fail",
         "Offline mode needs no network"
       ],
       "blockedBy": [
         "mate-001"
-      ]
+      ],
+      "doneNote": "Landed: offline Laya + missing-approve fail + schema tests."
     },
     {
       "id": "judge-002",
       "title": "Judge: review sales workflow draft",
       "owner": "judge",
-      "status": "todo",
+      "status": "done",
       "pillar": "judge",
       "acceptance": [
         "Verdict emitted for sales workflow",
@@ -74,7 +77,8 @@
       "blockedBy": [
         "mate-002",
         "judge-001"
-      ]
+      ],
+      "doneNote": "Landed: sales verdict path offline."
     },
     {
       "id": "human-001",
@@ -97,7 +101,7 @@
       "id": "runtime-001",
       "title": "Runtime: deterministic handlers + 1B VND threshold",
       "owner": "runtime",
-      "status": "todo",
+      "status": "done",
       "pillar": "runtime",
       "acceptance": [
         "Approved workflows execute without LLM",
@@ -106,13 +110,14 @@
       ],
       "blockedBy": [
         "human-001"
-      ]
+      ],
+      "doneNote": "Landed: demo:offline PASS + 1B + audit JSONL."
     },
     {
       "id": "web-001",
-      "title": "Web: offline demo UI generate → judge → approve → run",
+      "title": "Web: offline demo UI generate \u2192 judge \u2192 approve \u2192 run",
       "owner": "web",
-      "status": "todo",
+      "status": "done",
       "pillar": "web",
       "acceptance": [
         "vite build succeeds",
@@ -121,7 +126,8 @@
       ],
       "blockedBy": [
         "runtime-001"
-      ]
+      ],
+      "doneNote": "Landed: VN story UI + Reset + progress; vite build green."
     },
     {
       "id": "mate-003",
@@ -130,7 +136,7 @@
       "status": "todo",
       "pillar": "mate",
       "acceptance": [
-        "generation N→N+1 diff visible",
+        "generation N\u2192N+1 diff visible",
         "Parent id linked in workflow.generation",
         "Re-judge still passes offline"
       ],
@@ -156,5 +162,9 @@
         "mate-003"
       ]
     }
-  ]
+  ],
+  "statusLegend": {
+    "done": "Landed in tree + verified offline",
+    "todo": "Planned / HITL / evolve not yet claimed done"
+  }
 }

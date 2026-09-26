@@ -7,11 +7,11 @@ Implement `@bizmate/runtime` to execute **approved** workflows with no LLM on th
 runtime
 
 ## Acceptance checklist
-- [ ] Loads only registry-approved workflows
-- [ ] Threshold / exemption tests pass via `@bizmate/core` money helpers
-- [ ] `npm run demo:offline` prints ledger (or equivalent) without API keys
-- [ ] Rejects running drafts that lack human approval
-- [ ] Vitest covers happy path + threshold cross
+- [x] Loads only registry-approved workflows
+- [x] Threshold / exemption tests pass via `@bizmate/core` money helpers
+- [x] `npm run demo:offline` prints ledger (or equivalent) without API keys
+- [x] Rejects running drafts that lack human approval
+- [x] Vitest covers happy path + threshold cross
 
 ## Blocked by
 - human-001 (publish approve) — Runtime must not execute unapproved drafts
@@ -27,3 +27,6 @@ runtime
 ## Notes
 - Secrets never enter prompts; env via process only
 - No live tax authority or real payments in MVP
+
+## Status
+- [x] Acceptance checked off against offline tree (2026-09-26 Adv · BizMate). Honest: live SLM/Mate live remain stubs.

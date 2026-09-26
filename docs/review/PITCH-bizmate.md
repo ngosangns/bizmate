@@ -1,6 +1,6 @@
 # Biz Mate — Round 1 pitch (≤45s meta · hero = accounting only)
 
-> **BizMate = cách chúng ta build** (≤45s meta) — không chiếm stage như product hero.  
+> **BizMate = cách chúng ta build** (≤45s meta) — **không** chiếm 6' platform hero; sales chỉ backup trong UI.  
 > **Stage hero = accounting / Bà Lan only** (seller-finance · ngưỡng 1 tỷ).  
 > Trust proof: `npm run demo:offline` (deny → approve → crossed 1B + AUDIT).
 
@@ -27,3 +27,9 @@ Chat-LLM trên tiền/thuế không audit được. Biz Mate: **creation = agent
 ## Gaps
 
 No live tax/payments; WTP unmeasured; SLM stub.
+
+
+## 60s Codex honesty (Son B7)
+
+- Real parallel tasks: `.scratch/002–004` checked + EM board statuses synced to landed offline work (see `CODEX-EVIDENCE-bizmate.md`).
+- **Stub callout:** `BIZMATE_MODE=live` Mate/Judge SLM remain heuristics — on stage we demo **offline rules**, not frontier SLM.
