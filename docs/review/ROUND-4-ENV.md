@@ -9,7 +9,7 @@
 |-------|-------|
 | **Gate** | **GREEN** |
 | **Owner** | Orchestrator (box `/workspace/bizmate`) |
-| **Last check** | 2026-09-26 **19:06 ICT** |
+| **Last check** | 2026-09-26 **19:07 ICT** |
 | **Tip SHA** | `be24bb6` (main; contains STACK-REBUILD tips through Bookkeeper `55758e1` / `37cfd0c`) |
 | **Bar for GREEN** | Node+npm OK · 4 demos EXIT 0 · 4 builds EXIT 0 · 4 UI ports bind · browser openable |
 
@@ -71,7 +71,7 @@ Conflict check: `ss -ltnp | rg '5173|5174|3010|3011'`.
 | BizMate | 578823 | vite 578988 | HTTP 200 |
 | Shield | 578879 | vite 578972 | HTTP 200 |
 | Bookkeeper | 578911 | next 579054 | HTTP 200 · `/api/health` OK |
-| FloodOps | 578946 | next 579061 | HTTP 200 · `/api/state` OK |
+| FloodOps | 593397 | next 593621 | HTTP 200 · `/api/state` OK (restarted after mid-polish breakage) |
 | FloodOps worker | — | one-shot EXIT 0 | writes `apps/floodops/data/orders.json` · re-run: `npm run worker -w @bizmate/floodops` |
 
 Snapshot: `.scratch/r4-pids.txt` · Logs: `.scratch/r4-bizmate-web.log` · `r4-shield.log` · `r4-bookkeeper.log` · `r4-floodops.log` · `r4-floodops-worker.log`
