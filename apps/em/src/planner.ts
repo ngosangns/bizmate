@@ -27,6 +27,8 @@ export function planFromGoal(goal: string): TaskBoard {
       owner: "mate",
       status: "todo",
       pillar: "mate",
+      domain: "accounting",
+      tags: ["accounting", "workflow"],
       acceptance: [
         "Workflow JSON passes validateWorkflow",
         "Includes approve step before persist",
@@ -40,6 +42,8 @@ export function planFromGoal(goal: string): TaskBoard {
       owner: "mate",
       status: "todo",
       pillar: "mate",
+      domain: "sales",
+      tags: ["sales"],
       acceptance: [
         "Workflow JSON passes validateWorkflow",
         "Happy-path fixture for offline demo",
@@ -93,6 +97,8 @@ export function planFromGoal(goal: string): TaskBoard {
       owner: "runtime",
       status: "todo",
       pillar: "runtime",
+      domain: "accounting",
+      tags: ["money", "ledger", "threshold"],
       acceptance: [
         "Approved workflows execute without LLM",
         "Threshold / exemption tests pass",

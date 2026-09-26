@@ -16,4 +16,5 @@ export {
   canAutoAdvance,
   autoAdvanceStatuses,
   hitlRequiredStatuses,
+  touchesMoney,
 } from "./policy.js";

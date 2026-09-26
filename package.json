@@ -2,7 +2,7 @@
   "name": "bizmate",
   "version": "0.1.0",
   "private": true,
-  "description": "Biz Mate — agent generates deterministic business workflows (sales, accounting). Runtime is code; creation is agent.",
+  "description": "Biz Mate \u2014 agent generates deterministic business workflows (sales, accounting). Runtime is code; creation is agent.",
   "workspaces": [
     "packages/*",
     "apps/*"
@@ -12,14 +12,15 @@
     "test": "npm run test -w @bizmate/core && npm run test -w @bizmate/mate && npm run test -w @bizmate/judge && npm run test -w @bizmate/em && npm run test -w @bizmate/runtime && npm run test -w @bizmate/bookkeeper && npm run test -w @bizmate/shield && npm run test -w @bizmate/floodops",
     "demo": "npm run demo -w @bizmate/runtime",
     "demo:offline": "BIZMATE_MODE=offline npm run demo -w @bizmate/runtime",
-    "mate:generate": "npm run generate -w @bizmate/mate",
-    "judge": "npm run judge -w @bizmate/judge",
+    "mate:generate": "node apps/mate/dist/cli.js generate",
+    "judge": "node apps/judge/dist/cli.js",
     "em": "npm run start -w @bizmate/em",
     "dev:web": "npm run dev -w @bizmate/web",
     "validate:contracts": "node packages/contracts/scripts/validate.mjs",
     "demo:bookkeeper": "npm run demo -w @bizmate/bookkeeper",
     "demo:shield": "npm run demo -w @bizmate/shield",
-    "demo:floodops": "npm run demo -w @bizmate/floodops"
+    "demo:floodops": "npm run demo -w @bizmate/floodops",
+    "mate:evolve": "node apps/mate/dist/cli.js evolve"
   },
   "engines": {
     "node": ">=20"

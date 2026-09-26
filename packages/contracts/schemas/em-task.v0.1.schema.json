@@ -20,6 +20,11 @@
       "items": { "type": "string" }
     },
     "hitl": { "type": "boolean" },
-    "pillar": { "type": "string" }
+    "pillar": { "type": "string" },
+    "domain": { "type": "string", "enum": ["accounting", "sales"] },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
   }
 }

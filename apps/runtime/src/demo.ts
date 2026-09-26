@@ -6,6 +6,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Workflow } from "@bizmate/contracts";
 import { EXEMPTION_THRESHOLD_VND, getMode } from "@bizmate/core";
+import { clearAudit, defaultAuditJsonlPath, formatAuditSummary } from "./audit.js";
 import { executeWorkflow } from "./engine.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -15,6 +16,7 @@ const fixturePath = path.resolve(
 );
 
 function main(): void {
+  clearAudit();
   const mode = getMode();
   console.log("=== Biz Mate Runtime — offline accounting demo ===");
   console.log(`mode: ${mode}`);
@@ -80,6 +82,9 @@ function main(): void {
     console.log(`  persisted:     ${ledger.persisted}`);
   }
 
+  console.log("");
+  console.log(formatAuditSummary());
+  console.log(`audit jsonl: ${defaultAuditJsonlPath()}`);
   console.log("");
   console.log(`demo ${result.ok ? "PASSED" : "FAILED"}`);
   if (!result.ok) process.exitCode = 1;

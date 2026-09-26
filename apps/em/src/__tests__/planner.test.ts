@@ -43,7 +43,11 @@ describe("planFromGoal", () => {
     const human = board.tasks.find((t) => t.id === "human-001");
     expect(human).toBeDefined();
     expect(canAutoAdvance(human!, "done")).toBe(false);
-    const mate = board.tasks.find((t) => t.owner === "mate");
-    expect(canAutoAdvance(mate!, "done")).toBe(true);
+    // mate-001 title mentions accounting → money HITL on done (Lee)
+    const mateAccounting = board.tasks.find((t) => t.id === "mate-001");
+    expect(canAutoAdvance(mateAccounting!, "done")).toBe(false);
+    // mate-002 is sales pipeline — may auto-done
+    const mateSales = board.tasks.find((t) => t.id === "mate-002");
+    expect(canAutoAdvance(mateSales!, "done")).toBe(true);
   });
 });

@@ -14,3 +14,9 @@ apps/*/.registry/*
 !apps/*/.registry/.gitkeep
 apps/*/node_modules/
 packages/*/node_modules/
+
+# runtime audit JSONL
+apps/runtime/.audit/
+
+# floodops audit JSONL
+apps/floodops/.audit/

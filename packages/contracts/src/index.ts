@@ -69,6 +69,25 @@ export interface EmTask {
   pillar?: string;
 }
 
+/** Ledger entry / proposal payload — money path for Bookkeeper. */
+export interface LedgerProposalItem {
+  description: string;
+  qty: number;
+  unitPriceVnd: number;
+}
+
+export interface LedgerProposal {
+  id: string;
+  items: LedgerProposalItem[];
+  totalVnd: number;
+  ytdBefore: number;
+  ytdAfter: number;
+  remainingExemptionVnd: number;
+  crossedThreshold: boolean;
+  citations: string[];
+  status: "proposed" | "approved" | "rejected";
+}
+
 function loadSchema(name: string): object {
   return JSON.parse(fs.readFileSync(path.join(schemasDir, name), "utf8"));
 }
@@ -84,6 +103,29 @@ export const validateJudgeVerdict: ValidateFunction<JudgeVerdict> = ajv.compile(
 );
 export const validateEmTask: ValidateFunction<EmTask> = ajv.compile(
   loadSchema("em-task.v0.1.schema.json")
+);
+export const validateLedgerProposal: ValidateFunction<LedgerProposal> =
+  ajv.compile(loadSchema("ledger-proposal.v0.1.schema.json"));
+
+/** FloodOps replan / audit decision — money path never auto_applied for refund. */
+export interface FloodDecision {
+  ts?: string;
+  type?: "wave_action" | "human_decision";
+  waveId?: string;
+  orderId: string;
+  kind: "reschedule" | "reroute_clear_ward" | "hold" | "propose_refund" | "noop";
+  status: "proposed" | "auto_applied" | "awaiting_human" | "approved";
+  requiresHuman?: boolean;
+  reason?: string;
+  impactEstimate?: string;
+  actor?: string;
+  decision?: "approved";
+  before?: { status: FloodDecision["status"] };
+  after?: { status: FloodDecision["status"] };
+}
+
+export const validateFloodDecision: ValidateFunction<FloodDecision> = ajv.compile(
+  loadSchema("flood-decision.v0.1.schema.json")
 );
 
 export function assertValid<T>(

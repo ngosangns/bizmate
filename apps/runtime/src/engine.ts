@@ -3,6 +3,7 @@
  * Compute steps dispatch to deterministic domain handlers (no LLM).
  */
 import type { Domain, Workflow, WorkflowStep } from "@bizmate/contracts";
+import { appendAudit } from "./audit.js";
 import {
   computeSale,
   processSale,
@@ -124,6 +125,11 @@ export function executeWorkflow(
     domain: workflow.domain,
   };
   let ok = true;
+  const pin = {
+    workflowId: workflow.id,
+    workflowVersion: workflow.version,
+    domain: workflow.domain,
+  };
 
   for (const step of workflow.steps) {
     if (!ok) {
@@ -154,13 +160,46 @@ export function executeWorkflow(
           break;
         case "approve":
           if (step.requiresHuman && !approved) {
+            appendAudit({
+              ...pin,
+              action: "approve_fail",
+              stepId: step.id,
+              detail: `Step ${step.id} requires human approval`,
+            });
             throw new Error(`Step ${step.id} requires human approval`);
           }
           output = { approved };
           state.approve = output;
+          if (step.requiresHuman) {
+            appendAudit({
+              ...pin,
+              action: "approve_ok",
+              stepId: step.id,
+              detail: "human approved",
+            });
+          }
           break;
         case "persist":
-          output = runPersist(workflow.domain, event, state, opts);
+          try {
+            output = runPersist(workflow.domain, event, state, opts);
+            appendAudit({
+              ...pin,
+              action: "persist_ok",
+              stepId: step.id,
+              detail: "ledger/pipeline persisted",
+            });
+          } catch (persistErr) {
+            appendAudit({
+              ...pin,
+              action: "persist_fail",
+              stepId: step.id,
+              detail:
+                persistErr instanceof Error
+                  ? persistErr.message
+                  : String(persistErr),
+            });
+            throw persistErr;
+          }
           break;
         case "emit":
           output = {

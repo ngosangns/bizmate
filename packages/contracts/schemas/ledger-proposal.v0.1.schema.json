@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bizmate.dev/schemas/ledger-proposal.v0.1.schema.json",
+  "title": "BizMateLedgerProposal",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "items",
+    "totalVnd",
+    "ytdBefore",
+    "ytdAfter",
+    "remainingExemptionVnd",
+    "crossedThreshold",
+    "citations",
+    "status"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["description", "qty", "unitPriceVnd"],
+        "properties": {
+          "description": { "type": "string", "minLength": 1 },
+          "qty": { "type": "integer", "minimum": 0 },
+          "unitPriceVnd": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "totalVnd": { "type": "integer", "minimum": 0 },
+    "ytdBefore": { "type": "integer", "minimum": 0 },
+    "ytdAfter": { "type": "integer", "minimum": 0 },
+    "remainingExemptionVnd": { "type": "integer", "minimum": 0 },
+    "crossedThreshold": { "type": "boolean" },
+    "citations": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["proposed", "approved", "rejected"]
+    }
+  }
+}
