@@ -14,9 +14,9 @@ Keep stub/sandbox labels. No fake live SPX / tax / payment. Shared `@bizmate/con
 | App | Adv | Current UI | Polish target | Tip SHA | Demo | Build | Tests | Docs | Status |
 |-----|-----|------------|---------------|---------|------|-------|-------|------|--------|
 | BizMate | Adv · BizMate | Vite SPA `apps/web` | Tailwind + shadcn/Radix · story + billing **Giá** panel | `ddd5276` / `d2ca575` | ☑ | ☑ | ☑ | ☑ | **Verified** |
-| Bookkeeper | Adv · Bookkeeper | Next App Router | Tailwind + shadcn/Radix · HITL Duyệt/Từ chối · ledger cards · `.next-build` race fix | `53c147f` | ☑ | ☑ | ☑ | ☑ | **Done (Adv claim)** |
-| Shield | Adv · Shield | PWA + Vite `:5174` | Tailwind + a11y elder/family · SW notifs labeled · Care CTA | `52972a1` | ☑ | ☑ | ☑ | ☑ | **Done (Adv claim)** |
-| FloodOps | Adv · FloodOps | Next + Leaflet `:3011` | Tailwind + shadcn · map/orders/billing · **fix Lee+Sid R4 `build:web`** first | — | ☐ | ☐ | ☐ | ☐ | **In progress** (+ R4 CONDITIONAL) |
+| Bookkeeper | Adv · Bookkeeper | Next App Router | Tailwind + shadcn/Radix · HITL Duyệt/Từ chối · ledger cards · `.next-build` race fix | `53c147f` / `e3f2956` | ☑ | ☑ | ☑ | ☑ | **Verified** |
+| Shield | Adv · Shield | PWA + Vite `:5174` | Tailwind + a11y elder/family · SW notifs labeled · Care CTA | `52972a1` / `07a6072` | ☑ | ☑ | ☑ | ☑ | **Verified** |
+| FloodOps | Adv · FloodOps | Next + Leaflet `:3011` | Tailwind + shadcn · map/orders/billing · `build:web` hygiene | `d2df47c` / `c93ea43` | ☑ | ☑ | ☑ | ☑ | **Verified** |
 
 **Status legend:** Routed → In progress → Prove filed → **Verified** (Orchestrator) → Folded into R4 re-use.
 
@@ -35,7 +35,7 @@ Keep stub/sandbox labels. No fake live SPX / tax / payment. Shared `@bizmate/con
 | Hands-on protocol | `ROUND-4-HANDS-ON.md` |
 | Rubric / checklists / form | `ROUND-4-RUBRIC.md` · `ROUND-4-CHECKLISTS.md` · `ROUND-4-FEEDBACK-FORM.md` |
 | Env gate | `ROUND-4-ENV.md` |
-| Open CONDITIONAL | FloodOps · Lee + Sidharth · `build:web` packaging |
+| Open CONDITIONAL | _none_ — R4 GATE MET · all CONDITIONAL cleared |
 
 ## Routed
 
@@ -46,4 +46,6 @@ Orchestrator → 4 Advs · 2026-09-26 ~19:03 ICT.
 
 - **BizMate** · tip `ddd5276` · 2026-09-26 19:08 ICT · web build / demo:offline / runtime 12/12 EXIT 0 · honesty OK · **Verified**
 
-- **Bookkeeper** · tip `53c147f` · 2026-09-26 Asia/Saigon · build/test/demo EXIT 0 · curl :3010 HTTP 200 · Son R4 REPORT filed · **Adv claim** (await Orchestrator verify)
+- **Bookkeeper** · tip `53c147f` (docs `e3f2956`) · 2026-09-26 19:16 ICT · build `.next-build` EXIT 0 · test 16/16 · demo EXIT 0 · :3010 HTTP 200 · REPORT Son · **Verified**
+
+- **FloodOps** · tip `d2df47c` (fix `c93ea43`) · 2026-09-26 19:15 ICT · build:web EXIT 0 · test 24/24 · :3011 HTTP 200 · REPORT ×5 · **Verified**
