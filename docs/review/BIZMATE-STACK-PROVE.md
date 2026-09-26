@@ -1,7 +1,7 @@
 # BizMate STACK-REBUILD prove packet
 
 > Adv · BizMate · 2026-09-26 Asia/Saigon  
-> Baseline: `fd56e9a` · Tip: **_TIP_PENDING_** (filled after push)  
+> Baseline: `fd56e9a` · Tip: **`124e0f7`** (`124e0f7569c1db7e8b64492301a426198b03e0ad`)  
 > Docs: `docs/review/BIZMATE-STACK.md`
 
 ## Stack pick (summary)

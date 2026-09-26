@@ -34,7 +34,7 @@
 | Bookkeeper | Adv · Bookkeeper | **Next App Router + SQLite** (chosen; tRPC/API) | `fd56e9a` baseline | — | — | — | **In progress** |
 | Shield | Adv · Shield | **PWA + Service Worker** (chosen; not Expo) | `fd56e9a` baseline | — | — | — | **In progress** |
 | FloodOps | Adv · FloodOps | **Next + Leaflet + Node worker** (chosen) | `fd56e9a` baseline | — | — | — | **In progress** |
-| BizMate | Adv · BizMate | **Vite + TS monorepo** (not Next) | _TIP_PENDING_ | EXIT 0 | EXIT 0 | `docs/review/BIZMATE-STACK.md` | **Done** (Adv claim) |
+| BizMate | Adv · BizMate | **Vite + TS monorepo** (not Next) | `124e0f7` | EXIT 0 | EXIT 0 | `docs/review/BIZMATE-STACK.md` | **Done** (Adv claim) |
 
 ## Routed
 

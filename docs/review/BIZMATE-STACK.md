@@ -1,7 +1,7 @@
 # BizMate — STACK-REBUILD pick
 
 > Adv · BizMate · 2026-09-26 Asia/Saigon · P0 STACK-REBUILD  
-> Baseline tip: `fd56e9a` · Prove: `docs/review/BIZMATE-STACK-PROVE.md`
+> Baseline tip: `fd56e9a` · Stack tip: `124e0f7` · Prove: `docs/review/BIZMATE-STACK-PROVE.md`
 
 ## Stack chosen: **Vite + TypeScript monorepo** (not Next.js)
 
