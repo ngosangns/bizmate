@@ -1,7 +1,7 @@
 # FloodOps · ROUND-5 Adv REPORT (UX / HUMAN HITL)
 
 > Adv · FloodOps · 2026-09-26 Asia/Saigon  
-> Tip baseline: `23ec3b4` · this ship tip: see git HEAD after commit  
+> Tip baseline: `23ec3b4` · this ship tip: `d8f6513`  
 > Judges covered: **Lee · Sidharth · Trần Tuấn Anh · Kyle · Son Lê**  
 > Axes: D1–D4 (Orchestrator U1–U4). R1–R4 không đụng.
 
@@ -13,7 +13,7 @@
 |-------|---------|
 | **Before** | OrdersTable **read-only** — `awaiting_human` HUMAN rows (ORD-1003 refund · ORD-1005 hold) visible but no Duyệt/Apply/Từ chối. D4 weak / Kyle initially FAIL on critical HUMAN loop. Ward column DOM text glued (`Hòa Hưngflooded`) — Lee noted as popup/`floodedflood` glue. |
 | **After** | Row-level HITL: **Duyệt hoàn** (`propose_refund`) · **Ops duyệt** (hold/reschedule/reroute) · **Từ chối** → `POST /api/approve` → `resolveHumanAction` / `approveRefund` / `applyOpsAction` / `rejectHumanAction` · updates `data/orders.json` + `.audit/wave.jsonl` · UI refreshes status. Ward badge/popup/legend use spaced **`flooded · ngập`** / **`clear · khô`**. COD≠invoice + SANDBOX/STUB banners **kept**. |
-| **Tip SHA** | `f785161` (`f785161a20cecae07c0bc62b28304d4801e38d94`) |
+| **Tip SHA** | `d8f6513` (`d8f65130111fa1e21f186007afe2dc621172cde0`) |
 | **Prove** | `npm test -w @bizmate/floodops` **EXIT 0** (27/27) · `npm run demo:floodops` **EXIT 0** · `npm run build:web -w @bizmate/floodops` **EXIT 0** · `:3011` **HTTP 200** · smoke `POST /api/approve` ok |
 | **How to re-use** | Commands below · `npm run worker -w @bizmate/floodops` to reset HUMAN queue · restart `npm run dev -w @bizmate/floodops` if `:3011` stale |
 | **Honesty** | **Y** — SANDBOX/STUB · **COD ≠ invoice** · no live SPX · offline_stub seats · HUMAN decide only |
