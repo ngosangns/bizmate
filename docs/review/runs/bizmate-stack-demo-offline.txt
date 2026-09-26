@@ -1,0 +1,69 @@
+
+> bizmate@0.1.0 demo:offline
+> BIZMATE_MODE=offline npm run demo -w @bizmate/runtime
+
+
+> @bizmate/runtime@0.1.0 demo
+> tsx src/demo.ts
+
+=== Biz Mate Runtime — offline accounting demo ===
+mode: offline
+fixture: /workspace/bizmate/domains/accounting/fixtures/vendor-day.json
+exemption threshold: 1.000.000.000 VND
+
+--- BUSINESS-READY (demo-derived / sandbox honesty) ---
+Who pays (D-Day): Sea internal tooling — seller-finance / ops seat (SME = roadmap only)
+  Seat sketch: Sea seat · pilot · 0 ₫ / seat (cost-center nội bộ) (bizmate-sea-seat)
+Cost-center stub: Stub charge 0 ₫ / seat (cost-center nội bộ) → cost-center SEA-INTERNAL-TOOLING (Ghế Sea · pilot) — offline only · chargeId=ch_stub_muic0nunjmfoj8
+  ⚠️ STUB · Offline stub / cost-center nội bộ — không gọi cổng thanh toán / offline stub only
+Giá / checkout → web UI (npm run dev:web) hoặc @bizmate/billing — không live pay
+
+EM blocked auto-done on money task
+  (board: 2 accounting/money task(s) require hitl:true)
+
+event: vendor-day-001
+voice: "Hôm nay bán 3 thùng nước mỗi thùng 2 triệu và 1 máy lạnh 15 triệu."
+workflow: wf-accounting-vendor-day v0.1.0
+
+--- without approval (persist must fail) ---
+  [ok] intake:intake-sale 0.011ms
+  [ok] compute:compute-ledger 0.23ms
+  [FAIL] approve:approve-persist 0.625ms — Step approve-persist requires human approval
+  [skip] persist:persist-ledger 0ms — skipped after prior failure
+  [skip] emit:emit-status 0ms — skipped after prior failure
+result.ok=false
+
+--- with human approval ---
+  [ok] intake:intake-sale 0.004ms
+  [ok] compute:compute-ledger 0.026ms
+  [ok] approve:approve-persist 0.078ms
+  [ok] persist:persist-ledger 0.303ms
+  [ok] emit:emit-status 0.01ms
+
+ledger entry:
+  saleTotal:     21.000.000 VND
+  ytd before:    985.000.000 VND
+  ytd after:     1.006.000.000 VND
+  remaining:     0 VND
+  crossed 1B:    true
+  persisted:     true
+
+BLAST-RADIUS: unpin workflow version wf-accounting-vendor-day@0.1.0 → 3 executions affected (demo-derived)
+
+AUDIT SUMMARY (demo-derived — offline seed, not field baseline)
+  total=3 approve_ok=1 approve_fail=1 persist_ok=1 persist_fail=0
+  [approve_fail] wf-accounting-vendor-day@0.1.0 (accounting) step=approve-persist — Step approve-persist requires human approval
+  [approve_ok] wf-accounting-vendor-day@0.1.0 (accounting) step=approve-persist — human approved
+  [persist_ok] wf-accounting-vendor-day@0.1.0 (accounting) step=persist-ledger — ledger/pipeline persisted
+  BLAST-RADIUS: unpin workflow version wf-accounting-vendor-day@0.1.0 → 3 executions affected (demo-derived)
+HOT-PATH LATENCY (demo-derived — compute+persist ms/step, offline seed)
+  total=0.457ms compute+persist=0.329ms
+  intake:intake-sale 0.004ms/step
+  compute:compute-ledger 0.026ms/step
+  approve:approve-persist 0.078ms/step
+  persist:persist-ledger 0.303ms/step
+  emit:emit-status 0.01ms/step
+audit jsonl: /workspace/bizmate/apps/runtime/.audit/events.jsonl
+
+demo PASSED
+DEMO_EXIT:0

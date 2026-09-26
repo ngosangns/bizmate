@@ -1,0 +1,99 @@
+=== @bizmate/billing ===
+
+> @bizmate/billing@0.1.0 test
+> vitest run
+
+
+ RUN  v2.1.9 /workspace/bizmate/packages/billing
+
+ ✓ src/__tests__/billing.test.ts (10 tests) 8ms
+
+ Test Files  1 passed (1)
+      Tests  10 passed (10)
+   Start at  11:54:18
+   Duration  358ms (transform 68ms, setup 0ms, collect 71ms, tests 8ms, environment 0ms, prepare 57ms)
+
+BILLING_EXIT:0
+=== @bizmate/core ===
+
+> @bizmate/core@0.1.0 test
+> vitest run
+
+
+ RUN  v2.1.9 /workspace/bizmate/packages/core
+
+ ✓ src/__tests__/money.test.ts (2 tests) 3ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  11:54:19
+   Duration  321ms (transform 41ms, setup 0ms, collect 38ms, tests 3ms, environment 0ms, prepare 57ms)
+
+CORE_EXIT:0
+=== @bizmate/mate ===
+
+> @bizmate/mate@0.1.0 test
+> vitest run
+
+
+ RUN  v2.1.9 /workspace/bizmate/apps/mate
+
+ ✓ src/__tests__/mate.test.ts (4 tests) 9ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  11:54:20
+   Duration  528ms (transform 100ms, setup 0ms, collect 236ms, tests 9ms, environment 0ms, prepare 62ms)
+
+MATE_EXIT:0
+=== @bizmate/judge ===
+
+> @bizmate/judge@0.1.0 test
+> vitest run
+
+
+ RUN  v2.1.9 /workspace/bizmate/apps/judge
+
+ ✓ src/__tests__/judge.test.ts (2 tests) 6ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  11:54:21
+   Duration  492ms (transform 73ms, setup 0ms, collect 184ms, tests 6ms, environment 0ms, prepare 53ms)
+
+JUDGE_EXIT:0
+=== @bizmate/em ===
+
+> @bizmate/em@0.1.0 test
+> vitest run
+
+
+ RUN  v2.1.9 /workspace/bizmate/apps/em
+
+ ✓ src/__tests__/policy.test.ts (9 tests) 8ms
+ ✓ src/__tests__/queue.test.ts (5 tests) 6ms
+ ✓ src/__tests__/planner.test.ts (3 tests) 7ms
+
+ Test Files  3 passed (3)
+      Tests  17 passed (17)
+   Start at  11:54:22
+   Duration  474ms (transform 146ms, setup 0ms, collect 420ms, tests 21ms, environment 1ms, prepare 170ms)
+
+EM_EXIT:0
+=== @bizmate/runtime ===
+
+> @bizmate/runtime@0.1.0 test
+> vitest run
+
+
+ RUN  v2.1.9 /workspace/bizmate/apps/runtime
+
+ ✓ src/__tests__/accounting.test.ts (6 tests) 10ms
+ ✓ src/__tests__/audit.test.ts (6 tests) 14ms
+
+ Test Files  2 passed (2)
+      Tests  12 passed (12)
+   Start at  11:54:23
+   Duration  380ms (transform 127ms, setup 0ms, collect 172ms, tests 24ms, environment 0ms, prepare 124ms)
+
+RUNTIME_EXIT:0

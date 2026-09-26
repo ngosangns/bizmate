@@ -574,3 +574,16 @@ pre.json {
 .billing-actions {
   margin-top: 0.25rem;
 }
+
+.stack-footer {
+  margin: 1.25rem 0 0.5rem;
+  padding: 0.65rem 0.85rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+.stack-footer .hint {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+}

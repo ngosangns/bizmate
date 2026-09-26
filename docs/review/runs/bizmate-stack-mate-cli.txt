@@ -1,0 +1,154 @@
+
+> bizmate@0.1.0 mate:generate
+> node apps/mate/dist/cli.js generate --domain sales --id wf-stack-cli-sales
+
+{
+  "ok": true,
+  "mode": "offline",
+  "path": "/workspace/bizmate/apps/mate/.registry/wf-stack-cli-sales.json",
+  "workflow": {
+    "id": "wf-stack-cli-sales",
+    "version": "0.1.0",
+    "domain": "sales",
+    "name": "Simple Sales Pipeline",
+    "description": "Simple sales pipeline for SME quotes and deals",
+    "steps": [
+      {
+        "id": "intake",
+        "kind": "intake",
+        "label": "Intake lead / order",
+        "ruleRefs": [
+          "intake.required-fields"
+        ]
+      },
+      {
+        "id": "classify",
+        "kind": "classify",
+        "label": "Classify stage & priority",
+        "ruleRefs": [
+          "classify.pipeline-stage"
+        ]
+      },
+      {
+        "id": "emit",
+        "kind": "emit",
+        "label": "Emit quote / notification",
+        "ruleRefs": [
+          "emit.quote"
+        ]
+      },
+      {
+        "id": "approve",
+        "kind": "approve",
+        "label": "Human approve deal",
+        "requiresHuman": true,
+        "ruleRefs": [
+          "approve.human-gate"
+        ]
+      },
+      {
+        "id": "persist",
+        "kind": "persist",
+        "label": "Persist opportunity",
+        "ruleRefs": [
+          "persist.crm"
+        ]
+      }
+    ],
+    "invariants": [
+      {
+        "id": "inv-amount-non-negative",
+        "expression": "dealAmount >= 0",
+        "severity": "error"
+      },
+      {
+        "id": "inv-human-approve-before-persist",
+        "expression": "steps.approve.requiresHuman === true && steps.approve.before(steps.persist)",
+        "severity": "error"
+      }
+    ],
+    "generation": {
+      "generation": 0,
+      "parentId": null,
+      "feedbackDigest": ""
+    }
+  }
+}
+GEN_EXIT:0
+
+> bizmate@0.1.0 mate:evolve
+> node apps/mate/dist/cli.js evolve --id wf-stack-cli-sales --feedback stack rebuild
+
+{
+  "ok": true,
+  "mode": "offline",
+  "path": "/workspace/bizmate/apps/mate/.registry/wf-stack-cli-sales-g1.json",
+  "workflow": {
+    "id": "wf-stack-cli-sales-g1",
+    "version": "0.1.0",
+    "domain": "sales",
+    "name": "Simple Sales Pipeline",
+    "description": "Simple sales pipeline for SME quotes and deals | Evolved from feedback: stack rebuild",
+    "steps": [
+      {
+        "id": "intake",
+        "kind": "intake",
+        "label": "Intake lead / order",
+        "ruleRefs": [
+          "intake.required-fields"
+        ]
+      },
+      {
+        "id": "classify",
+        "kind": "classify",
+        "label": "Classify stage & priority",
+        "ruleRefs": [
+          "classify.pipeline-stage"
+        ]
+      },
+      {
+        "id": "emit",
+        "kind": "emit",
+        "label": "Emit quote / notification",
+        "ruleRefs": [
+          "emit.quote"
+        ]
+      },
+      {
+        "id": "approve",
+        "kind": "approve",
+        "label": "Human approve deal",
+        "requiresHuman": true,
+        "ruleRefs": [
+          "approve.human-gate"
+        ]
+      },
+      {
+        "id": "persist",
+        "kind": "persist",
+        "label": "Persist opportunity",
+        "ruleRefs": [
+          "persist.crm"
+        ]
+      }
+    ],
+    "invariants": [
+      {
+        "id": "inv-amount-non-negative",
+        "expression": "dealAmount >= 0",
+        "severity": "error"
+      },
+      {
+        "id": "inv-human-approve-before-persist",
+        "expression": "steps.approve.requiresHuman === true && steps.approve.before(steps.persist)",
+        "severity": "error"
+      }
+    ],
+    "generation": {
+      "generation": 1,
+      "parentId": "wf-stack-cli-sales",
+      "feedbackDigest": "stack rebuild"
+    }
+  }
+}
+EVOLVE_EXIT:0

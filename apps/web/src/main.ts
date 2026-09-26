@@ -398,6 +398,10 @@ function render(): void {
       <pre class="json">${escapeHtml(JSON.stringify(verdict, null, 2))}</pre>
       <pre class="json">${escapeHtml(JSON.stringify(fixture, null, 2))}</pre>
     </details>
+
+    <footer class="stack-footer">
+      <p class="hint">stack: Vite + Node runtime · TS monorepo (mate / judge / em / runtime / web) · stubs labeled</p>
+    </footer>
   `;
 
   app.querySelectorAll<HTMLButtonElement>("[data-domain]").forEach((btn) => {
