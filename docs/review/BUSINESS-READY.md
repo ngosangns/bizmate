@@ -28,7 +28,7 @@ Mỗi app (BizMate · Bookkeeper · Shield · FloodOps) phải ship:
 
 | App | Adv | SHA | BR1 | BR2 | BR3 | Overall |
 |-----|-----|-----|-----|-----|-----|---------|
-| BizMate | Adv · BizMate | 8b8e275 | Done | Done | Done | Done |
+| BizMate | Adv · BizMate | 6a43e29 | Done | Done | Done | Done |
 | Bookkeeper | Adv · Bookkeeper | _(pending push)_ | Done | Done | Done | Done |
 | Shield | Adv · Shield | _(SHA after push)_ | Done | Done | Done | Adv Done — Orchestrator verify |
 | FloodOps | Adv · FloodOps | — | Open | Open | Open | Open |
