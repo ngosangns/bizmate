@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bizmate.dev/schemas/flood-decision.v0.1.schema.json",
+  "title": "FloodOpsDecision",
+  "description": "Single FloodOps replan action or audit line (wave_action / human_decision). propose_refund must never be auto_applied.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["orderId", "kind", "status"],
+  "properties": {
+    "ts": { "type": "string" },
+    "type": { "type": "string", "enum": ["wave_action", "human_decision"] },
+    "waveId": { "type": "string" },
+    "orderId": { "type": "string", "minLength": 1 },
+    "kind": {
+      "type": "string",
+      "enum": ["reschedule", "reroute_clear_ward", "hold", "propose_refund", "noop"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["proposed", "auto_applied", "awaiting_human", "approved"]
+    },
+    "requiresHuman": { "type": "boolean" },
+    "reason": { "type": "string" },
+    "impactEstimate": { "type": "string" },
+    "actor": { "type": "string" },
+    "decision": { "type": "string", "enum": ["approved"] },
+    "before": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["proposed", "auto_applied", "awaiting_human", "approved"]
+        }
+      }
+    },
+    "after": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["proposed", "auto_applied", "awaiting_human", "approved"]
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "kind": { "const": "propose_refund" } },
+        "required": ["kind"]
+      },
+      "then": {
+        "properties": {
+          "status": { "enum": ["awaiting_human", "approved", "proposed"] },
+          "requiresHuman": { "const": true }
+        }
+      }
+    }
+  ]
+}

@@ -17,9 +17,9 @@
     "em": "npm run start -w @bizmate/em",
     "dev:web": "npm run dev -w @bizmate/web",
     "validate:contracts": "node packages/contracts/scripts/validate.mjs",
-    "demo:bookkeeper": "npm run demo -w @bizmate/bookkeeper",
+    "demo:bookkeeper": "npm run demo -w @bizmate/bookkeeper --",
     "demo:shield": "npm run demo -w @bizmate/shield",
-    "demo:floodops": "npm run demo -w @bizmate/floodops",
+    "demo:floodops": "npm run demo -w @bizmate/floodops --",
     "mate:evolve": "node apps/mate/dist/cli.js evolve"
   },
   "engines": {

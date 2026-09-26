@@ -9,9 +9,11 @@
   "orders": [
     { "id": "ORD-1001", "wardId": "q5-andong", "codVnd": 350000, "slaHoursLeft": 4 },
     { "id": "ORD-1002", "wardId": "q1-bnghe", "codVnd": 120000, "slaHoursLeft": 8 },
-    { "id": "ORD-1003", "wardId": "q10-hoahung", "codVnd": 2_500_000, "slaHoursLeft": 2 },
+    { "id": "ORD-1003", "wardId": "q10-hoahung", "codVnd": 2500000, "slaHoursLeft": 2 },
     { "id": "ORD-1004", "wardId": "thu-duc", "codVnd": 89000, "slaHoursLeft": 12 },
-    { "id": "ORD-1005", "wardId": "q5-andong", "codVnd": 50000, "slaHoursLeft": 1 }
+    { "id": "ORD-1005", "wardId": "q5-andong", "codVnd": 50000, "slaHoursLeft": 1 },
+    { "id": "ORD-1006", "wardId": "q10-hoahung", "codVnd": 750000, "slaHoursLeft": 5 },
+    { "id": "ORD-1007", "wardId": "q10-hoahung", "codVnd": 200000, "slaHoursLeft": 6 }
   ],
   "events": [
     { "type": "flood_alert", "wardId": "q5-andong", "floodCm": 45 },
