@@ -15,8 +15,8 @@ Shared kept: `@bizmate/contracts` · `@bizmate/billing` · `@bizmate/core` money
 
 ## Tip SHA
 
-Pending commit — see git log after `feat(bookkeeper): STACK-REBUILD — Next.js App Router + SQLite ledger`.  
-Baseline was `fd56e9a`.
+**`37cfd0c`** · `feat(bookkeeper): STACK-REBUILD — Next.js App Router + SQLite ledger`  
+Docs stamp: `bc6a385`. Baseline was `fd56e9a`.
 
 ## Prove commands (all EXIT 0)
 
