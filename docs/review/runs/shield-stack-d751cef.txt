@@ -1,0 +1,159 @@
+Shield STACK-REBUILD prove — tip d751cef (d751cef508437413a5dc04defc3ce6fbf3327883)
+Date: 2026-09-26 11:56:16 UTC Asia/Saigon
+Stack: PWA + Service Worker (+ Vite) — not Expo
+
+===== npm run test -w @bizmate/shield =====
+
+> @bizmate/shield@0.1.0 test
+> vitest run
+
+
+ RUN  v2.1.9 /workspace/bizmate/apps/shield
+
+ ✓ src/__tests__/notify.test.ts (4 tests) 7ms
+ ✓ src/__tests__/shield.test.ts (20 tests) 53ms
+
+ Test Files  2 passed (2)
+      Tests  24 passed (24)
+   Start at  11:56:16
+   Duration  408ms (transform 138ms, setup 0ms, collect 167ms, tests 59ms, environment 0ms, prepare 114ms)
+
+EXIT:0
+
+===== npm run demo -w @bizmate/shield -- --once =====
+
+> @bizmate/shield@0.1.0 demo
+> tsx src/demo.ts --once
+
+
+🛡️  Shield demo — hộp thư của Ông Minh
+30s backup · ba/mẹ mua Shopee
+backup 30s · family B2C
+STAGE: 30s backup only — not hero; not seller KPI
+buyer-trust QR / phishing adjacent (no live SPX)
+detector: fixture
+deepfakeScore=fixture
+HONESTY: deepfakeScore = fixture meta (not a live detector)
+ENGINE: rule engine + fixture score — not Mate codegen (Codex = contracts/audit only)
+Sea wedge: Shopee Buyer Protection surface for fake QR hoàn tiền (distribution only; payer = family).
+Payer: family B2C (con trả cho ba/mẹ). Sea/Shopee = distribution only — fake QR refund / phishing adjacent; no live SPX.
+Family alert → con gái Hương (+84…)
+Trusted contacts → Con gái Hương, Con trai Nam, Cháu nội An
+Per-pattern shadow (7d window, now < shadowUntil): fake-cskh-bank, otp-share-request
+CLI: --once (single pass; skip RESET REPLAY)
+
+—— INBOX PASS 1 (6 messages) ——
+STEP 1/6 · block  🚫  live allow=0 flag=0 block=1
+   💬 Ba/mẹ ơi, tin có đường link giả mạo, đừng bấm vào. người gửi có dấu hiệu giả mạo. tin giả ngân hàng, thúc giục bấm link. Đừng bấm link hay chuyển tiền. Con đã được báo.
+   📱 Con ơi, Shield vừa chặn một tin nguy hiểm gửi cho ba/mẹ — hãy kiểm tra giúp.
+
+STEP 2/6 · block  🚫  live allow=0 flag=0 block=2
+   detector: fixture (deepfakeScore stub value=0.97)
+   💬 Ba/mẹ ơi, giọng nói hoặc hình ảnh có dấu hiệu giả mạo. giọng nói không khớp với người thân trong danh bạ. ai đó đang giả làm người thân xin tiền gấp. Đừng bấm link hay chuyển tiền. Con đã được báo.
+   📱 Con ơi, Shield vừa chặn một tin nguy hiểm gửi cho ba/mẹ — hãy kiểm tra giúp.
+
+STEP 3/6 · block  🚫  live allow=0 flag=0 block=3
+   💬 Ba/mẹ ơi, mã QR nằm trong danh sách nguy hiểm. mã QR hoàn tiền này không đáng tin. Đừng bấm link hay chuyển tiền. Con đã được báo.
+   📱 Con ơi, Shield vừa chặn một tin nguy hiểm gửi cho ba/mẹ — hãy kiểm tra giúp.
+   Tip buyer: Đừng quét QR hoàn tiền từ shipper lạ — mở app Shopee để kiểm tra đơn.
+
+STEP 4/6 · allow  ✅  live allow=1 flag=0 block=3
+   💬 Tin này trông bình thường.
+
+STEP 5/6 · flag  ⚠️  live allow=1 flag=1 block=3
+   💬 Ba/mẹ ơi, ai đó giả làm tổng đài ngân hàng gọi xác minh. Đừng bấm link hay chuyển tiền. Con đã được báo.
+   📱 Con ơi, Shield vừa cảnh báo một tin đáng ngờ gửi cho ba/mẹ — hãy xem giúp.
+
+STEP 6/6 · flag  ⚠️  live allow=1 flag=2 block=3
+   💬 Ba/mẹ ơi, đừng bao giờ chia sẻ mã OTP hay mã xác thực. Đừng bấm link hay chuyển tiền. Con đã được báo.
+   📱 Con ơi, Shield vừa cảnh báo một tin đáng ngờ gửi cho ba/mẹ — hãy xem giúp.
+
+—— AUDIT SUMMARY ——
+  AUDIT: blacklistVersion=0.1.0  hash=f0dc1664  deepfake=fixture
+  allow=1  flag=2  block=3  (total entries=6)
+  —— machine reasons (AUDIT only) ——
+  m1: block (block) — Domain blacklist: vcb-secure-login.xyz; Sender spoof detected; SMS ngân hàng giả — thúc giục bấm link
+  m2: block (block) — Deepfake score 97% [detector: fixture]; Voice/contact mismatch với danh bạ tin cậy; Mạo danh người thân xin tiền khẩn
+  m3: block (block) — QR on blacklist; QR hoàn tiền giả
+  m4: allow (safe) — clean
+  m5: flag (warn) — Giả mạo CSKH / ngân hàng hỗ trợ (shadow: pattern fake-cskh-bank <7d) | shadowPatternIds=fake-cskh-bank
+  m6: flag (warn) — Yêu cầu chia sẻ OTP / mã xác thực (shadow: pattern otp-share-request <7d) | shadowPatternIds=otp-share-request
+
+—— HUMAN OVERRIDE EXAMPLE (false positive → allow) ——
+  Before: m1 → block (block)
+    reasons: Domain blacklist: vcb-secure-login.xyz; Sender spoof detected; SMS ngân hàng giả — thúc giục bấm link
+  After:  m1 → allow (safe)
+    reasons: Domain blacklist: vcb-secure-login.xyz; Sender spoof detected; SMS ngân hàng giả — thúc giục bấm link; Human override: allow by Con gái Hương
+    💬 Tin này đã được người thân xác nhận an toàn.
+FP SLA: trusted-contact false-block target <1%; override = human decide
+
+—— --once: skip RESET REPLAY ——
+  Re-run without --once (or: npm run demo:shield) for full RESET loop.
+
+—— BILLING (BR2/BR3 · packaging only) ——
+  Buyer: family B2C (child pays). Sea = distribution only — not payer.
+  Source: @bizmate/billing listPlans("shield") + fixtures/family-plans.json
+  Unit economics: fixture prices only — no invented live ARR/ARPU.
+
+  —— pricing table (fixture) ——
+  · Free (shield-free) — 0 ₫ / tháng (fixture) — 1 elder (ba/mẹ); Rule-based inbox scan; Family alert on block
+  · Family Care (shield-family-care) — 99.000 ₫ / tháng (fixture) — 2 elders; SMS alert to child payer; Backup 30s demo path
+  · Family Plus (shield-family-plus) — 199.000 ₫ / tháng (fixture) — 4 elders; SMS alert + priority review queue; Human override path
+
+  CTA: demo subscribe (Family Care) → createCheckout(shield-family-care, mode=stripe_test)
+  ⚠️ SANDBOX · Stripe TEST mode — không phải thanh toán thật / not live payment
+  honestyBanner: ⚠️ SANDBOX · Stripe TEST mode — không phải thanh toán thật / not live payment
+  sessionId=cs_test_muic38tcolvzht  ok=true  stub=false
+  url=https://checkout.stripe.com/c/pay/cs_test_muic38tcolvzht#fid_sandbox_fixture
+  detail: Stripe TEST session shaped result for Family Care · 99.000 ₫ / tháng (fixture)
+  demoSubscribeCount=1 (this CTA) · plan=shield-family-care · NOT live payment
+
+EXIT:0
+
+===== npm run build -w @bizmate/shield =====
+
+> @bizmate/shield@0.1.0 build
+> tsc -p tsconfig.json && npm run build:pwa
+
+
+> @bizmate/shield@0.1.0 build:pwa
+> vite build --config web/vite.config.ts
+
+vite v5.4.21 building for production...
+transforming...
+✓ 13 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                  0.82 kB │ gzip: 0.48 kB
+dist/assets/index-Cov7KE4O.css   2.58 kB │ gzip: 0.98 kB
+dist/assets/index-YmUQRJOy.js   19.25 kB │ gzip: 8.03 kB │ map: 52.96 kB
+✓ built in 193ms
+EXIT:0
+
+===== npm run demo:shield (tail) =====
+  m1: block (block) — Domain blacklist: vcb-secure-login.xyz; Sender spoof detected; SMS ngân hàng giả — thúc giục bấm link
+  m2: block (block) — Deepfake score 97% [detector: fixture]; Voice/contact mismatch với danh bạ tin cậy; Mạo danh người thân xin tiền khẩn
+  m3: block (block) — QR on blacklist; QR hoàn tiền giả
+  m4: allow (safe) — clean
+  m5: flag (warn) — Giả mạo CSKH / ngân hàng hỗ trợ (shadow: pattern fake-cskh-bank <7d) | shadowPatternIds=fake-cskh-bank
+  m6: flag (warn) — Yêu cầu chia sẻ OTP / mã xác thực (shadow: pattern otp-share-request <7d) | shadowPatternIds=otp-share-request
+
+—— BILLING (BR2/BR3 · packaging only) ——
+  Buyer: family B2C (child pays). Sea = distribution only — not payer.
+  Source: @bizmate/billing listPlans("shield") + fixtures/family-plans.json
+  Unit economics: fixture prices only — no invented live ARR/ARPU.
+
+  —— pricing table (fixture) ——
+  · Free (shield-free) — 0 ₫ / tháng (fixture) — 1 elder (ba/mẹ); Rule-based inbox scan; Family alert on block
+  · Family Care (shield-family-care) — 99.000 ₫ / tháng (fixture) — 2 elders; SMS alert to child payer; Backup 30s demo path
+  · Family Plus (shield-family-plus) — 199.000 ₫ / tháng (fixture) — 4 elders; SMS alert + priority review queue; Human override path
+
+  CTA: demo subscribe (Family Care) → createCheckout(shield-family-care, mode=stripe_test)
+  ⚠️ SANDBOX · Stripe TEST mode — không phải thanh toán thật / not live payment
+  honestyBanner: ⚠️ SANDBOX · Stripe TEST mode — không phải thanh toán thật / not live payment
+  sessionId=cs_test_muic3bhxasqxby  ok=true  stub=false
+  url=https://checkout.stripe.com/c/pay/cs_test_muic3bhxasqxby#fid_sandbox_fixture
+  detail: Stripe TEST session shaped result for Family Care · 99.000 ₫ / tháng (fixture)
+  demoSubscribeCount=1 (this CTA) · plan=shield-family-care · NOT live payment
+
+EXIT:0

@@ -2,7 +2,7 @@
 
 > Adv · Shield · 2026-09-26 Asia/Saigon  
 > Matrix: [`STACK-REBUILD.md`](./STACK-REBUILD.md)  
-> Baseline tip: `fd56e9a` · Stack tip: **`TIP_SHA_PLACEHOLDER`** (filled after push)
+> Baseline tip: `fd56e9a` · Stack tip: **`d751cef`** (filled after push)
 
 ## Stack chosen
 
@@ -48,7 +48,7 @@ npm run build -w @bizmate/shield   # tsc + vite PWA
 | `npm run demo:shield` | **0** | full RESET REPLAY |
 | `npm run build -w @bizmate/shield` | **0** | tsc dist/ + vite `web/dist/` |
 
-Evidence: `docs/review/runs/shield-stack-<shortsha>.txt`
+Evidence: `docs/review/runs/shield-stack-d751cef.txt`
 
 ## Honesty banners (UI + CLI)
 
