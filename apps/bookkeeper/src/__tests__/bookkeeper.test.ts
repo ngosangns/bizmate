@@ -13,7 +13,11 @@ import {
   verifyLedgerProposal,
 } from "../agent.js";
 import { runDemoOnce } from "../demo.js";
-import { parseUtterance } from "../parse-utterance.js";
+import {
+  buildWeek2SeedMetrics,
+  formatWeek2SeedMetricsBlock,
+} from "../metrics.js";
+import { isNoSaleUtterance, parseUtterance } from "../parse-utterance.js";
 import { proposeLedgerEntry } from "../rules.js";
 
 function goodPayload(overrides: Partial<LedgerProposal> = {}): LedgerProposal {
@@ -36,6 +40,11 @@ describe("bookkeeper", () => {
     const items = parseUtterance("sáng nay bán 3 áo, mỗi cái 250 nghìn");
     expect(items[0]?.qty).toBe(3);
     expect(items[0]?.unitPriceVnd).toBe(250_000);
+  });
+
+  it("parses no-sale day as empty items", () => {
+    expect(isNoSaleUtterance("hôm nay không bán")).toBe(true);
+    expect(parseUtterance("hôm nay không bán")).toEqual([]);
   });
 
   it("flags crossing 1B threshold", () => {
@@ -113,11 +122,9 @@ describe("bookkeeper", () => {
       fingerprintLedgerPayload(entry)
     );
 
-    // same payload again → no-op success
     const again = verifyLedgerProposal(state, createProposal("idem-1", entry, "mate"));
     expect(again.proposal.status).toBe("verified");
 
-    // different payload same id → reject
     const other = proposeLedgerEntry(
       "idem-1",
       [{ description: "áo", qty: 2, unitPriceVnd: 100_000 }],
@@ -134,7 +141,6 @@ describe("bookkeeper", () => {
 
   it("ingest rejects invalid Ajv payload before verify", () => {
     const state = createVendorState("v1", 100_000);
-    // Force a bad payload through verifyLedgerProposal
     const bad = createProposal(
       "bad-1",
       {
@@ -155,7 +161,25 @@ describe("bookkeeper", () => {
     expect(proposal.verificationErrors.length).toBeGreaterThan(0);
   });
 
-  it("runDemoOnce lifecycle: HITL refuse, approve, YTD crosses 1B", () => {
+  it("buildWeek2SeedMetrics counts + remainingExemption", () => {
+    const m = buildWeek2SeedMetrics({
+      approveCount: 3,
+      refuseBeforeDuyetCount: 3,
+      thresholdWarningCount: 1,
+      citationHits: 8,
+      finalYtdVnd: 1_006_110_000,
+    });
+    expect(m.remainingExemptionVnd).toBe(0);
+    expect(m.refuseBeforeDuyetCount).toBe(3);
+    expect(m.citationHits).toBe(8);
+    const block = formatWeek2SeedMetricsBlock(m).join("\n");
+    expect(block).toMatch(/WEEK-2 METRICS/);
+    expect(block).toMatch(/Từ chối-before-Duyệt/);
+    expect(block).toMatch(/citation hits/);
+    expect(block).toMatch(/remainingExemption|YTD gap to 1B/);
+  });
+
+  it("runDemoOnce lifecycle: HITL refuse, approve, YTD crosses 1B, metrics+audit", () => {
     const captured: string[] = [];
     const result = runDemoOnce({
       reset: true,
@@ -166,15 +190,36 @@ describe("bookkeeper", () => {
     expect(result.finalYtd).toBeGreaterThanOrEqual(1_000_000_000);
     expect(result.state.ledger.length).toBe(3);
 
+    expect(result.week2Metrics.approveCount).toBe(3);
+    expect(result.week2Metrics.refuseBeforeDuyetCount).toBe(3);
+    expect(result.week2Metrics.thresholdWarningCount).toBe(1);
+    expect(result.week2Metrics.citationHits).toBeGreaterThan(0);
+    expect(result.week2Metrics.remainingExemptionVnd).toBe(0);
+
+    expect(result.audit.some((e) => e.type === "approve_rejected")).toBe(true);
+    expect(result.audit.some((e) => e.type === "approve_committed")).toBe(true);
+    expect(result.audit.some((e) => e.type === "idempotency_conflict")).toBe(
+      true
+    );
+
     const text = captured.join("\n");
-    expect(text).toMatch(/↺ Reset seed/);
+    expect(text).toMatch(/↺ RESET \(top\)|↺ Reset seed/);
     expect(text).toMatch(/Bà Lan/);
-    expect(text).toMatch(/Từ chối ghi sổ khi chưa Duyệt/);
-    expect(text).toMatch(/Người duyệt: Bà Lan → Duyệt/);
+    expect(text).toMatch(/TỪ CHỐI|Từ chối ghi sổ khi chưa Duyệt/);
+    expect(text).toMatch(/DUYỆT|Người duyệt: Bà Lan → Duyệt/);
     expect(text).toMatch(/Đã duyệt/);
-    expect(text).toMatch(/CẢNH BÁO|vượt ngưỡng|1 tỷ/i);
+    expect(text).toMatch(/PAUSE|CẢNH BÁO|vượt ngưỡng|1 tỷ/i);
+    expect(text).toMatch(/ĐỀ XUẤT|Đề xuất/);
     expect(text).toMatch(/Căn cứ:/);
-    // no raw JSON wall of full proposal objects
+    expect(text).toMatch(/WEEK-2 METRICS/);
+    expect(text).toMatch(/Không bán hôm nay|no-op/i);
+    expect(text).toMatch(/Idempotency|sửa sai/i);
+    expect(text).toMatch(/Pro kê khai/);
+    expect(text).toMatch(/HĐ điện tử|invoiceNumber|HD-DEMO/i);
+    expect(text).toMatch(/Đoạn citation|excerpt/i);
+    expect(text).toMatch(/approve_rejected/);
+    expect(text).toMatch(/nhóm tiểu thương chợ An Đông/);
+    expect(text).toMatch(/regex stub/i);
     expect(text).not.toMatch(/"ytdBefore":/);
     expect(text).not.toMatch(/"crossedThreshold":/);
   });

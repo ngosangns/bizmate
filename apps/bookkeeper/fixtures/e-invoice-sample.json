@@ -1,0 +1,44 @@
+{
+  "_meta": {
+    "kind": "offline-fixture",
+    "demo": true,
+    "note": "Demo e-invoice ONLY — không kết nối cơ quan thuế / không live API. Fields for Bookkeeper K2 / Lee-K1 richer offline fixture."
+  },
+  "invoiceNumber": "HD-DEMO-2026-0918-001",
+  "issuedAt": "2026-09-18T16:45:00+07:00",
+  "sellerTaxId": "0312345678-DEMO",
+  "sellerName": "Bà Lan — sạp vải chợ An Đông (demo)",
+  "buyerName": "Cửa hàng may Lan Chi (demo buyer)",
+  "buyerTaxId": null,
+  "currency": "VND",
+  "status": "drafted",
+  "lineItems": [
+    {
+      "description": "Áo thun cotton",
+      "qty": 3,
+      "unitPriceVnd": 250000,
+      "lineTotalVnd": 750000
+    },
+    {
+      "description": "Vải thô (mét)",
+      "qty": 2,
+      "unitPriceVnd": 180000,
+      "lineTotalVnd": 360000
+    }
+  ],
+  "totalVnd": 1110000,
+  "citationIds": ["ND-141-2026", "LUAT-09-2026"],
+  "citations": [
+    {
+      "id": "ND-141-2026",
+      "title": "Nghị định 141/2026/NĐ-CP (demo citation)",
+      "excerpt": "Hộ kinh doanh chuyển từ thuế khoán sang kê khai; ngưỡng doanh thu miễn thuế theo quy định. (đoạn demo — không phải văn bản chính thức)"
+    },
+    {
+      "id": "LUAT-09-2026",
+      "title": "Luật 09/2026 (demo citation)",
+      "excerpt": "Ngưỡng doanh thu miễn thuế hộ kinh doanh: 1 tỷ đồng/năm (fixture demo)."
+    }
+  ],
+  "notes": "Fixture gắn demo seed An Đông; status drafted|issued. Không gửi thuế."
+}

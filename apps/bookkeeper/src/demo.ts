@@ -6,13 +6,27 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { createProposal } from "@bizmate/core";
-import { answerTaxQuestion } from "./rules.js";
+import { answerTaxQuestion, proposeLedgerEntry } from "./rules.js";
 import {
   commitApproved,
   createVendorState,
   ingestUtterance,
+  verifyLedgerProposal,
   type VendorState,
 } from "./agent.js";
+import {
+  appendAudit,
+  createAuditLog,
+  formatAuditBlock,
+  type AuditEvent,
+} from "./audit.js";
+import {
+  buildWeek2SeedMetrics,
+  formatSoftPaywallLine,
+  formatWeek2SeedMetricsBlock,
+  type Week2SeedMetrics,
+} from "./metrics.js";
+import { isNoSaleUtterance, parseUtterance } from "./parse-utterance.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -30,12 +44,37 @@ export interface VendorFixture {
   officialDocs: OfficialDoc[];
 }
 
+export interface EInvoiceCitation {
+  id: string;
+  title: string;
+  excerpt: string;
+}
+
+export interface EInvoiceFixture {
+  _meta?: { demo?: boolean; note?: string; kind?: string };
+  invoiceNumber: string;
+  issuedAt: string;
+  sellerTaxId: string;
+  sellerName?: string;
+  buyerName: string;
+  currency: string;
+  status: "drafted" | "issued" | string;
+  lineItems: {
+    description: string;
+    qty: number;
+    unitPriceVnd: number;
+    lineTotalVnd?: number;
+  }[];
+  totalVnd: number;
+  citationIds: string[];
+  citations?: EInvoiceCitation[];
+}
+
 export interface DemoOptions {
-  /** Reload fixture seed (YTD 980tr) and replay full story. */
   reset?: boolean;
-  /** Capture lines instead of / in addition to console. */
   log?: (line: string) => void;
   fixturePath?: string;
+  eInvoicePath?: string;
 }
 
 export interface DemoResult {
@@ -43,6 +82,8 @@ export interface DemoResult {
   lines: string[];
   crossedThreshold: boolean;
   finalYtd: number;
+  week2Metrics: Week2SeedMetrics;
+  audit: AuditEvent[];
 }
 
 function loadFixture(fixturePath?: string): VendorFixture {
@@ -50,6 +91,17 @@ function loadFixture(fixturePath?: string): VendorFixture {
     fixturePath ??
     path.join(__dirname, "../fixtures/vendor-an-dong.json");
   return JSON.parse(fs.readFileSync(p, "utf8")) as VendorFixture;
+}
+
+function loadEInvoice(eInvoicePath?: string): EInvoiceFixture | null {
+  const p =
+    eInvoicePath ??
+    path.join(__dirname, "../fixtures/e-invoice-sample.json");
+  try {
+    return JSON.parse(fs.readFileSync(p, "utf8")) as EInvoiceFixture;
+  } catch {
+    return null;
+  }
 }
 
 function vnd(n: number): string {
@@ -67,9 +119,17 @@ function formatItems(
     .join("; ");
 }
 
+function formatEInvoiceSummary(inv: EInvoiceFixture): string {
+  const nLines = inv.lineItems?.length ?? 0;
+  return (
+    `HĐ điện tử (fixture offline): ${inv.invoiceNumber} · ${inv.status} · ` +
+    `${inv.buyerName} · ${nLines} dòng · ${vnd(inv.totalVnd)} ${inv.currency}` +
+    ` · MST bán (demo): ${inv.sellerTaxId} — không gửi thuế`
+  );
+}
+
 /**
  * Run one full demo lifecycle (ingest → refuse draft → human Duyệt → persist).
- * Preferred entry for tests (no process spawn).
  */
 export function runDemoOnce(opts: DemoOptions = {}): DemoResult {
   const lines: string[] = [];
@@ -80,13 +140,14 @@ export function runDemoOnce(opts: DemoOptions = {}): DemoResult {
   };
 
   const fixture = loadFixture(opts.fixturePath);
+  const audit = createAuditLog();
   const reset =
     opts.reset === true ||
     process.argv.includes("--reset") ||
     process.env.BOOKKEEPER_RESET === "1";
 
   if (reset) {
-    out(`↺ Reset seed · YTD về ${vnd(fixture.ytdRevenueVnd)}`);
+    out(`↺ RESET (top) · seed YTD về ${vnd(fixture.ytdRevenueVnd)}`);
   }
 
   let state = createVendorState(fixture.vendorId, fixture.ytdRevenueVnd);
@@ -101,19 +162,37 @@ export function runDemoOnce(opts: DemoOptions = {}): DemoResult {
   out(
     "Giả thuyết mua: hộ kinh doanh chợ / SME VN · freemium → trả phí khi gần ngưỡng 1 tỷ hoặc cần kê khai (giả thuyết, chưa đo ARPU)."
   );
+  out(
+    "Week-2 kênh (chọn 1): nhóm tiểu thương chợ An Đông — trust láng giềng, CAC thấp, khớp persona Bà Lan (không đại lý thuế / không Shopee Academy trong pilot này)."
+  );
+  out(
+    "Parse utterance = regex stub (offline) — chưa ASR thật."
+  );
   out("");
 
   let crossedThreshold = false;
+  let approveCount = 0;
+  let refuseBeforeDuyetCount = 0;
+  let thresholdWarningCount = 0;
+  let citationHits = 0;
   let step = 0;
+  let firstApprovedId: string | null = null;
 
   for (const u of fixture.utterances) {
     step += 1;
+    out(`── Bước ${step} ──`);
+    out(`Bạn nói: “${u.text}”`);
+
+    // TA-K2: no-sale / empty day — no-op, no ledger proposal
+    if (isNoSaleUtterance(u.text) || parseUtterance(u.text).length === 0) {
+      out("📭 Không bán hôm nay — không đề xuất ghi sổ (no-op)");
+      out("");
+      continue;
+    }
+
     const ingested = ingestUtterance(state, u.id, u.text, cites);
     state = ingested.state;
     const proposal = ingested.proposal;
-
-    out(`── Bước ${step} ──`);
-    out(`Bạn nói: “${u.text}”`);
 
     if (proposal.status === "rejected") {
       out(
@@ -125,32 +204,100 @@ export function runDemoOnce(opts: DemoOptions = {}): DemoResult {
 
     const p = proposal.payload;
     out(
-      `Đề xuất ghi sổ: ${formatItems(p.items)} · tổng ${vnd(p.totalVnd)} (chờ Duyệt)`
+      `▶ ĐỀ XUẤT: ${formatItems(p.items)} · tổng ${vnd(p.totalVnd)} (chờ Duyệt)`
     );
+    citationHits += p.citations.length;
 
     if (p.crossedThreshold) {
       crossedThreshold = true;
+      thresholdWarningCount += 1;
       out(
-        "⚠️  CẢNH BÁO: Giao dịch này sẽ vượt ngưỡng miễn thuế 1 tỷ đồng/năm. Cần bạn Duyệt trước khi ghi sổ."
+        "⏸ PAUSE · CẢNH BÁO 1B: Giao dịch này sẽ vượt ngưỡng miễn thuế 1 tỷ đồng/năm."
       );
+      out(
+        "   → Dừng lại xem số · Cần bạn Duyệt trước khi ghi sổ."
+      );
+      out(formatSoftPaywallLine());
+      appendAudit(audit, {
+        type: "threshold_warned",
+        utteranceId: u.id,
+        detail: `crossedThreshold · total ${p.totalVnd}`,
+        ytdVnd: state.ytdRevenueVnd,
+      });
+      appendAudit(audit, {
+        type: "soft_paywall_shown",
+        utteranceId: u.id,
+        detail: "Pro kê khai fixture upsell (no live billing)",
+        ytdVnd: state.ytdRevenueVnd,
+      });
     }
 
-    // HITL gate — refuse draft (human has not approved yet)
+    // HITL: Từ chối-before-Duyệt + Lee-K2 audit trail
     const draftProbe = createProposal(u.id + ":draft-probe", p, "mate");
     let refused = false;
     try {
       commitApproved(state, draftProbe);
-    } catch {
+    } catch (err) {
       refused = true;
-      out("⛔ Từ chối ghi sổ khi chưa Duyệt");
+      refuseBeforeDuyetCount += 1;
+      out("▶ TỪ CHỐI: ghi sổ khi chưa Duyệt");
+      appendAudit(audit, {
+        type: "approve_rejected",
+        utteranceId: u.id,
+        detail:
+          err instanceof Error
+            ? err.message
+            : "Refuse to persist without a verified proposal",
+        ytdVnd: state.ytdRevenueVnd,
+      });
     }
     if (!refused) {
       throw new Error("Expected refuse path for unverified draft");
     }
 
-    out("👤 Người duyệt: Bà Lan → Duyệt");
+    out("▶ DUYỆT: Người duyệt Bà Lan → Duyệt");
     state = commitApproved(state, proposal);
+    approveCount += 1;
+    if (!firstApprovedId) firstApprovedId = u.id;
+    appendAudit(audit, {
+      type: "approve_committed",
+      utteranceId: u.id,
+      detail: `YTD → ${state.ytdRevenueVnd}`,
+      ytdVnd: state.ytdRevenueVnd,
+    });
     out(`✓ Đã duyệt · YTD mới: ${vnd(state.ytdRevenueVnd)}`);
+    out("");
+  }
+
+  // Lee-K3 / TA-K2 sửa sai: same utteranceId, DIFFERENT amounts → reject
+  if (firstApprovedId) {
+    out("── Sửa sai / idempotent re-ingest ──");
+    out(
+      `Thử sửa sai cùng id “${firstApprovedId}” với số tiền khác → phải từ chối (idempotency).`
+    );
+    const conflictEntry = proposeLedgerEntry(
+      firstApprovedId,
+      [{ description: "áo", qty: 99, unitPriceVnd: 999_000 }],
+      fixture.ytdRevenueVnd,
+      cites
+    );
+    const conflict = verifyLedgerProposal(
+      state,
+      createProposal(firstApprovedId, conflictEntry, "mate")
+    );
+    if (conflict.proposal.status === "rejected") {
+      out(
+        `⛔ Idempotency: ${conflict.proposal.verificationErrors.join("; ")}`
+      );
+      appendAudit(audit, {
+        type: "idempotency_conflict",
+        utteranceId: firstApprovedId,
+        detail: conflict.proposal.verificationErrors.join("; "),
+        ytdVnd: state.ytdRevenueVnd,
+      });
+    } else {
+      throw new Error("Expected idempotency reject on different payload");
+    }
     out("");
   }
 
@@ -159,9 +306,8 @@ export function runDemoOnce(opts: DemoOptions = {}): DemoResult {
     fixture.officialDocs,
     state.ytdRevenueVnd
   );
-  const citeTitles = q.citations.map(
-    (id) => titleById[id] ?? id
-  );
+  const citeTitles = q.citations.map((id) => titleById[id] ?? id);
+  citationHits += q.citations.length;
 
   out("── Hỏi thuế ──");
   out("Bạn hỏi: Tôi còn bao nhiêu trước ngưỡng miễn thuế 1 tỷ?");
@@ -169,14 +315,51 @@ export function runDemoOnce(opts: DemoOptions = {}): DemoResult {
   out(`Căn cứ: ${citeTitles.join(" · ")}`);
   out("");
 
+  const eInvoice = loadEInvoice(opts.eInvoicePath);
+  if (eInvoice) {
+    out("── Hóa đơn điện tử (fixture) ──");
+    out(formatEInvoiceSummary(eInvoice));
+    citationHits += eInvoice.citationIds?.length ?? 0;
+    const excerpts = eInvoice.citations ?? [];
+    for (const c of excerpts) {
+      out(`  Đoạn citation: [${c.id}] ${c.excerpt}`);
+      citationHits += 1;
+    }
+    out("");
+  }
+
+  if (crossedThreshold) {
+    out("── Soft paywall (fixture, no billing) ──");
+    out(formatSoftPaywallLine());
+    out("");
+  }
+
+  const week2Metrics = buildWeek2SeedMetrics({
+    approveCount,
+    refuseBeforeDuyetCount,
+    thresholdWarningCount,
+    citationHits,
+    finalYtdVnd: state.ytdRevenueVnd,
+  });
+  for (const line of formatWeek2SeedMetricsBlock(week2Metrics)) {
+    out(line);
+  }
+  out("");
+
+  for (const line of formatAuditBlock(audit)) {
+    out(line);
+  }
+  out("");
+
   return {
     state,
     lines,
     crossedThreshold,
     finalYtd: state.ytdRevenueVnd,
+    week2Metrics,
+    audit,
   };
 }
-
 
 function isCliEntry(): boolean {
   const arg = process.argv[1];

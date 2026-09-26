@@ -1,0 +1,12 @@
+{
+  "_meta": {
+    "kind": "soft-paywall-fixture",
+    "demo": true,
+    "note": "No live billing. Shown when crossedThreshold on demo seed."
+  },
+  "productName": "Pro kê khai",
+  "trigger": "crossedThreshold",
+  "copyVn": "Vượt 1 tỷ — mở gói Pro để xuất HĐ + kê khai có căn cứ. Không thu phí trong demo · không billing live.",
+  "priceHypothesisVnd": null,
+  "billingLive": false
+}
