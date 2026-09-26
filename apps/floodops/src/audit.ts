@@ -19,6 +19,7 @@ export interface AuditRecord {
   requiresHuman?: boolean;
   reason?: string;
   actor?: string;
+  /** approved = Duyệt; omit on Từ chối (status → proposed, schema-safe). */
   decision?: "approved";
   before?: { status: ProposedAction["status"] };
   after?: { status: ProposedAction["status"] };
@@ -158,3 +159,117 @@ export function applyReplayApproval(
   return action;
 }
 
+/**
+ * Ops apply: flip non-refund awaiting_human → approved (hold/reschedule/reroute).
+ * Refund must use approveRefund.
+ */
+export function applyOpsAction(
+  actions: ProposedAction[],
+  orderId: string,
+  actor: string,
+  opts?: { ts?: string; auditPath?: string }
+): ProposedAction {
+  const action = actions.find((a) => a.orderId === orderId);
+  if (!action) {
+    throw new Error(`applyOpsAction: order ${orderId} not found`);
+  }
+  if (action.kind === "propose_refund") {
+    throw new Error(
+      `applyOpsAction: ${orderId} is propose_refund — dùng approveRefund / Duyệt hoàn`
+    );
+  }
+  if (action.status !== "awaiting_human") {
+    throw new Error(
+      `applyOpsAction: ${orderId} status=${action.status} (cần awaiting_human)`
+    );
+  }
+  const before = { status: action.status };
+  action.status = "approved";
+  const ts = opts?.ts ?? new Date().toISOString();
+  const auditPath = opts?.auditPath ?? defaultAuditJsonlPath();
+  appendJsonl(
+    {
+      ts,
+      type: "human_decision",
+      orderId,
+      kind: action.kind,
+      status: action.status,
+      requiresHuman: true,
+      actor,
+      decision: "approved",
+      before,
+      after: { status: "approved" },
+      reason: action.reason,
+    },
+    auditPath
+  );
+  return action;
+}
+
+/**
+ * Ops Từ chối: awaiting_human → proposed (schema-safe; no "rejected" enum yet).
+ * Appends human_decision audit without decision:"approved".
+ */
+export function rejectHumanAction(
+  actions: ProposedAction[],
+  orderId: string,
+  actor: string,
+  opts?: { ts?: string; auditPath?: string; note?: string }
+): ProposedAction {
+  const action = actions.find((a) => a.orderId === orderId);
+  if (!action) {
+    throw new Error(`rejectHumanAction: order ${orderId} not found`);
+  }
+  if (action.status !== "awaiting_human") {
+    throw new Error(
+      `rejectHumanAction: ${orderId} status=${action.status} (cần awaiting_human)`
+    );
+  }
+  const before = { status: action.status };
+  const note = opts?.note?.trim() || "ops từ chối";
+  action.status = "proposed";
+  if (!action.reason.includes("ops từ chối")) {
+    action.reason = `${action.reason} · ${note}`;
+  }
+  const ts = opts?.ts ?? new Date().toISOString();
+  const auditPath = opts?.auditPath ?? defaultAuditJsonlPath();
+  appendJsonl(
+    {
+      ts,
+      type: "human_decision",
+      orderId,
+      kind: action.kind,
+      status: action.status,
+      requiresHuman: true,
+      actor,
+      before,
+      after: { status: "proposed" },
+      reason: action.reason,
+    },
+    auditPath
+  );
+  return action;
+}
+
+/**
+ * Unified HITL entry for UI / API: approve refund, apply ops, or reject.
+ */
+export function resolveHumanAction(
+  actions: ProposedAction[],
+  orderId: string,
+  actor: string,
+  verdict: "approve" | "reject",
+  opts?: { ts?: string; auditPath?: string; note?: string }
+): ProposedAction {
+  const action = actions.find((a) => a.orderId === orderId);
+  if (!action) {
+    throw new Error(`resolveHumanAction: order ${orderId} not found`);
+  }
+  if (verdict === "reject") {
+    return rejectHumanAction(actions, orderId, actor, opts);
+  }
+  if (action.kind === "propose_refund") {
+    return approveRefund(actions, orderId, actor, opts);
+  }
+  return applyOpsAction(actions, orderId, actor, opts);
+}

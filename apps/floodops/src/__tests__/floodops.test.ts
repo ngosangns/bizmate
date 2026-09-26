@@ -4,12 +4,15 @@ import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { assertValid, validateFloodDecision } from "@bizmate/contracts";
 import {
+  applyOpsAction,
   applyReplayApproval,
   approveRefund,
   findLatestHumanDecision,
   persistWaveActions,
   readAuditJsonl,
+  rejectHumanAction,
   resetAuditFile,
+  resolveHumanAction,
 } from "../audit.js";
 import {
   createCheckout,
@@ -232,6 +235,77 @@ describe("floodops", () => {
     expect(() => approveRefund([refund], "ORD-X", "ops")).toThrow(
       /awaiting_human/
     );
+  });
+
+  it("applyOpsAction flips non-refund awaiting_human → approved", () => {
+    const auditPath = tmpAudit();
+    const hold = replanOrder(
+      { id: "ORD-1005", wardId: "w1", codVnd: 50_000, slaHoursLeft: 1 },
+      flooded,
+      policy,
+      [],
+      true
+    );
+    expect(hold.status).toBe("awaiting_human");
+    expect(hold.kind).toBe("hold");
+    const actions = [hold];
+    const approved = applyOpsAction(actions, "ORD-1005", "ops-ui-demo", {
+      auditPath,
+    });
+    expect(approved.status).toBe("approved");
+    const lines = readAuditJsonl(auditPath);
+    expect(lines[0]!.type).toBe("human_decision");
+    expect(lines[0]!.decision).toBe("approved");
+    assertValid(validateFloodDecision, lines[0]!, "ops-apply");
+  });
+
+  it("rejectHumanAction flips awaiting_human → proposed (Từ chối)", () => {
+    const auditPath = tmpAudit();
+    const refund = replanOrder(
+      { id: "ORD-1003", wardId: "w1", codVnd: 2_500_000, slaHoursLeft: 2 },
+      flooded,
+      policy,
+      ["clear"]
+    );
+    const actions = [refund];
+    const rejected = rejectHumanAction(actions, "ORD-1003", "ops-ui-demo", {
+      auditPath,
+    });
+    expect(rejected.status).toBe("proposed");
+    expect(rejected.reason).toMatch(/ops từ chối/);
+    const lines = readAuditJsonl(auditPath);
+    expect(lines[0]!.type).toBe("human_decision");
+    expect(lines[0]!.after?.status).toBe("proposed");
+    assertValid(validateFloodDecision, lines[0]!, "ops-reject");
+  });
+
+  it("resolveHumanAction routes refund approve / hold apply / reject", () => {
+    const auditPath = tmpAudit();
+    const refund = replanOrder(
+      { id: "R1", wardId: "w1", codVnd: 2_500_000, slaHoursLeft: 2 },
+      flooded,
+      policy,
+      ["clear"]
+    );
+    const hold = replanOrder(
+      { id: "H1", wardId: "w1", codVnd: 50_000, slaHoursLeft: 1 },
+      flooded,
+      policy,
+      [],
+      true
+    );
+    resolveHumanAction([refund], "R1", "ops", "approve", { auditPath });
+    expect(refund.status).toBe("approved");
+    resolveHumanAction([hold], "H1", "ops", "approve", { auditPath });
+    expect(hold.status).toBe("approved");
+    const refund2 = replanOrder(
+      { id: "R2", wardId: "w1", codVnd: 2_500_000, slaHoursLeft: 2 },
+      flooded,
+      policy,
+      ["clear"]
+    );
+    resolveHumanAction([refund2], "R2", "ops", "reject", { auditPath });
+    expect(refund2.status).toBe("proposed");
   });
 
   it("resetAuditFile clears JSONL for replay", () => {

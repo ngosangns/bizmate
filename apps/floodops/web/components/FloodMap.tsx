@@ -50,9 +50,11 @@ export default function FloodMap({ wards, wardGeo }: Props) {
           fillOpacity: 0.75,
           weight: 2,
         }).addTo(map);
+        const statusLabel =
+          w.status === "flooded" ? "flooded · ngập" : "clear · khô";
         marker.bindPopup(
           `<strong>${w.name}</strong><br/>` +
-            `status: <b>${w.status}</b><br/>` +
+            `status: <b>${statusLabel}</b><br/>` +
             `flood: ${w.floodCm}cm<br/>` +
             `<em>fixture pin · not live GPS</em>`
         );
@@ -71,8 +73,8 @@ export default function FloodMap({ wards, wardGeo }: Props) {
         <p className="mt-2 text-sm text-muted">Đang tải bản đồ Leaflet…</p>
       )}
       <div className="mt-2.5 flex flex-wrap items-center gap-3 text-sm text-muted">
-        <span className="legend-dot flooded">flooded / ngập</span>
-        <span className="legend-dot dry">clear / khô</span>
+        <span className="legend-dot flooded">flooded · ngập</span>
+        <span className="legend-dot dry">clear · khô</span>
         <Badge variant="muted">fixture pins</Badge>
       </div>
       <p className="mt-1.5 text-sm text-muted">

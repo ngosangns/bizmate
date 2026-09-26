@@ -1,8 +1,18 @@
+"use client";
+
+import { useEffect, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import type { Order, ProposedAction, Ward } from "../lib/load-state";
 import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
 
 function vnd(n: number): string {
   return n.toLocaleString("vi-VN") + "₫";
+}
+
+/** Spaced EN · VN so DOM text is never glued (Lee: Hòa Hưngflooded / floodedflood). */
+function wardStatusLabel(status: Ward["status"]): string {
+  return status === "flooded" ? "flooded · ngập" : "clear · khô";
 }
 
 interface Props {
@@ -12,10 +22,61 @@ interface Props {
 }
 
 export default function OrdersTable({ orders, actions, wards }: Props) {
-  const byId = new Map(actions.map((a) => [a.orderId, a]));
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [flash, setFlash] = useState<string | null>(null);
+  const [rows, setRows] = useState<ProposedAction[]>(actions);
+
+  useEffect(() => {
+    setRows(actions);
+  }, [actions]);
+
+  const byId = new Map(rows.map((a) => [a.orderId, a]));
   const wardName = new Map(wards.map((w) => [w.id, w]));
 
-  if (actions.length === 0) {
+  async function hitl(
+    orderId: string,
+    verdict: "approve" | "reject"
+  ): Promise<void> {
+    setBusyId(orderId);
+    setFlash(null);
+    try {
+      const res = await fetch("/api/approve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderId,
+          verdict,
+          actor: "ops-ui-demo",
+        }),
+      });
+      const data = (await res.json()) as {
+        ok?: boolean;
+        error?: string;
+        action?: ProposedAction;
+      };
+      if (!res.ok || !data.ok || !data.action) {
+        setFlash(data.error ?? `HITL failed (${res.status})`);
+        return;
+      }
+      setRows((prev) =>
+        prev.map((a) => (a.orderId === orderId ? { ...a, ...data.action! } : a))
+      );
+      setFlash(
+        verdict === "approve"
+          ? `✓ ${orderId} → ${data.action.status}`
+          : `⛔ ${orderId} từ chối → ${data.action.status}`
+      );
+      startTransition(() => router.refresh());
+    } catch (e) {
+      setFlash(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  if (rows.length === 0) {
     return (
       <p className="text-sm text-muted">
         Chưa có actions — chạy <code>npm run worker -w @bizmate/floodops</code>{" "}
@@ -32,6 +93,11 @@ export default function OrdersTable({ orders, actions, wards }: Props) {
 
   return (
     <div className="overflow-x-auto">
+      {flash && (
+        <p className="mb-2 text-sm text-warn" role="status">
+          {flash}
+        </p>
+      )}
       <table className="w-full border-collapse text-sm">
         <thead>
           <tr className="text-left text-muted">
@@ -42,29 +108,42 @@ export default function OrdersTable({ orders, actions, wards }: Props) {
             <th className="border-b border-border px-2 py-2 font-medium">Action</th>
             <th className="border-b border-border px-2 py-2 font-medium">Gate</th>
             <th className="border-b border-border px-2 py-2 font-medium">Status</th>
+            <th className="border-b border-border px-2 py-2 font-medium">HITL</th>
           </tr>
         </thead>
         <tbody>
           {sorted.map((o) => {
             const a = byId.get(o.id);
             const w = wardName.get(o.wardId);
+            const needsHitl =
+              !!a && a.requiresHuman && a.status === "awaiting_human";
+            const isRefund = a?.kind === "propose_refund";
+            const rowBusy = busyId === o.id || pending;
+
             return (
               <tr key={o.id} className="align-top">
                 <td className="border-b border-border px-2 py-2">
                   <code>{o.id}</code>
                 </td>
                 <td className="border-b border-border px-2 py-2">
-                  <span className="mr-1.5">{w?.name ?? o.wardId}</span>
+                  <span>{w?.name ?? o.wardId}</span>
                   {w && (
-                    <Badge variant={w.status === "flooded" ? "flood" : "clear"}>
-                      {w.status}
-                    </Badge>
+                    <>
+                      {" "}
+                      <Badge
+                        variant={w.status === "flooded" ? "flood" : "clear"}
+                      >
+                        {wardStatusLabel(w.status)}
+                      </Badge>
+                    </>
                   )}
                 </td>
                 <td className="border-b border-border px-2 py-2 font-medium tabular-nums whitespace-nowrap">
                   {vnd(o.codVnd)}
                 </td>
-                <td className="border-b border-border px-2 py-2">{o.slaHoursLeft}h</td>
+                <td className="border-b border-border px-2 py-2">
+                  {o.slaHoursLeft}h
+                </td>
                 <td className="border-b border-border px-2 py-2">
                   {a?.kind ?? "—"}
                   {a?.reason && (
@@ -82,7 +161,45 @@ export default function OrdersTable({ orders, actions, wards }: Props) {
                     "—"
                   )}
                 </td>
-                <td className="border-b border-border px-2 py-2">{a?.status ?? "—"}</td>
+                <td className="border-b border-border px-2 py-2">
+                  {a?.status ?? "—"}
+                </td>
+                <td className="border-b border-border px-2 py-2">
+                  {needsHitl ? (
+                    <div className="flex flex-wrap gap-1.5">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="warn"
+                        disabled={rowBusy}
+                        onClick={() => void hitl(o.id, "approve")}
+                        aria-label={
+                          isRefund
+                            ? `Duyệt hoàn ${o.id}`
+                            : `Ops duyệt ${o.id}`
+                        }
+                      >
+                        {isRefund ? "Duyệt hoàn" : "Ops duyệt"}
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        disabled={rowBusy}
+                        onClick={() => void hitl(o.id, "reject")}
+                        aria-label={`Từ chối ${o.id}`}
+                      >
+                        Từ chối
+                      </Button>
+                    </div>
+                  ) : a?.status === "approved" ? (
+                    <span className="text-xs text-[#9aecc0]">✓ đã duyệt</span>
+                  ) : a?.reason?.includes("ops từ chối") ? (
+                    <span className="text-xs text-muted">⛔ từ chối</span>
+                  ) : (
+                    <span className="text-xs text-muted">—</span>
+                  )}
+                </td>
               </tr>
             );
           })}
@@ -91,7 +208,8 @@ export default function OrdersTable({ orders, actions, wards }: Props) {
       <p className="mt-2.5 text-sm text-muted">
         COD trên bảng = giá trị thu hộ đơn (ops risk) —{" "}
         <strong className="text-warn">COD ≠ invoice / seat charge</strong>.
-        Refund cao luôn HUMAN.
+        Refund cao luôn HUMAN · Duyệt hoàn / Ops duyệt / Từ chối ghi audit JSONL
+        (sandbox).
       </p>
     </div>
   );
