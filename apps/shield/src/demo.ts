@@ -3,11 +3,13 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   BLACKLIST_VERSION,
+  SHADOW_DAYS,
   applyHumanOverride,
   auditLog,
   blacklistDomainsHash,
   clearAuditLog,
   judgeMessage,
+  shadowedPatternIds,
   type IncomingMessage,
   type ShieldVerdict,
 } from "./engine.js";
@@ -19,6 +21,21 @@ const inbox = JSON.parse(
 
 function printHeader(): void {
   console.log(`\n🛡️  Shield demo — hộp thư của ${inbox.elderName}`);
+  // TA-S1 P0 — MUST be first opener (family/buyer; NEVER seller KPI)
+  console.log(`30s backup · ba/mẹ mua Shopee`);
+  // Sid-S1 / S1
+  console.log(`backup 30s · family B2C`);
+  console.log(`STAGE: 30s backup only — not hero; not seller KPI`);
+  console.log(`buyer-trust QR / phishing adjacent (no live SPX)`);
+  // Sid-S1 / S2 — mandatory honesty (also printed per-message on m2)
+  console.log(`deepfakeScore=fixture`);
+  console.log(
+    `HONESTY: deepfakeScore = fixture meta (not a live detector)`
+  );
+  // Sid-S2 — Sea wedge = distribution surface, NOT payer
+  console.log(
+    `Sea wedge: Shopee Buyer Protection surface for fake QR hoàn tiền (distribution only; payer = family).`
+  );
   console.log(
     `Payer: family B2C (con trả cho ba/mẹ). Sea/Shopee = distribution only — fake QR refund / phishing adjacent; no live SPX.`
   );
@@ -26,8 +43,11 @@ function printHeader(): void {
   if (inbox.trustedContacts?.length) {
     console.log(`Trusted contacts → ${inbox.trustedContacts.join(", ")}`);
   }
+  const shadowIds = shadowedPatternIds();
   console.log(
-    `Blacklist ${BLACKLIST_VERSION} (hash=${blacklistDomainsHash()}) · mode=enforce`
+    `Per-pattern shadow (${SHADOW_DAYS}d window, now < shadowUntil): ${
+      shadowIds.length ? shadowIds.join(", ") : "(none)"
+    }`
   );
   console.log();
 }
@@ -48,6 +68,7 @@ function runInboxPass(
     console.log(`STEP ${step}/${total}  ${icon} [${m.channel}] ${m.from}`);
     console.log(`   ${m.body.slice(0, 80)}${m.body.length > 80 ? "…" : ""}`);
     if (m.meta?.deepfakeScore !== undefined) {
+      // Lee-S1 — unmistakable fixture callout on m2
       console.log(
         `   deepfakeScore=fixture (upstream detector stub) value=${m.meta.deepfakeScore}`
       );
@@ -56,8 +77,21 @@ function runInboxPass(
       `   → ${v.action.toUpperCase()} (${v.risk}): ${v.reasons.join("; ") || "clean"}`
     );
     if (v.detector) console.log(`   detector: ${v.detector}`);
+    if (v.shadowPatternIds?.length) {
+      console.log(`   shadowPatternIds: ${v.shadowPatternIds.join(", ")}`);
+    }
     if (v.familyAlert) console.log(`   📱 ${v.familyAlert}`);
-    console.log(`   💬 ${v.elderExplanation}\n`);
+    console.log(`   💬 ${v.elderExplanation}`);
+    // TA-S2 — buyer VN tip after blocking fake QR hoàn tiền (m3)
+    if (
+      v.action === "block" &&
+      (m.id === "m3" || (m.meta?.qrBlacklisted && /hoàn tiền/i.test(m.body)))
+    ) {
+      console.log(
+        `   Tip buyer: Đừng quét QR hoàn tiền từ shipper lạ — mở app Shopee để kiểm tra đơn.`
+      );
+    }
+    console.log();
   }
   return verdicts;
 }
@@ -68,8 +102,9 @@ function printAuditSummary(): void {
     counts[e.action]++;
   }
   console.log("—— AUDIT SUMMARY ——");
+  // Lee-S1 / TA-S3 — version/hash + deepfake=fixture ONLY here (not in familyAlert/elder)
   console.log(
-    `  blacklistVersion=${BLACKLIST_VERSION}  hash=${blacklistDomainsHash()}`
+    `  AUDIT: blacklistVersion=${BLACKLIST_VERSION}  hash=${blacklistDomainsHash()}  deepfake=fixture`
   );
   console.log(
     `  allow=${counts.allow}  flag=${counts.flag}  block=${counts.block}  (total entries=${auditLog.length})`
@@ -94,6 +129,10 @@ if (blocked) {
   console.log(`  After:  ${overridden.messageId} → ${overridden.action} (${overridden.risk})`);
   console.log(`    reasons: ${overridden.reasons.join("; ")}`);
   console.log(`    💬 ${overridden.elderExplanation}`);
+  // Lee-S3 — FP SLA line after override
+  console.log(
+    `FP SLA: trusted-contact false-block target <1%; override = human decide`
+  );
 }
 
 console.log("\n—— RESET ——");

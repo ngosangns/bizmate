@@ -4,11 +4,16 @@ import { fileURLToPath } from "node:url";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   BLACKLIST_VERSION,
+  SCRIPT_PATTERNS,
+  SHADOW_DAYS,
+  addCalendarDays,
   applyHumanOverride,
   auditLog,
   blacklistDomainsHash,
   clearAuditLog,
+  isPatternInShadow,
   judgeMessage,
+  shadowedPatternIds,
 } from "../engine.js";
 
 beforeEach(() => {
@@ -68,6 +73,8 @@ describe("shield", () => {
     });
     expect(v.action).toBe("flag");
     expect(v.risk).toBe("warn");
+    // CSKH is in shadow window → shadowPatternIds set, never block from pattern alone
+    expect(v.shadowPatternIds).toContain("fake-cskh-bank");
   });
 
   it("trusted contact soft-hit is allowed (ignore soft reasons)", () => {
@@ -102,8 +109,10 @@ describe("shield", () => {
       body: "Quý khách vui lòng chia sẻ mã OTP vừa nhận để chúng tôi xác minh giao dịch.",
       meta: {},
     });
-    expect(["flag", "block"]).toContain(v.action);
+    // OTP is in shadow → FLAG only (Lee-S2), never block from shadow pattern alone
+    expect(v.action).toBe("flag");
     expect(v.action).not.toBe("allow");
+    expect(v.shadowPatternIds).toContain("otp-share-request");
   });
 
   it("audit grows on each judge and carries blacklistVersion", () => {
@@ -129,7 +138,6 @@ describe("shield", () => {
   });
 
   it("false positive → human override", () => {
-    // Soft script would flag; treat block path then caregiver allows (false positive story)
     const flagged = judgeMessage({
       id: "fp1",
       channel: "sms",
@@ -175,8 +183,14 @@ describe("shield", () => {
     });
     expect(v.action).toBe("block");
     expect(v.elderExplanation).not.toMatch(
-      /Domain blacklist|Deepfake score|QR on blacklist|fixture|detector/i
+      /Domain blacklist|Deepfake score|QR on blacklist|fixture|detector|hash|blacklistVersion/i
     );
+    // TA-S3: familyAlert = everyday VN, no jargon/hash/version
+    expect(v.familyAlert).toBeDefined();
+    expect(v.familyAlert!).not.toMatch(
+      /Domain blacklist|Deepfake|hash|blacklistVersion|fixture|detector/i
+    );
+    expect(v.familyAlert!).toMatch(/Con ơi/);
   });
 
   it("shadow mode turns would-block into flag with shadow: would_block", () => {
@@ -226,5 +240,76 @@ describe("shield", () => {
     for (const key of schema.required as string[]) {
       expect(v).toHaveProperty(key);
     }
+  });
+
+  // --- S3/S4 + Sid-S3 + Lee-S2: per-pattern shadowUntil calendar ---
+
+  it("isPatternInShadow: now < shadowUntil → true; past → false", () => {
+    const now = new Date(2026, 8, 26); // 2026-09-26 local
+    expect(isPatternInShadow("2026-10-01", now)).toBe(true);
+    expect(isPatternInShadow("2026-09-26", now)).toBe(false); // not strictly before
+    expect(isPatternInShadow("2026-09-08", now)).toBe(false);
+    // introducedAt + SHADOW_DAYS
+    const until = addCalendarDays("2026-09-24", SHADOW_DAYS); // 2026-10-01
+    expect(until).toBe("2026-10-01");
+    expect(isPatternInShadow(until, now)).toBe(true);
+  });
+
+  it("new shadow pattern alone → flag not block (Lee-S2)", () => {
+    const v = judgeMessage({
+      id: "shadow-alone",
+      channel: "sms",
+      from: "1900-xxxx",
+      body: "CSKH Vietcombank gọi xác minh thông tin tài khoản của quý khách. Vui lòng nghe máy.",
+      meta: {},
+    });
+    expect(v.action).toBe("flag");
+    expect(v.risk).toBe("warn");
+    expect(v.shadowPatternIds).toContain("fake-cskh-bank");
+    expect(v.reasons.some((r) => /shadow: pattern fake-cskh-bank/i.test(r))).toBe(
+      true
+    );
+    expect(auditLog[0].shadowPatternIds).toContain("fake-cskh-bank");
+  });
+
+  it("old patterns + blacklist still block (demo m1 intact)", () => {
+    const v = judgeMessage({
+      id: "m1",
+      channel: "sms",
+      from: "Vietcombank",
+      body: "TK của quý khách bất thường. Nhấn link http://vcb-secure-login.xyz để xác minh ngay hoặc bị khóa.",
+      meta: { senderSpoof: true },
+    });
+    expect(v.action).toBe("block");
+    expect(v.risk).toBe("block");
+    // bank-urgent is mature — not in shadow
+    expect(v.shadowPatternIds ?? []).not.toContain("bank-urgent-link");
+  });
+
+  it("SCRIPT_PATTERNS carry introducedAt + shadowUntil; OTP/CSKH still in shadow", () => {
+    for (const p of SCRIPT_PATTERNS) {
+      expect(p.introducedAt).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(p.shadowUntil).toBe(addCalendarDays(p.introducedAt, SHADOW_DAYS));
+    }
+    const now = new Date(2026, 8, 26);
+    const ids = shadowedPatternIds(now);
+    expect(ids).toEqual(
+      expect.arrayContaining(["fake-cskh-bank", "otp-share-request"])
+    );
+    expect(ids).not.toContain("bank-urgent-link");
+    expect(ids).not.toContain("family-emergency-money");
+    expect(ids).not.toContain("qr-refund");
+  });
+
+  it("hard signals still block even when shadow patterns also fire", () => {
+    // URL blacklist hard-blocks; shadow OTP must not weaken
+    const v = judgeMessage({
+      id: "hard+shadow",
+      channel: "sms",
+      from: "x",
+      body: "Chia sẻ mã OTP và xác minh ngay http://vcb-secure-login.xyz",
+      meta: {},
+    });
+    expect(v.action).toBe("block");
   });
 });

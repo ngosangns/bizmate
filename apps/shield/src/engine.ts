@@ -2,9 +2,13 @@ import {
   BLACKLIST_VERSION,
   DOMAIN_BLACKLIST,
   SCRIPT_PATTERNS,
+  SHADOW_DAYS,
   TRUSTED_CONTACTS,
+  addCalendarDays,
   blacklistDomainsHash,
+  isPatternInShadow,
   isTrustedContact,
+  shadowedPatternIds,
   urlHitsBlacklist,
 } from "./blacklist.js";
 
@@ -28,6 +32,8 @@ export interface IncomingMessage {
 export interface ReasonCode {
   id: string;
   machineLabel: string;
+  /** Soft script reason that is still inside the per-pattern 7-day shadow window. */
+  shadowSoft?: boolean;
 }
 
 /** Plain VN sentences for elders — no jargon like "Domain blacklist" or "Deepfake score 97%". */
@@ -59,6 +65,8 @@ export interface ShieldVerdict {
   /** Present when deepfakeScore was considered — always fixture/stub offline. */
   detector?: "fixture";
   mode?: ShieldMode;
+  /** Pattern ids that matched while still inside the SHADOW_DAYS window. */
+  shadowPatternIds?: string[];
 }
 
 export interface AuditEntry {
@@ -72,13 +80,15 @@ export interface AuditEntry {
   detector?: "fixture";
   mode?: ShieldMode;
   note?: string;
+  shadowPatternIds?: string[];
 }
 
 export interface JudgeOptions {
   /**
    * Default "enforce". In "shadow", would-be blocks become flag + note.
-   * Policy: new SCRIPT_PATTERNS / blacklist entries stay shadow/flag for 7 days
-   * before promote to enforce (documented SLA; this flag is the runtime switch).
+   * Per-pattern calendar: SCRIPT_PATTERNS with introducedAt inside SHADOW_DAYS
+   * do not count toward the soft→block threshold (see isPatternInShadow).
+   * Global mode: "shadow" still forces every would-block → flag.
    */
   mode?: ShieldMode;
 }
@@ -102,6 +112,9 @@ export function recordAudit(verdict: ShieldVerdict, note?: string): void {
     detector: verdict.detector,
     mode: verdict.mode,
     note,
+    shadowPatternIds: verdict.shadowPatternIds
+      ? [...verdict.shadowPatternIds]
+      : undefined,
   });
 }
 
@@ -113,7 +126,11 @@ function elderPlainReasons(codes: ReasonCode[]): string[] {
 
 /**
  * Hard-block policy (rules/blacklist only — never LLM):
- *   blacklist URL hit OR qrBlacklisted OR deepfakeScore >= 0.9 OR reasons.length >= 2
+ *   blacklist URL hit OR qrBlacklisted OR deepfakeScore >= 0.9
+ *   OR (non-shadow reasons).length >= 2
+ * Shadowed SCRIPT_PATTERNS still appear in reasons but do NOT count toward
+ * the soft→block threshold; if they would have been the tipping driver,
+ * action stays flag with a note.
  * Single soft reason → warn/flag.
  *
  * Allowlist policy:
@@ -122,8 +139,8 @@ function elderPlainReasons(codes: ReasonCode[]): string[] {
  *   ignore soft SCRIPT reasons → allow.
  *   Hard-block signals still block even when the display name is trusted (spoof).
  *
- * Shadow mode:
- *   Hard-block outcomes become flag with reason/note "shadow: would_block" — still deterministic.
+ * Global shadow mode:
+ *   Hard-block outcomes become flag with reason/note "shadow: would_block".
  */
 export function judgeMessage(
   msg: IncomingMessage,
@@ -132,6 +149,7 @@ export function judgeMessage(
   const mode: ShieldMode = options.mode ?? "enforce";
   const codes: ReasonCode[] = [];
   const blHash = blacklistDomainsHash();
+  const firedShadowIds: string[] = [];
 
   const hit = urlHitsBlacklist(msg.body);
   if (hit) {
@@ -141,10 +159,20 @@ export function judgeMessage(
   const softScriptCodes: ReasonCode[] = [];
   for (const p of SCRIPT_PATTERNS) {
     if (p.re.test(msg.body)) {
-      softScriptCodes.push({
-        id: `script-${p.id}`,
-        machineLabel: p.label,
-      });
+      const inShadow = isPatternInShadow(p.shadowUntil);
+      if (inShadow) {
+        firedShadowIds.push(p.id);
+        softScriptCodes.push({
+          id: `script-${p.id}`,
+          machineLabel: `${p.label} (shadow: pattern ${p.id} <${SHADOW_DAYS}d)`,
+          shadowSoft: true,
+        });
+      } else {
+        softScriptCodes.push({
+          id: `script-${p.id}`,
+          machineLabel: p.label,
+        });
+      }
     }
   }
 
@@ -185,30 +213,45 @@ export function judgeMessage(
     codes.push(...softScriptCodes);
   }
 
-  // Block if: URL hit OR qr blacklist OR deepfake OR >= 2 reasons
-  const wouldBlock =
-    Boolean(hit) ||
-    Boolean(msg.meta?.qrBlacklisted) ||
-    deepfakeHit ||
-    codes.length >= 2;
+  const enforceableCodes = codes.filter((c) => !c.shadowSoft);
+  const hardSignalBlock =
+    Boolean(hit) || Boolean(msg.meta?.qrBlacklisted) || deepfakeHit;
+  // Soft threshold uses only non-shadow reasons (hard meta + old patterns)
+  const softThresholdBlock = enforceableCodes.length >= 2;
+  const wouldBlock = hardSignalBlock || softThresholdBlock;
+  // If shadow soft reasons were counted, would we tip into block?
+  const wouldBlockIfShadowCounted =
+    hardSignalBlock || codes.length >= 2;
 
   let risk: RiskLevel = "safe";
   let action: ShieldVerdict["action"] = "allow";
-  let shadowNote: string | undefined;
+  let auditNote: string | undefined;
 
   if (wouldBlock) {
     if (mode === "shadow") {
       risk = "warn";
       action = "flag";
-      shadowNote = "shadow: would_block";
+      auditNote = "shadow: would_block";
       codes.push({ id: "shadow-would-block", machineLabel: "shadow: would_block" });
     } else {
       risk = "block";
       action = "block";
     }
-  } else if (codes.length === 1) {
+  } else if (codes.length >= 1) {
     risk = "warn";
     action = "flag";
+    // Shadowed pattern(s) would have been sole/tipping soft→block driver
+    if (
+      firedShadowIds.length > 0 &&
+      wouldBlockIfShadowCounted &&
+      !wouldBlock
+    ) {
+      auditNote = `shadow: pattern tipping (${firedShadowIds.join(",")}) — not enforce`;
+      codes.push({
+        id: "shadow-pattern-tipping",
+        machineLabel: auditNote,
+      });
+    }
   }
 
   const plain = elderPlainReasons(codes);
@@ -220,10 +263,16 @@ export function judgeMessage(
         : "Ba/mẹ ơi, tin này có dấu hiệu lừa đảo. Đừng bấm link hay chuyển tiền. Con đã được báo.";
 
   const machineReasons = codes.map((c) => c.machineLabel);
+  // TA-S3: familyAlert = one everyday VN sentence; no hash/version/jargon
   const familyAlert =
     action === "allow"
       ? undefined
-      : `[Shield] ${msg.channel} từ "${msg.from}": ${machineReasons.join("; ")}`;
+      : action === "block"
+        ? "Con ơi, Shield vừa chặn một tin nguy hiểm gửi cho ba/mẹ — hãy kiểm tra giúp."
+        : "Con ơi, Shield vừa cảnh báo một tin đáng ngờ gửi cho ba/mẹ — hãy xem giúp.";
+
+  const shadowPatternIds =
+    firedShadowIds.length > 0 ? [...firedShadowIds] : undefined;
 
   const verdict: ShieldVerdict = {
     messageId: msg.id,
@@ -237,9 +286,10 @@ export function judgeMessage(
     blacklistHash: blHash,
     detector: deepfakePresent ? "fixture" : undefined,
     mode,
+    shadowPatternIds,
   };
 
-  recordAudit(verdict, shadowNote);
+  recordAudit(verdict, auditNote);
   return verdict;
 }
 
@@ -265,7 +315,7 @@ export function applyHumanOverride(
     familyAlert:
       decision === "allow"
         ? undefined
-        : `[Shield] Human override BLOCK by ${by} on ${verdict.messageId}`,
+        : "Con ơi, người thân đã xác nhận tin này nguy hiểm — đừng để ba/mẹ bấm link.",
     explanationDraftSource: "template",
   };
   recordAudit(next, note);
@@ -276,7 +326,11 @@ export {
   BLACKLIST_VERSION,
   DOMAIN_BLACKLIST,
   SCRIPT_PATTERNS,
+  SHADOW_DAYS,
   TRUSTED_CONTACTS,
+  addCalendarDays,
   blacklistDomainsHash,
+  isPatternInShadow,
   isTrustedContact,
+  shadowedPatternIds,
 };

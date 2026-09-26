@@ -12,9 +12,9 @@
 | Shield | Lee · Tuấn Anh · Kyle · Son · Sidharth (5/5) | domain-sidharth + seed | ✅ re-route Sid-* |
 | FloodOps | Lee · Tuấn Anh · Kyle · Son · Sidharth (5/5) | domain-sidharth + seed | ✅ re-route Sid-* |
 
-Kyle / Son domain notes: pending their re-score + domain packets.
+Kyle / Son domain notes: filed — `domain-kyle.md` · `domain-son.md`. Son R1d BizMate PASS 36 (B5–B7 done).
 
-**Packets filed:** `domain-sidharth.md` · `domain-lee.md` · `domain-tuananh.md` (2–3 GTM items/app + route priorities Sid-B1…Sid-F1).
+**Packets filed:** `domain-sidharth.md` · `domain-lee.md` · `domain-tuananh.md` · `domain-kyle.md` · `domain-son.md` (2–3 GTM items/app + route priorities Sid-B1…Sid-F1).
 
 **Lee packet filed:** `docs/review/domain-lee.md` (ops/money-safety · Lee-B1…Lee-F2).
 
@@ -42,10 +42,10 @@ Kyle / Son domain notes: pending their re-score + domain packets.
 
 | # | Source | Improvement | Priority | Status |
 |---|--------|-------------|----------|--------|
-| S1 | Tuấn Anh / Sidharth | Stage = **backup 30s** only; không hero seller; buyer-trust QR | P0 pitch | Open |
-| S2 | Lee / Sidharth | Pitch line bắt buộc: `deepfakeScore` = fixture meta, không detector | P0 honesty | Open |
-| S3 | Sidharth | Shadow 7 ngày: calendar / per-pattern (hiện global mode) | P2 ops | Open |
-| S4 | Lee | Shadow mode cho pattern mới trước enforce (nice-to-have) | P2 | Open |
+| S1 | Tuấn Anh / Sidharth | Stage = **backup 30s** only; không hero seller; buyer-trust QR | P0 pitch | **Done** — demo opener + README; see `SHIELD-DOMAIN.md` (commit 912f971) |
+| S2 | Lee / Sidharth | Pitch line bắt buộc: `deepfakeScore` = fixture meta, không detector | P0 honesty | **Done** — header `deepfakeScore=fixture` + HONESTY line |
+| S3 | Sidharth | Shadow 7 ngày: calendar / per-pattern (hiện global mode) | P2 ops | **Done** — `introducedAt`/`shadowUntil` + `isPatternInShadow` |
+| S4 | Lee | Shadow mode cho pattern mới trước enforce (nice-to-have) | P2 | **Done** — shadow FLAG-only; hard signals still BLOCK |
 
 ## FloodOps — Adv · FloodOps
 
@@ -63,7 +63,7 @@ Mỗi judge file `docs/review/domain-{judge}.md` với 2–3 bullet **cụ thể
 
 ## Late adds — gate met residuals
 
-### BizMate — Son Lê CONDITIONAL (blocking his PASS only)
+### BizMate — Son Lê R1c P0 (cleared R1d PASS 36)
 | # | Source | Improvement | Priority | Status |
 |---|--------|-------------|----------|--------|
 | B5 | Son Lê R1c | Sync `apps/em/board.json` done statuses to landed work (or split planned vs done) | **P0** | **Done** — board synced (HITL/evolve remain todo) |
@@ -113,3 +113,39 @@ Mỗi judge file `docs/review/domain-{judge}.md` với 2–3 bullet **cụ thể
 | TA-F1 | FloodOps | Màn chủ shop Shop An Đông VN | P1 | Open → Adv |
 | TA-F2 | FloodOps | Ước phí 2 chiều cạnh Duyệt hoàn | P1 | Open → Adv |
 | TA-F3 | FloodOps | Local-knowledge stub ngách xe máy | P2 | Open → Adv |
+
+
+## Kyle product packet (`domain-kyle.md`) — routed 18:25 ICT
+
+| ID | App | Item | P | Status |
+|----|-----|------|---|--------|
+| Kyle-B1 | BizMate | YTD/1B above-the-fold sau Chạy | **P0** | Open → Adv |
+| Kyle-B2 | BizMate | Progress chỉ khi Tạo lại | P1 | Open → Adv |
+| Kyle-B3 | BizMate | Reset full loop + seed #N to | P1 | Open → Adv |
+| Kyle-K1 | Bookkeeper | HITL 3 dòng lớn / bước | **P0** | Open → Adv |
+| Kyle-K2 | Bookkeeper | Pause beat khi đỏ 1B | P1 | Open → Adv |
+| Kyle-K3 | Bookkeeper | --reset header đầu demo | P1 | Open → Adv |
+| Kyle-S1 | Shield | 30s · 💬 1 câu · reasons→AUDIT | **P0** | Open → Adv |
+| Kyle-S2 | Shield | CLI --once | P1 | Open → Adv |
+| Kyle-S3 | Shield | STEP pill live counts | P1 | Open → Adv |
+| Kyle-F1 | FloodOps | HUMAN+COD cùng dòng | **P0** | Open → Adv |
+| Kyle-F2 | FloodOps | Wave status ①②③ | P1 | Open → Adv |
+| Kyle-F3 | FloodOps | Shop An Đông 3 dòng | P1 | Open → Adv |
+
+
+## Son Codex packet (`domain-son.md`) — routed 18:25 ICT
+
+| ID | App | Item | P | Status |
+|----|-----|------|---|--------|
+| Son-B1 | BizMate | Board 7/3 live on stage | P1 | Open → Adv |
+| Son-B2 | BizMate | Nói stub-fail trên sân | P1 | Open → Adv |
+| Son-B3 | BizMate | Self-review PR template 3 dòng | P2 | Open → Adv |
+| Son-K1 | Bookkeeper | `.scratch/bookkeeper-001.md` | **P0** | Open → Adv |
+| Son-K2 | Bookkeeper | Fail→fix git beat 15s | P1 | Open → Adv |
+| Son-K3 | Bookkeeper | Parse = regex stub label | P1 | Open → Adv |
+| Son-S1 | Shield | detector:fixture above-the-fold | P1 | Open → Adv |
+| Son-S2 | Shield | `.scratch/shield-001.md` | P1 | Open → Adv |
+| Son-S3 | Shield | Không claim Mate codegen | P2 | Open → Adv |
+| Son-F1 | FloodOps | Scratch honesty 2 câu on stage | P1 | Open → Adv |
+| Son-F2 | FloodOps | Schema flood-decision 10s | P1 | Open → Adv |
+| Son-F3 | FloodOps | Policy evolve path offline | P2 | Open → Adv |

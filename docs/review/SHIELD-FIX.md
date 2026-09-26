@@ -46,3 +46,7 @@ npm run demo:shield
 - No live SMS/Zalo/QR channels
 - In-memory audit only
 - Codex process evidence (Son) still thin outside this fix commit
+
+
+## Domain follow-up (2026-09-26)
+See `docs/review/SHIELD-DOMAIN.md` for S1–S4 + Sid/Lee/TA mapping. Per-pattern `shadowUntil` calendar replaces policy-only 7-day note.
