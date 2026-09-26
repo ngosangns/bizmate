@@ -1,8 +1,19 @@
 # FloodOps — điều phối đơn ngày ngập / flood-day last-mile replan
 
-**Offline, deterministic rule engine** for HCMC flood-day logistics. When wards flood, FloodOps replans COD orders: auto-reschedule, reroute to a clear ward, hold, or escalate a refund to a human.
+**Domain-fit stack (STACK-REBUILD):** Next.js App Router **ops dashboard** + Leaflet HCMC ward map + event-driven **Node worker** + deterministic TS engine. Order state = **JSON** (`data/orders.json`, sandbox) + immutable audit **JSONL** (`.audit/wave.jsonl`).
 
-> **Không** gọi live Shopee Express / SPX API. Fixture `hcm-flood-day.json` là analogy last-mile (đơn COD + phường ngập) — cùng pattern ops SPX quan tâm, nhưng chạy 100% offline.
+> **Không** gọi live Shopee Express / SPX API. Fixture `hcm-flood-day.json` là analogy last-mile (đơn COD + phường ngập) — cùng pattern ops SPX quan tâm, nhưng chạy 100% offline / sandbox.
+
+## Stack
+
+| Layer | Tech | Role |
+|-------|------|------|
+| Engine | Pure TS (`src/engine.ts`) | `replanOrder` / `runWave` — zero-LLM hot path |
+| Audit | JSONL (`src/audit.ts`) | `persistWaveActions` · `approveRefund` · `--replay` |
+| Worker | Node + tsx (`src/worker.ts`) | Consume fixture events → replan → write state + audit |
+| State | JSON file (`data/orders.json`) | Sandbox order/wave snapshot for dashboard |
+| Dashboard | Next.js App Router (`web/`) | Map (Leaflet) · orders table · billing seats |
+| Billing | `@bizmate/billing` | `listPlans("floodops")` · `createCheckout(offline_stub)` |
 
 ## Buyer nội bộ (GTM persona)
 
@@ -16,7 +27,6 @@
 
 Ai trả tiền? Internal cost-avoidance (COD loss + phí 2 chiều) — champion = ops lead, không phải seller app store.
 
-
 ## Pricing / subscription (BR2)
 
 | Plan id | Name | Price (fixture) | Notes |
@@ -24,26 +34,11 @@ Ai trả tiền? Internal cost-avoidance (COD loss + phí 2 chiều) — champio
 | `floodops-site` | Per-site ops | 1.500.000 ₫ / site / tháng (fixture · internal) | D-Day primary — Sea / Express-analog **internal budget** |
 | `floodops-wave` | Per-wave ops seat | 500.000 ₫ / wave (fixture · internal) | Optional wave-scoped seat |
 
-Source of truth: `@bizmate/billing` → `listPlans("floodops")`. Demo section ④ prints tiers + honesty.
+Source of truth: `@bizmate/billing` → `listPlans("floodops")`. Demo section ④ + dashboard billing panel print tiers + honesty.
 
-**Payment (BR3):** primary = `createCheckout({ appId:"floodops", planId:"floodops-site", mode:"offline_stub" })` / `stubCharge` (cost-center labeled stub). Optional secondary = `stripe_test` sandbox URL. **COD at-risk ≠ product payment.** No live SPX pay claim. See `docs/review/FLOODOPS-BUSINESS.md`.
-
-
-## What it is / Là gì
-
-| VI | EN |
-|----|----|
-| Agent/rule engine đọc cảnh báo ngập + đơn COD | Rule engine reads flood alerts + COD orders |
-| Tự áp dụng hành động nhỏ (dời giao, chuyển tuyến khô) | Auto-applies small actions (reschedule, reroute) |
-| Đẩy hoàn COD cao / SLA ≤2h cho người duyệt | Escalates high COD refund / tight SLA to human |
-| Mẫu tin nhắn buyer VN khi dời/chuyển/giữ (`buyerNotifyVi`) | Sample VN buyer SMS copy on reschedule/reroute/hold |
-| Audit JSONL bất biến + `approveRefund` | Immutable JSONL audit + human approve helper |
-
-Trust boundary (Biz Mate): **AI proposes → code verifies → human decides**. Runtime ở đây là code thuần — không LLM trên hot path. Policy thresholds hôm nay nằm trong fixture; Mate/Judge *có thể* codegen policy offline sau — xem `.scratch/floodops-001.md`.
+**Payment (BR3):** primary = `createCheckout({ appId:"floodops", planId:"floodops-site", mode:"offline_stub" })` / `stubCharge`. Optional secondary = `stripe_test`. **COD at-risk ≠ product payment.** No live SPX pay claim. See `docs/review/FLOODOPS-BUSINESS.md`.
 
 ## COD / SLA policy
-
-Thresholds come from the fixture `policy`:
 
 | COD (VND) | Clear wards? | Action | Human? |
 |-----------|--------------|--------|--------|
@@ -57,50 +52,54 @@ Default fixture: auto ≤ **500_000**, refund ≥ **1_000_000**.
 
 **Lee rule:** mọi đơn trên ward flooded với `slaHoursLeft <= 2` → `requiresHuman: true` + `status: awaiting_human` (kể cả reschedule/hold/reroute).
 
-`courier_cancel` trên phường đang ngập: **ưu tiên `hold`** thay vì `reschedule`. Mid-COD vẫn có thể `reroute` sang ward khô.
-
-## Offline HCMC fixture
-
-`fixtures/hcm-flood-day.json` — TP.HCM wards (An Đông, Bến Nghé, Hòa Hưng, Thủ Đức), **7 orders**, flood alerts + one `courier_cancel`. Pure JSON so `JSON.parse` is safe on D-Day.
-
 ## Run
 
 ```bash
 # from monorepo root
-npm run demo:floodops
-npm run demo:floodops -- --reset    # xóa audit JSONL
-npm run demo:floodops -- --replay   # đọc Duyệt ORD-1003 từ JSONL
-npm test -w @bizmate/floodops
+npm run demo:floodops                 # CLI story §①–④ · EXIT 0
+npm run demo:floodops -- --reset      # xóa audit JSONL
+npm run demo:floodops -- --replay     # đọc Duyệt ORD-1003 từ JSONL
+npm test -w @bizmate/floodops         # vitest engine/audit/billing
+npm run worker -w @bizmate/floodops   # one wave → data/orders.json + audit
+npm run dev -w @bizmate/floodops      # Next ops dashboard :3011
 ```
 
-Demo story (90s): **honesty/schema → ① alerts → ② actions (HUMAN+COD) → ②b Duyệt/replay + phí 2 chiều → ②c Shop An Đông (3 dòng) → ③ audit → ④ pricing/billing (listPlans + offline_stub)**.
+Demo story (90s): **honesty/schema → ① alerts → ② actions (HUMAN+COD) → ②b Duyệt/replay + phí 2 chiều → ②c Shop An Đông → ③ audit → ④ pricing/billing**.
+
+Dashboard: honesty banners (sandbox/stub · COD≠invoice) · Leaflet flooded/clear wards · orders + HUMAN badges · billing seats panel.
 
 ## Shopee Express relevance (analogy only)
 
-Sea last-mile ops care about rain/flood disruption, COD risk, and courier drop-offs. FloodOps shows the **same decision shape** (auto small moves, human on money) without claiming a live SPX integration. Post-hackathon path: plug real ward/order feeds behind the same `replanOrder` / `runWave` interface.
-
-## Post-hackathon roadmap (not built)
-
-> Honest path after demo day — **roadmap, not shipped**.
-
-| Item | Intent | Status |
-|------|--------|--------|
-| **Live flood feed** | Ingest ward flood alerts from a real feed (or ops CSV) behind the same `FloodEvent` shape | Roadmap |
-| **Hub capacity** | Cap auto-reschedule/reroute by hub/courier capacity so one wave doesn't overload dry hubs | Roadmap |
-| **Multi-wave throttle** | Stagger auto actions across waves when many wards flood at once (CS/ops queue protection) | Roadmap |
-
-Still **no live SPX / Shopee Express API** in this repo. Plug feeds behind `replanOrder` / `runWave` when ready.
+Sea last-mile ops care about rain/flood disruption, COD risk, and courier drop-offs. FloodOps shows the **same decision shape** (auto small moves, human on money) without claiming a live SPX integration.
 
 ## Layout
 
 ```
 apps/floodops/
   fixtures/hcm-flood-day.json
-  .audit/wave.jsonl          # append-only (gitignored); --reset clears
-  src/engine.ts              # replanOrder, runWave, summarizeEvents, codAtRiskVnd
+  fixtures/policy-v2-candidate.json
+  data/orders.json           # runtime state (gitignored · sandbox)
+  .audit/wave.jsonl          # append-only audit
+  src/engine.ts              # replanOrder, runWave, …
   src/audit.ts               # persistWaveActions, approveRefund
+  src/state.ts               # JSON wave state read/write
+  src/worker.ts              # event-driven Node worker
   src/demo.ts                # offline CLI story
   src/__tests__/
+  web/                       # Next.js App Router ops dashboard
+    app/page.tsx             # map + orders + billing
+    app/api/state|billing
+    components/FloodMap.tsx  # Leaflet
   README.md
-packages/contracts/schemas/flood-decision.v0.1.schema.json
 ```
+
+## Post-hackathon roadmap (not built)
+
+| Item | Intent | Status |
+|------|--------|--------|
+| **Live flood feed** | Ingest ward flood alerts behind `FloodEvent` | Roadmap |
+| **Hub capacity** | Cap auto-reschedule/reroute by hub capacity | Roadmap |
+| **Multi-wave throttle** | Stagger auto actions across waves | Roadmap |
+| **SQLite option** | Swap `data/orders.json` for better-sqlite3 | Roadmap (JSON chosen for D-Day) |
+
+Still **no live SPX / Shopee Express API** in this repo.

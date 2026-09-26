@@ -20,3 +20,10 @@ apps/runtime/.audit/
 
 # floodops audit JSONL
 apps/floodops/.audit/
+
+# floodops runtime order state (sandbox)
+apps/floodops/data/
+!apps/floodops/data/.gitkeep
+# bookkeeper SQLite ledger
+apps/bookkeeper/data/*.db
+apps/bookkeeper/data/*.db-*

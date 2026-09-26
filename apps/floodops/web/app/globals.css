@@ -1,0 +1,242 @@
+@import "leaflet/dist/leaflet.css";
+
+:root {
+  --bg: #0f1419;
+  --panel: #1a2332;
+  --border: #2d3a4d;
+  --text: #e7ecf3;
+  --muted: #8b9bb4;
+  --flood: #e85d4c;
+  --clear: #3dba7a;
+  --human: #f5a623;
+  --auto: #5b8def;
+  --warn: #f0c14b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  line-height: 1.45;
+}
+
+a {
+  color: var(--auto);
+}
+
+.banner {
+  background: #3a2f0f;
+  border: 1px solid var(--warn);
+  color: var(--warn);
+  padding: 0.65rem 1rem;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.banner strong {
+  color: #fff3c4;
+}
+
+.layout {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.25rem 1.5rem 3rem;
+}
+
+header.app-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.75rem 1.5rem;
+  margin-bottom: 1rem;
+}
+
+header.app-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 650;
+}
+
+header.app-header .meta {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 960px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.panel h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.panel h3 {
+  margin: 1rem 0 0.5rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.map-wrap {
+  height: 360px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+table.orders {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+table.orders th,
+table.orders td {
+  text-align: left;
+  padding: 0.45rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+table.orders th {
+  color: var(--muted);
+  font-weight: 550;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+}
+
+.badge.human {
+  background: #4a3208;
+  color: var(--human);
+  border: 1px solid var(--human);
+}
+
+.badge.auto {
+  background: #14305a;
+  color: #9ec0ff;
+  border: 1px solid var(--auto);
+}
+
+.badge.flood {
+  background: #4a1a14;
+  color: #ffb4a8;
+  border: 1px solid var(--flood);
+}
+
+.badge.clear {
+  background: #143528;
+  color: #9aecc0;
+  border: 1px solid var(--clear);
+}
+
+.cod {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.plans {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.plan-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.7rem 0.8rem;
+  background: #121a26;
+}
+
+.plan-card .price {
+  font-weight: 650;
+  color: #fff;
+  margin: 0.2rem 0;
+}
+
+.legend {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 0.6rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.legend span::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 0.35rem;
+  vertical-align: middle;
+}
+
+.legend .flooded::before {
+  background: var(--flood);
+}
+
+.legend .dry::before {
+  background: var(--clear);
+}
+
+.stat-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.stat {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  min-width: 160px;
+}
+
+.stat .label {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.stat .value {
+  font-size: 1.15rem;
+  font-weight: 650;
+}

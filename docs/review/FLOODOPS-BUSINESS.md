@@ -80,6 +80,23 @@ Honesty example:
 
 ---
 
+## Stack (STACK-REBUILD)
+
+Ops surface is no longer CLI-only:
+
+| Piece | Path | Note |
+|-------|------|------|
+| **Dashboard** | `apps/floodops/web` (Next.js App Router + Leaflet) | Ward map · orders · HUMAN badges · billing seats · honesty banners |
+| **Worker** | `apps/floodops/src/worker.ts` | Event-driven: fixture events → `runWave` → `data/orders.json` + `.audit/wave.jsonl` |
+| **State** | JSON `data/orders.json` (sandbox) + JSONL audit | Prefer JSON order state; SQLite optional later — labeled stub/sandbox |
+| **Engine** | `src/engine.ts` + `src/audit.ts` | Unchanged behavior — HUMAN+COD escalate · VND seats · `--replay` |
+
+BR1–BR3 honesty unchanged: **COD at-risk ≠ invoice** · **no live SPX pay** · seats via `@bizmate/billing` offline_stub.
+
+Prove packet: `docs/review/FLOODOPS-STACK-PROVE.md`.
+
+---
+
 ## Prove
 
 ```bash
