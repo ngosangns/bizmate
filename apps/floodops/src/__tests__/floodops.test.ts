@@ -12,6 +12,12 @@ import {
   resetAuditFile,
 } from "../audit.js";
 import {
+  createCheckout,
+  honestyBanner,
+  listPlans,
+  stubCharge,
+} from "@bizmate/billing";
+import {
   buildAuditLog,
   buildBuyerNotifyVi,
   codAtRiskVnd,
@@ -464,5 +470,42 @@ describe("floodops", () => {
     expect(fresh[0]!.status).toBe("approved");
     // JSONL unchanged length (replay does not append)
     expect(readAuditJsonl(auditPath).length).toBe(records.length);
+  });
+});
+
+
+describe("floodops billing BR2/BR3", () => {
+  it("listPlans(\"floodops\") is non-empty with site + wave", () => {
+    const plans = listPlans("floodops");
+    expect(plans.length).toBeGreaterThan(0);
+    expect(plans.some((p) => p.id === "floodops-site")).toBe(true);
+    expect(plans.some((p) => p.id === "floodops-wave")).toBe(true);
+    for (const p of plans) {
+      expect(p.appId).toBe("floodops");
+      expect(p.honestyNote).toMatch(/stub|fixture|internal/i);
+    }
+  });
+
+  it("createCheckout offline_stub and stubCharge return honestyBanner", () => {
+    const checkout = createCheckout({
+      appId: "floodops",
+      planId: "floodops-site",
+      mode: "offline_stub",
+    });
+    expect(checkout.ok).toBe(true);
+    expect(checkout.honestyBanner).toBe(honestyBanner("offline_stub"));
+    expect(checkout.honestyBanner).toMatch(/STUB/i);
+    expect(checkout.stub).toBe(true);
+    expect(checkout.url).toBeNull();
+
+    const charge = stubCharge({
+      appId: "floodops",
+      planId: "floodops-site",
+      costCenter: "SEA-FLOODOPS-OPS",
+    });
+    expect(charge.ok).toBe(true);
+    expect(charge.honestyBanner).toBe(honestyBanner("offline_stub"));
+    expect(charge.honestyBanner).toMatch(/STUB/i);
+    expect(charge.chargeId).toMatch(/^ch_stub_/);
   });
 });

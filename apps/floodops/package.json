@@ -10,6 +10,7 @@
     "demo": "tsx src/demo.ts"
   },
   "dependencies": {
+    "@bizmate/billing": "0.1.0",
     "@bizmate/core": "0.1.0",
     "@bizmate/contracts": "0.1.0"
   },

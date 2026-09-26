@@ -21,6 +21,12 @@ import {
   type Order,
   type ProposedAction,
 } from "./engine.js";
+import {
+  createCheckout,
+  honestyBanner,
+  listPlans,
+  stubCharge,
+} from "@bizmate/billing";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const reset = process.argv.includes("--reset");
@@ -208,6 +214,60 @@ for (const e of audit) {
   );
 }
 console.log("");
+
+// ④ BR2/BR3 — shared @bizmate/billing (Sea internal offline_stub primary)
+const floodPlans = listPlans("floodops");
+console.log("④ Pricing / billing (BR2 · BR3 · @bizmate/billing)");
+console.log(
+  "   Who pays: ops org / Express-analog internal budget (champion) — not live SPX pay."
+);
+console.log(
+  `   Value sketch (fixture): COD at-risk ${atRisk.toLocaleString("vi-VN")}₫ ≠ product payment.`
+);
+console.log("   Plans listPlans(\"floodops\"):");
+for (const p of floodPlans) {
+  console.log(
+    `   · ${p.id} · ${p.nameVi} · ${p.priceDisplay} · ${p.honestyNote}`
+  );
+}
+const checkout = createCheckout({
+  appId: "floodops",
+  planId: "floodops-site",
+  mode: "offline_stub",
+});
+console.log("   Primary path: createCheckout(offline_stub) — Sea internal");
+console.log(`   ${checkout.honestyBanner}`);
+console.log(
+  `   → ok=${checkout.ok} · session=${checkout.sessionId} · stub=${checkout.stub}` +
+    (checkout.costCenter ? ` · CC=${checkout.costCenter}` : "")
+);
+console.log(`   ${checkout.detail}`);
+const charge = stubCharge({
+  appId: "floodops",
+  planId: "floodops-site",
+  costCenter: "SEA-FLOODOPS-OPS",
+  amountDisplay: "ops seat / site (fixture)",
+});
+console.log(`   stubCharge: ${charge.honestyBanner}`);
+console.log(
+  `   → ${charge.chargeId} · CC=${charge.costCenter} · ${charge.detail}`
+);
+const stripeOpt = createCheckout({
+  appId: "floodops",
+  planId: "floodops-site",
+  mode: "stripe_test",
+});
+console.log(
+  `   Optional secondary: stripe_test · ${honestyBanner("stripe_test")}`
+);
+console.log(
+  `   → session=${stripeOpt.sessionId}` +
+    (stripeOpt.url ? ` · url=${stripeOpt.url}` : "")
+);
+console.log(
+  "   Explicit: COD at-risk is ops avoidance metric — not a card charge for FloodOps.\n"
+);
+
 console.log(
   "Story: alerts → rule engine (COD/SLA/clear wards/local-knowledge) → auto apply hoặc escalate → human duyệt hoàn → audit."
 );

@@ -16,6 +16,19 @@
 
 Ai trả tiền? Internal cost-avoidance (COD loss + phí 2 chiều) — champion = ops lead, không phải seller app store.
 
+
+## Pricing / subscription (BR2)
+
+| Plan id | Name | Price (fixture) | Notes |
+|---------|------|-----------------|--------|
+| `floodops-site` | Per-site ops | ops seat / site | D-Day primary — Sea / Express-analog **internal budget** |
+| `floodops-wave` | Per-wave ops seat | ops seat / wave | Optional wave-scoped seat |
+
+Source of truth: `@bizmate/billing` → `listPlans("floodops")`. Demo section ④ prints tiers + honesty.
+
+**Payment (BR3):** primary = `createCheckout({ appId:"floodops", planId:"floodops-site", mode:"offline_stub" })` / `stubCharge` (cost-center labeled stub). Optional secondary = `stripe_test` sandbox URL. **COD at-risk ≠ product payment.** No live SPX pay claim. See `docs/review/FLOODOPS-BUSINESS.md`.
+
+
 ## What it is / Là gì
 
 | VI | EN |
@@ -60,7 +73,7 @@ npm run demo:floodops -- --replay   # đọc Duyệt ORD-1003 từ JSONL
 npm test -w @bizmate/floodops
 ```
 
-Demo story (90s): **honesty/schema → ① alerts → ② actions (HUMAN+COD) → ②b Duyệt/replay + phí 2 chiều → ②c Shop An Đông (3 dòng) → ③ audit**.
+Demo story (90s): **honesty/schema → ① alerts → ② actions (HUMAN+COD) → ②b Duyệt/replay + phí 2 chiều → ②c Shop An Đông (3 dòng) → ③ audit → ④ pricing/billing (listPlans + offline_stub)**.
 
 ## Shopee Express relevance (analogy only)
 
