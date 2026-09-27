@@ -1,12 +1,17 @@
 /**
  * Mate AI propose — codegen/evolve with honesty meta.
  * Pattern: AI proposes → Ajv/Judge verify → human publish.
- * Live path gated by BIZMATE_MODE=live; falls back to offline template — never invents LLM traffic.
+ * Soft A4: BIZMATE_MODE=live + API key → thin OpenAI chat call (advisory only);
+ * workflow structure still from deterministic templates. Missing key / any
+ * failure → offline_stub with fallbackUsed + reason (never invent modelId).
  */
 import {
-  callLiveLlmStub,
+  callLiveChatCompletion,
   createAiMeta,
+  createFallbackAiMeta,
+  liveLlmFallbackReason,
   resolveAiMode,
+  resolveOpenAiApiKey,
   type AiMode,
   type AiProposalMeta,
   type AiSource,
@@ -26,6 +31,10 @@ export interface WorkflowProposal {
   aiMeta: AiProposalMeta;
   /** VN stage badge for UI. */
   stageBadgeVi: string;
+  /** True when live was attempted and offline template used instead. */
+  fallbackUsed?: boolean;
+  /** Optional advisory note from live LLM (never owns workflow structure). */
+  liveNote?: string;
 }
 
 export const MATE_UI_BADGES = {
@@ -36,16 +45,6 @@ export const MATE_UI_BADGES = {
 
 function offlineMeta(source: AiSource = "template"): AiProposalMeta {
   return createAiMeta("offline_stub", source);
-}
-
-function fallbackMeta(_reason: string): AiProposalMeta {
-  const base = createAiMeta("offline_stub", "template");
-  return {
-    ...base,
-    labelVi: `AI đề xuất (stub offline · live fallback)`,
-    labelEn: `AI proposed (offline stub · live fallback)`,
-    // keep reason out of label for stable UI; callers can log reason
-  };
 }
 
 function toBizMode(ai: AiMode): BizMateMode {
@@ -65,6 +64,7 @@ export function proposeWorkflowOffline(
     workflow,
     aiMeta: offlineMeta("template"),
     stageBadgeVi: MATE_UI_BADGES.proposing,
+    fallbackUsed: false,
   };
 }
 
@@ -80,12 +80,39 @@ export function proposeForDomainOffline(
     workflow,
     aiMeta: offlineMeta("template"),
     stageBadgeVi: MATE_UI_BADGES.proposing,
+    fallbackUsed: false,
   };
+}
+
+async function tryLiveAdvisory(
+  prompt: string,
+  env: NodeJS.ProcessEnv
+): Promise<
+  | { ok: true; content: string; modelId: string }
+  | { ok: false; reason: string }
+> {
+  if (!resolveOpenAiApiKey(env)) {
+    return { ok: false, reason: "missing_api_key" };
+  }
+  try {
+    const result = await callLiveChatCompletion(prompt, {
+      env,
+      system:
+        "You are BizMate Mate. Reply with ONE short advisory sentence (max 40 words) about the workflow propose. Do NOT output JSON, code, money, tax, or risk verdicts.",
+      timeoutMs: 12_000,
+    });
+    const content = result.content.trim();
+    if (!content) return { ok: false, reason: "empty_content" };
+    return { ok: true, content, modelId: result.modelId };
+  } catch (err) {
+    return { ok: false, reason: String(liveLlmFallbackReason(err)) };
+  }
 }
 
 /**
  * Generate with meta. Default offline_stub.
- * When env/mode is live, attempts callLiveLlmStub then falls back to template.
+ * When env/mode is live: call OpenAI if key present; on any failure → stub.
+ * Workflow structure ALWAYS from deterministic generator (trust boundary).
  */
 export async function generateWorkflowWithMeta(
   brief: DomainBrief,
@@ -105,31 +132,32 @@ export async function generateWorkflowWithMeta(
     });
   }
 
-  try {
-    await callLiveLlmStub(
-      `Propose workflow for domain=${brief.domain} intent=${brief.intent}`,
-      { modelId: env.BIZMATE_LLM_MODEL }
-    );
-    // Unreachable until a real provider is wired — if stub is replaced and returns,
-    // still use template structure (no invented LLM JSON).
-    const workflow = generateWorkflow(brief, { ...options, mode: "live" });
+  const live = await tryLiveAdvisory(
+    `Propose advisory note for domain=${brief.domain} intent=${brief.intent}`,
+    env
+  );
+
+  const workflow = generateWorkflow(brief, {
+    ...options,
+    mode: live.ok ? "live" : "offline",
+  });
+
+  if (live.ok) {
     return {
       workflow,
-      aiMeta: createAiMeta("live", "llm", {
-        modelId: env.BIZMATE_LLM_MODEL,
-      }),
+      aiMeta: createAiMeta("live", "llm", { modelId: live.modelId }),
       stageBadgeVi: MATE_UI_BADGES.proposing,
-    };
-  } catch {
-    const stub = proposeWorkflowOffline(brief, {
-      ...options,
-      mode: "offline",
-    });
-    return {
-      ...stub,
-      aiMeta: fallbackMeta("live hook unavailable"),
+      fallbackUsed: false,
+      liveNote: live.content,
     };
   }
+
+  return {
+    workflow,
+    aiMeta: createFallbackAiMeta("template", live.reason),
+    stageBadgeVi: MATE_UI_BADGES.proposing,
+    fallbackUsed: true,
+  };
 }
 
 export async function generateForDomainWithMeta(
@@ -152,40 +180,45 @@ export async function generateForDomainWithMeta(
   return generateWorkflowWithMeta(defaults[domain], options, env);
 }
 
-/** Evolve with meta — offline keyword heuristics; live attempts hook then falls back. */
+/** Evolve with meta — offline keyword heuristics; live advisory then fall back. */
 export async function evolveWorkflowWithMeta(
   workflow: Workflow,
   feedback: string,
   env: NodeJS.ProcessEnv = process.env
 ): Promise<WorkflowProposal> {
   const aiMode = resolveAiMode(env);
+  const evolved = evolveWorkflow(workflow, feedback);
 
   if (aiMode !== "live") {
     return {
-      workflow: evolveWorkflow(workflow, feedback),
+      workflow: evolved,
       aiMeta: offlineMeta("heuristic"),
       stageBadgeVi: MATE_UI_BADGES.proposing,
+      fallbackUsed: false,
     };
   }
 
-  try {
-    await callLiveLlmStub(`Evolve workflow ${workflow.id}: ${feedback}`, {
-      modelId: env.BIZMATE_LLM_MODEL,
-    });
+  const live = await tryLiveAdvisory(
+    `Evolve advisory for workflow ${workflow.id}: ${feedback}`,
+    env
+  );
+
+  if (live.ok) {
     return {
-      workflow: evolveWorkflow(workflow, feedback),
-      aiMeta: createAiMeta("live", "llm", {
-        modelId: env.BIZMATE_LLM_MODEL,
-      }),
+      workflow: evolved,
+      aiMeta: createAiMeta("live", "llm", { modelId: live.modelId }),
       stageBadgeVi: MATE_UI_BADGES.proposing,
-    };
-  } catch {
-    return {
-      workflow: evolveWorkflow(workflow, feedback),
-      aiMeta: fallbackMeta("live hook unavailable"),
-      stageBadgeVi: MATE_UI_BADGES.proposing,
+      fallbackUsed: false,
+      liveNote: live.content,
     };
   }
+
+  return {
+    workflow: evolved,
+    aiMeta: createFallbackAiMeta("heuristic", live.reason),
+    stageBadgeVi: MATE_UI_BADGES.proposing,
+    fallbackUsed: true,
+  };
 }
 
 export function resolveMateAiMode(

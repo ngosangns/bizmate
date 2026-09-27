@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   OfflineAiLedgerProposer,
   LiveAiLedgerProposer,
@@ -53,7 +53,7 @@ describe("AiLedgerProposer", () => {
   });
 
   it("live proposer falls back to offline stub without inventing LLM output", async () => {
-    const live = new LiveAiLedgerProposer();
+    const live = new LiveAiLedgerProposer({ BIZMATE_MODE: "live" });
     const ai = await live.propose({
       utteranceId: "u-live",
       text: "bán 1 áo 100 nghìn",
@@ -64,8 +64,9 @@ describe("AiLedgerProposer", () => {
     expect(ai.meta.mode).toBe("offline_stub");
     expect(ai.fallbackUsed).toBe(true);
     expect(ai.meta.modelId).toBeUndefined();
-    expect(ai.classificationNote).toMatch(/live hook unavailable|offline_stub/i);
-    expect(ai.meta.labelVi).toMatch(/fallback|stub|offline/i);
+    expect(ai.meta.fallbackReason).toBe("missing_api_key");
+    expect(ai.classificationNote).toMatch(/missing_api_key/i);
+    expect(ai.meta.labelVi).toMatch(/missing_api_key|fallback|stub|offline/i);
   });
 
   it("createAiLedgerProposer gated by BIZMATE_MODE", () => {
@@ -173,7 +174,8 @@ describe("AiLedgerProposer trust boundary", () => {
     expect(ai.fallbackUsed).toBe(true);
     expect(ai.meta.mode).toBe("offline_stub");
     expect(ai.meta.modelId).toBeUndefined();
-    expect(ai.meta.labelVi).toMatch(/fallback|stub|offline/i);
+    expect(ai.meta.fallbackReason).toBe("missing_api_key");
+    expect(ai.meta.labelVi).toMatch(/missing_api_key|fallback|stub|offline/i);
     // Totals still from rules
     expect(proposal.payload.totalVnd).toBe(100_000);
     expect(proposal.status).toBe("verified");
@@ -197,5 +199,58 @@ describe("AiLedgerProposer trust boundary", () => {
     const next = commitApproved(state, proposal);
     expect(next.ledger).toHaveLength(1);
     expect(next.ledger[0]?.status).toBe("approved");
+  });
+});
+
+describe("AiLedgerProposer Soft A4 live wire", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it("live with key mocked → live meta; items still from parser (no tax)", async () => {
+    const fetchImpl = vi.fn(async () =>
+      new Response(
+        JSON.stringify({
+          model: "gpt-4o-mini",
+          choices: [{ message: { content: "Looks like a shirt sale line." } }],
+        }),
+        { status: 200 }
+      )
+    );
+    vi.stubGlobal("fetch", fetchImpl);
+
+    const live = new LiveAiLedgerProposer({
+      BIZMATE_MODE: "live",
+      OPENAI_API_KEY: "sk-test",
+    });
+    const ai = await live.propose({
+      utteranceId: "u-live-ok",
+      text: "bán 1 áo 100 nghìn",
+      ytdRevenueVnd: 0,
+      citationIds: [],
+    });
+    expect(ai.fallbackUsed).toBe(false);
+    expect(ai.meta.mode).toBe("live");
+    expect(ai.meta.source).toBe("llm");
+    expect(ai.meta.modelId).toBe("gpt-4o-mini");
+    expect(ai.classificationNote).toMatch(/AI-live/);
+    expect(ai.items[0]?.unitPriceVnd).toBe(100_000);
+    expect(ai).not.toHaveProperty("taxVnd");
+    expect(fetchImpl).toHaveBeenCalled();
+  });
+
+  it("live missing key → missing_api_key fallback, no modelId", async () => {
+    const live = new LiveAiLedgerProposer({ BIZMATE_MODE: "live" });
+    const ai = await live.propose({
+      utteranceId: "u-nokey",
+      text: "bán 1 áo 100 nghìn",
+      ytdRevenueVnd: 0,
+      citationIds: [],
+    });
+    expect(ai.fallbackUsed).toBe(true);
+    expect(ai.meta.mode).toBe("offline_stub");
+    expect(ai.meta.fallbackReason).toBe("missing_api_key");
+    expect(ai.meta.modelId).toBeUndefined();
   });
 });

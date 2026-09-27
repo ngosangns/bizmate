@@ -2,12 +2,16 @@
  * Shield AI surfaces:
  * - explanation draft ALWAYS present on verdict (offline template = AI-draft stub)
  * - triage assist score NEVER overrides rule verdict (show both)
- * - live mode: try callLiveLlmStub → catch → honest offline_stub fallback (never invent LLM text)
+ * Soft A4: live + API key → thin OpenAI for elder/family copy; risk/action stay rules.
+ * Missing key / any failure → offline_stub + fallbackReason (never invent LLM text as live).
  */
 import {
-  callLiveLlmStub,
+  callLiveChatCompletion,
   createAiMeta,
+  createFallbackAiMeta,
+  liveLlmFallbackReason,
   resolveAiMode,
+  resolveOpenAiApiKey,
   type AiMode,
   type AiProposalMeta,
 } from "@bizmate/core";
@@ -32,24 +36,8 @@ function offlineDraftMeta(): AiProposalMeta {
   return createAiMeta("offline_stub", "template");
 }
 
-function liveFallbackDraftMeta(): AiProposalMeta {
-  return {
-    ...createAiMeta("offline_stub", "template"),
-    labelVi: "AI-draft stub (offline · live fallback)",
-    labelEn: "AI-draft stub (offline · live fallback)",
-  };
-}
-
 function offlineTriageMeta(): AiProposalMeta {
   return createAiMeta("offline_stub", "heuristic");
-}
-
-function liveFallbackTriageMeta(): AiProposalMeta {
-  return {
-    ...createAiMeta("offline_stub", "heuristic"),
-    labelVi: "AI triage (stub offline · live fallback)",
-    labelEn: "AI triage (offline stub · live fallback)",
-  };
 }
 
 function buildElderVi(verdict: ShieldVerdict): string {
@@ -93,15 +81,17 @@ function buildTriageRationale(
 }
 
 /**
- * Sync offline/template draft. When mode=live, returns the same template with
- * honest live-fallback meta (sync cannot await LLM — use draftAiExplanationAsync).
+ * Sync offline/template draft. When mode=live without awaiting LLM,
+ * returns template with honest live-fallback meta (use draftAiExplanationAsync).
  */
 export function draftAiExplanation(
   verdict: ShieldVerdict,
   mode: AiMode = resolveAiMode()
 ): AiExplanationDraft {
   const meta =
-    mode === "live" ? liveFallbackDraftMeta() : offlineDraftMeta();
+    mode === "live"
+      ? createFallbackAiMeta("template", "use_async_for_live")
+      : offlineDraftMeta();
   return {
     elderVi: buildElderVi(verdict),
     familyVi: buildFamilyVi(verdict),
@@ -110,42 +100,66 @@ export function draftAiExplanation(
 }
 
 /**
- * Live hook shape: try callLiveLlmStub; on throw → offline template + fallback labels.
- * Never invents live LLM copy when the provider is missing.
+ * Soft A4 live hook: key + OpenAI → elder copy; else missing_api_key / error fallback.
+ * Never invents live LLM copy when the provider/key is missing.
+ * Risk/action unchanged (caller must not mutate from draft).
  */
 export async function draftAiExplanationAsync(
   verdict: ShieldVerdict,
-  mode: AiMode = resolveAiMode()
+  mode: AiMode = resolveAiMode(),
+  env: NodeJS.ProcessEnv = process.env
 ): Promise<AiExplanationDraft> {
   if (mode !== "live") {
     return draftAiExplanation(verdict, mode);
   }
-  try {
-    await callLiveLlmStub(
-      `Draft elder/family explanation for Shield verdict action=${verdict.action} risk=${verdict.risk}`,
-      { modelId: process.env.BIZMATE_LLM_MODEL }
-    );
-    // Unreachable until a real provider is wired; keep structure for future.
+
+  const offline = {
+    elderVi: buildElderVi(verdict),
+    familyVi: buildFamilyVi(verdict),
+  };
+
+  if (!resolveOpenAiApiKey(env)) {
     return {
-      elderVi: buildElderVi(verdict),
-      familyVi: buildFamilyVi(verdict),
-      meta: createAiMeta("live", "llm", {
-        modelId: process.env.BIZMATE_LLM_MODEL,
-      }),
+      ...offline,
+      meta: createFallbackAiMeta("template", "missing_api_key"),
     };
-  } catch {
+  }
+
+  try {
+    const live = await callLiveChatCompletion(
+      `Draft a short elder-friendly Vietnamese explanation for Shield verdict action=${verdict.action} risk=${verdict.risk}. Do NOT change the verdict.`,
+      {
+        env,
+        system:
+          "You are Shield AI explain. One or two short Vietnamese sentences for elders. Never override allow/flag/block — rules own risk.",
+        timeoutMs: 12_000,
+      }
+    );
+    const elderVi = live.content.trim();
+    if (!elderVi) {
+      return {
+        ...offline,
+        meta: createFallbackAiMeta("template", "empty_content"),
+      };
+    }
     return {
-      elderVi: buildElderVi(verdict),
-      familyVi: buildFamilyVi(verdict),
-      meta: liveFallbackDraftMeta(),
+      elderVi: `AI-live: ${elderVi}`,
+      familyVi: offline.familyVi,
+      meta: createAiMeta("live", "llm", { modelId: live.modelId }),
+    };
+  } catch (err) {
+    return {
+      ...offline,
+      meta: createFallbackAiMeta(
+        "template",
+        String(liveLlmFallbackReason(err))
+      ),
     };
   }
 }
 
 /**
- * Heuristic triage score from message signals — advisory only.
- * Higher = review sooner. Does not change allow/flag/block.
- * Sync live → honest fallback labels (use triageAssistScoreAsync for real hook).
+ * Heuristic triage score — advisory only. Sync live → honest fallback labels.
  */
 export function triageAssistScore(
   msg: IncomingMessage,
@@ -154,7 +168,9 @@ export function triageAssistScore(
 ): TriageAssist {
   const score = computeTriageScore(msg, verdict);
   const meta =
-    mode === "live" ? liveFallbackTriageMeta() : offlineTriageMeta();
+    mode === "live"
+      ? createFallbackAiMeta("heuristic", "use_async_for_live")
+      : offlineTriageMeta();
   return {
     score,
     rationaleVi: buildTriageRationale(verdict, score),
@@ -163,35 +179,53 @@ export function triageAssistScore(
   };
 }
 
-/** Live triage hook: try LLM stub → catch → heuristic offline with fallback meta. */
+/** Live triage: OpenAI may refine rationale; score stays heuristic; never overrides. */
 export async function triageAssistScoreAsync(
   msg: IncomingMessage,
   verdict: ShieldVerdict,
-  mode: AiMode = resolveAiMode()
+  mode: AiMode = resolveAiMode(),
+  env: NodeJS.ProcessEnv = process.env
 ): Promise<TriageAssist> {
   if (mode !== "live") {
     return triageAssistScore(msg, verdict, mode);
   }
   const score = computeTriageScore(msg, verdict);
-  const rationaleVi = buildTriageRationale(verdict, score);
-  try {
-    await callLiveLlmStub(
-      `Triage assist score hint for Shield message ${msg.id} (advisory only; overridesVerdict=false)`,
-      { modelId: process.env.BIZMATE_LLM_MODEL }
-    );
+  const rationaleOffline = buildTriageRationale(verdict, score);
+
+  if (!resolveOpenAiApiKey(env)) {
     return {
       score,
-      rationaleVi,
-      meta: createAiMeta("live", "llm", {
-        modelId: process.env.BIZMATE_LLM_MODEL,
-      }),
+      rationaleVi: rationaleOffline,
+      meta: createFallbackAiMeta("heuristic", "missing_api_key"),
       overridesVerdict: false,
     };
-  } catch {
+  }
+
+  try {
+    const live = await callLiveChatCompletion(
+      `One-sentence triage rationale (advisory only, overridesVerdict=false) for Shield message ${msg.id}; rule verdict=${verdict.action}; score=${score}.`,
+      {
+        env,
+        system:
+          "You are Shield triage assist. Soft ranking hint only. NEVER change allow/flag/block.",
+        timeoutMs: 12_000,
+      }
+    );
+    const rationaleVi = live.content.trim() || rationaleOffline;
     return {
       score,
-      rationaleVi,
-      meta: liveFallbackTriageMeta(),
+      rationaleVi: `AI-live: ${rationaleVi}`,
+      meta: createAiMeta("live", "llm", { modelId: live.modelId }),
+      overridesVerdict: false,
+    };
+  } catch (err) {
+    return {
+      score,
+      rationaleVi: rationaleOffline,
+      meta: createFallbackAiMeta(
+        "heuristic",
+        String(liveLlmFallbackReason(err))
+      ),
       overridesVerdict: false,
     };
   }
@@ -213,11 +247,12 @@ export function attachAiDrafts(
   };
 }
 
-/** Async bundle — uses live hook with safe fallback; never mutates risk/action. */
+/** Async bundle — live hook with safe fallback; never mutates risk/action. */
 export async function attachAiDraftsAsync(
   msg: IncomingMessage,
   verdict: ShieldVerdict,
-  mode: AiMode = resolveAiMode()
+  mode: AiMode = resolveAiMode(),
+  env: NodeJS.ProcessEnv = process.env
 ): Promise<
   ShieldVerdict & {
     aiExplanation: AiExplanationDraft;
@@ -225,8 +260,8 @@ export async function attachAiDraftsAsync(
   }
 > {
   const [aiExplanation, triageAssist] = await Promise.all([
-    draftAiExplanationAsync(verdict, mode),
-    triageAssistScoreAsync(msg, verdict, mode),
+    draftAiExplanationAsync(verdict, mode, env),
+    triageAssistScoreAsync(msg, verdict, mode, env),
   ]);
   return {
     ...verdict,

@@ -5,13 +5,17 @@
  * Money / YTD / 1B threshold remain in rules.ts + @bizmate/core (deterministic).
  * Human Duyệt still required before persist.
  *
- * Live path: only when BIZMATE_MODE=live via createAiLedgerProposer.
- * Provider not wired in this build → safe fallback to offline_stub (never invent
- * tax, payment, YTD, or fake live model traffic).
+ * Soft A4: BIZMATE_MODE=live + API key → thin OpenAI call for classificationNote
+ * only; line items still from deterministic parseUtterance. Missing key / failure
+ * → offline_stub with fallbackUsed + reason (never invent modelId / tax).
  */
 import {
+  callLiveChatCompletion,
   createAiMeta,
+  createFallbackAiMeta,
+  liveLlmFallbackReason,
   resolveAiMode,
+  resolveOpenAiApiKey,
   type AiMode,
   type AiProposalMeta,
 } from "@bizmate/core";
@@ -82,39 +86,7 @@ export class OfflineAiLedgerProposer implements AiLedgerProposer {
   }
 }
 
-/**
- * Live hook: attempts LLM path when mode=live; falls back to offline stub.
- * This build does not ship a provider — callLiveLlmStub throws → fallback.
- * Never invents tax/payment/YTD or a live modelId on fallback.
- */
-export class LiveAiLedgerProposer implements AiLedgerProposer {
-  readonly mode: AiMode = "live";
-
-  async propose(input: AiLedgerProposeInput): Promise<AiLedgerProposal> {
-    const modelId = process.env.BIZMATE_LLM_MODEL;
-    try {
-      const { callLiveLlmStub } = await import("@bizmate/core");
-      // Promise<never> today — when a real provider is wired, parse items-only JSON here.
-      await callLiveLlmStub(`Propose ledger line items for: ${input.text}`, {
-        modelId,
-      });
-      // Unreachable until provider returns: still draft via offline parser (safe).
-      const stub = proposeOfflineSync(input);
-      return withLiveFallback(
-        stub,
-        "live provider returned but item parser not wired → offline_stub"
-      );
-    } catch {
-      const stub = proposeOfflineSync(input);
-      return withLiveFallback(
-        stub,
-        "live hook unavailable → offline_stub"
-      );
-    }
-  }
-}
-
-function withLiveFallback(
+function withFallback(
   stub: AiLedgerProposal,
   reason: string
 ): AiLedgerProposal {
@@ -122,24 +94,67 @@ function withLiveFallback(
     ...stub,
     classificationNote: `${stub.classificationNote} · ${reason}`,
     fallbackUsed: true,
-    meta: {
-      ...createAiMeta("offline_stub", "heuristic"),
-      // Honesty: do not attach modelId on fallback (would fake live).
-      labelVi: "AI đề xuất (stub offline · live fallback)",
-      labelEn: "AI proposed (offline stub · live fallback)",
-    },
+    meta: createFallbackAiMeta(
+      stub.items.length ? "heuristic" : "fixture",
+      reason
+    ),
   };
 }
 
 /**
+ * Live hook: OpenAI advisory note when key present; items always from parser.
+ * Never invents tax/payment/YTD or a live modelId on fallback.
+ */
+export class LiveAiLedgerProposer implements AiLedgerProposer {
+  readonly mode: AiMode = "live";
+
+  constructor(private readonly env: NodeJS.ProcessEnv = process.env) {}
+
+  async propose(input: AiLedgerProposeInput): Promise<AiLedgerProposal> {
+    const stub = proposeOfflineSync(input);
+
+    if (!resolveOpenAiApiKey(this.env)) {
+      return withFallback(stub, "missing_api_key");
+    }
+
+    try {
+      const live = await callLiveChatCompletion(
+        `Classify this SME sales utterance into a one-sentence note (no numbers ownership): ${input.text}`,
+        {
+          env: this.env,
+          system:
+            "You are Bookkeeper AiLedgerProposer. Reply with ONE short Vietnamese or English classification note. Do NOT invent totals, tax, YTD, or payment. Line items are computed by code.",
+          timeoutMs: 12_000,
+        }
+      );
+      const note = live.content.trim();
+      if (!note) {
+        return withFallback(stub, "empty_content");
+      }
+      // Trust: items stay from deterministic parser; LLM only owns note text.
+      return {
+        utteranceId: input.utteranceId,
+        items: stub.items,
+        classificationNote: `AI-live: ${note}`,
+        meta: createAiMeta("live", "llm", { modelId: live.modelId }),
+        fallbackUsed: false,
+        uiBadges: { ...UI_BADGES },
+      };
+    } catch (err) {
+      return withFallback(stub, String(liveLlmFallbackReason(err)));
+    }
+  }
+}
+
+/**
  * Factory gated by BIZMATE_MODE.
- * - live → LiveAiLedgerProposer (safe fallback if provider missing)
+ * - live → LiveAiLedgerProposer (safe fallback if key/provider missing)
  * - otherwise → OfflineAiLedgerProposer
  */
 export function createAiLedgerProposer(
   env: NodeJS.ProcessEnv = process.env
 ): AiLedgerProposer {
   return resolveAiMode(env) === "live"
-    ? new LiveAiLedgerProposer()
+    ? new LiveAiLedgerProposer(env)
     : new OfflineAiLedgerProposer();
 }

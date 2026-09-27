@@ -57,14 +57,14 @@ pass#1 (judge) → Adv PLAN → tip + prove → REPORT → Orchestrator verify �
 
 | App | Sidharth | Lee | Tuấn Anh | Kyle | Son Lê | Aggregate |
 |-----|----------|-----|----------|------|--------|-----------|
-| BizMate | — | — | — | — | — | pending |
-| Shield | — | — | — | — | — | pending |
-| Bookkeeper | — | — | — | — | — | pending |
-| FloodOps | — | — | — | — | — | pending |
+| BizMate | **PASS** (4.6) | **PASS** (4.80) | **PASS** (4.2) | **PASS** (4.6) | **PASS** (4.8) | **PASS 5/5** |
+| Shield | **PASS** (4.8) | **PASS** (4.80) | **PASS** (4.6) | **PASS** (4.8) | **PASS** (4.8) | **PASS 5/5** |
+| Bookkeeper | **PASS** (5.0) | **PASS** (5.00) | **PASS** (4.4) | **PASS** (5.0) | **PASS** (5.0) | **PASS 5/5** |
+| FloodOps | **PASS** (4.8) | **PASS** (4.80) | **PASS** (4.8) | **PASS** (4.8) | **PASS** (4.8) | **PASS 5/5** |
 
 ## Seed tips (scaffold baseline)
 
-Orchestrator seeds AI propose scaffolds on main; Advs polish UI + live hooks + pitch.
+**Canonical tip:** `45252f0` (`https://github.com/ngosangns/bizmate/commit/45252f0`). Orchestrator seeded scaffolds; Advs polish UI + live hooks + pitch.
 
 | App | Expected modules (min) | Vitest |
 |-----|------------------------|--------|
@@ -75,8 +75,60 @@ Orchestrator seeds AI propose scaffolds on main; Advs polish UI + live hooks + p
 
 ## GATE STATUS
 
-**OPEN** · Round 7 seeded · wait judge pass #1.
+**GATE MET** · 2026-09-27 ~12:35 Asia/Saigon · 4 apps × **5/5 PASS · 0 FAIL** · soft A4 only — no Adv. Polish tips: Mate `36cc0d7` · Shield `616b9ac` · BK `1c685aa` · FO `f0079bf` (seed `45252f0`). R1–R6 untouched.
+
+### Orchestrator open (~12:22 ICT Sep 27)
+Tip `45252f0` ⊂ HEAD · docs AI-OPS + business briefs · scaffold core/BK/Shield/FO. Briefed Judging Room + Contestant Lab. Adv polish: live hooks · Mate web AI badges · pitch honesty. R1–R6 read-only.
 
 ## Prior
 
 [Round 6 Skill Review](./ROUND-6-SKILL-REVIEW.md) (GATE MET). Product: [AI-OPS-REQUIREMENTS](../product/AI-OPS-REQUIREMENTS.md).
+
+### Lee filed
+`docs/review/r7-form-lee.md` — pass #1 tip `45252f0` · **4/4 PASS · 0 FAIL** · TB Mate 4.80 · BK 5.00 · Shield 4.80 · FO 4.80 · notes `runs/r7-lee-aiops-notes.txt`. Soft live wire only — **no Adv PLAN required** from Lee.
+
+### Trần Tuấn Anh filed
+`docs/review/r7-form-tuananh.md` — pass #1 tip `45252f0` · **4/4 PASS · 0 FAIL** · TB Mate 4.2 · BK 4.4 · Shield 4.6 · FO 4.8 · shots `runs/r7-tuananh-*.png`. Soft polish only — **no Adv PLAN** from TA.
+
+### Orchestrator PASS_VERIFY · Shield polish `616b9ac`
+PLAN/REPORT on disk · tip ⊂ HEAD · parent `45252f0` · vitest **30/30** · `:5174` **200**. Risk=rules · AI explain/triage live→catch→offline_stub. Soft for Lee/TA (already PASS); Sid/Kyle/Son may cite **`616b9ac`** or seed `45252f0`.
+
+### Orchestrator PASS_VERIFY · BizMate polish `36cc0d7`
+PLAN/REPORT · tip ⊂ HEAD · baseline `45252f0` · core 6/6 · mate 9/9 · runtime 15/15 · web 9/9 · `:5173` **200**. Live hook catch→offline_stub · badges · runtime 0 LLM. Lee/TA soft; Sid/Kyle/Son cite **`36cc0d7`** or seed.
+
+### Orchestrator PASS_VERIFY · Bookkeeper polish `1c685aa`
+PLAN/REPORT · tip ⊂ HEAD · baseline `45252f0` · vitest **30/30** · `:3010` **200** + `/api/health` 200. Live gate + offline · 1B via core · HITL. Lee/TA soft; Sid/Kyle/Son cite **`1c685aa`** or seed.
+
+### Orchestrator PASS_VERIFY · FloodOps polish `f0079bf`
+REPORT on disk (PLAN soft-missing) · tip ⊂ HEAD · baseline `45252f0` · vitest **33/33** · `:3011` **200**. Live advisor → stub fallback · AI badge · Engine/AI/human split · COD≠invoice. Soft: add `FLOODOPS-R7-PLAN.md` parity. Lee/TA soft; Sid/Kyle/Son cite **`f0079bf`** or seed.
+
+**Adv polish board:** Mate `36cc0d7` · Shield `616b9ac` · BK `1c685aa` · FO `f0079bf` — all PASS_VERIFY.
+
+### Sidharth R7 filed
+`docs/review/r7-form-sidharth.md` — pass #1 · **4/4 PASS · 0 FAIL** · Mate 4.6 (`36cc0d7`) · Shield 4.8 (`616b9ac`) · BK 5.0 (`1c685aa`) · FO 4.8 (`45252f0`). Soft live-wire — **no Adv route**.
+
+### Kyle Tran pass #1
+Mate **PASS** 4.6 (`36cc0d7`) · Shield **PASS** 4.8 (`616b9ac`) · BK **PASS** 5.0 (`1c685aa`) · FO **PASS** 4.8 (`f0079bf`).
+**Kyle board: 4 PASS · 0 FAIL.** Soft A4 only — no Adv route. Form `r7-form-kyle.md` · shots `runs/r7-kyle-*.png`.
+
+### Son Lê filed
+`docs/review/r7-form-son.md` — pass #1 · **4/4 PASS · 0 FAIL** · Mate 4.8 (`36cc0d7`) · Shield 4.8 (`616b9ac`) · BK 5.0 (`1c685aa`) · FO 4.8 (`f0079bf`) · shots `runs/r7-son-*.png`. Soft A4 only — **no Adv route**. Codex: core `ai.ts` + trust-boundary + propose modules.
+
+### Orchestrator close R7
+**GATE MET** confirmed after Son pass#1 (Kyle already PASS 4/4). Panel 5/5 · Lab stand-down.
+
+## Soft A4 (post-GATE polish) — CLOSED
+
+**Status:** closed · 2026-09-27 Asia/Saigon · GATE remains **MET** (no Adv re-open).
+
+Wired thin real OpenAI chat-completions helper in `@bizmate/core` (`callLiveChatCompletion`: timeout, abort, key resolve). Mate / Judge SLM / Bookkeeper `AiLedgerProposer` / Shield `ai-explain` / FloodOps `ai-ops-advisor`:
+
+- `BIZMATE_MODE=live` (or `VITE_BIZMATE_MODE` for web badge) + `OPENAI_API_KEY` / `BIZMATE_OPENAI_API_KEY` → live advisory text; money/risk still code.
+- Key missing → offline_stub · `fallbackUsed` · `fallbackReason=missing_api_key` · **no modelId**.
+- Provider/HTTP/timeout/empty → same honest fallback (never invent live success).
+
+Vitest: live-with-key (`fetch` mock) + missing-key on core + all four apps (+ Judge SLM).  
+Doc: [`docs/hackathon/ai-ops/SOFT-A4-LIVE-HOOKS.md`](../hackathon/ai-ops/SOFT-A4-LIVE-HOOKS.md).  
+Pitch pack: [`docs/hackathon/pitch/`](../hackathon/pitch/) + updated [`PITCH.md`](../hackathon/PITCH.md).
+
+R1–R6 docs untouched. Judges not re-spammed — Soft A4 polish only.

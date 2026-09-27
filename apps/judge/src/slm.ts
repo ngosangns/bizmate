@@ -2,15 +2,28 @@
  * High-level SLM reviewer for workflow intent alignment.
  *
  * Offline: heuristic keyword reviewer (no network).
- * Live: currently stubs to the same heuristics — plug a real SLM
- *       (OpenAI / local model) at `callLiveSlm` below when BIZMATE_MODE=live.
+ * Soft A4 live: BIZMATE_MODE=live + API key → thin OpenAI summary; findings
+ * still merged with heuristics. Missing key / failure → heuristic + honesty
+ * note in summary (never invent live success).
  */
 import type { JudgeFinding, Workflow } from "@bizmate/contracts";
-import type { BizMateMode } from "@bizmate/core";
+import {
+  callLiveChatCompletion,
+  liveLlmFallbackReason,
+  resolveOpenAiApiKey,
+  type BizMateMode,
+} from "@bizmate/core";
 
 export interface SlmReviewResult {
   findings: JudgeFinding[];
   summary: string;
+  /** Soft A4 honesty — set when live attempted. */
+  liveMeta?: {
+    usedLive: boolean;
+    fallbackUsed: boolean;
+    fallbackReason?: string;
+    modelId?: string;
+  };
 }
 
 const STOP = new Set([
@@ -95,7 +108,6 @@ export function reviewHeuristic(
     });
   }
 
-  // High-level: encourage approve/persist hygiene signal in narrative
   const kinds = new Set(workflow.steps.map((s) => s.kind));
   if (kinds.has("persist") && !kinds.has("approve")) {
     findings.push({
@@ -115,27 +127,86 @@ export function reviewHeuristic(
 }
 
 /**
- * Live SLM hook. Replace the body with a real model call
- * (e.g. OpenAI chat completions) that returns findings + summary.
- * Until then, offline heuristics keep demos deterministic.
+ * Soft A4 live SLM: OpenAI short summary + heuristic findings.
+ * Score ownership stays with Judge (Laya + deductions) — LLM never publishes.
  */
 async function callLiveSlm(
   workflow: Workflow,
-  intent?: string
+  intent: string | undefined,
+  env: NodeJS.ProcessEnv
 ): Promise<SlmReviewResult> {
-  // TODO(live-slm): POST workflow + intent to SLM; map response → SlmReviewResult.
-  // Keep assertValid(JudgeVerdict) at the outer judge boundary.
-  return reviewHeuristic(workflow, intent);
+  const base = reviewHeuristic(workflow, intent);
+
+  if (!resolveOpenAiApiKey(env)) {
+    return {
+      ...base,
+      summary: `${base.summary} · live fallback: missing_api_key`,
+      liveMeta: {
+        usedLive: false,
+        fallbackUsed: true,
+        fallbackReason: "missing_api_key",
+      },
+    };
+  }
+
+  try {
+    const live = await callLiveChatCompletion(
+      `Summarize in 1-2 sentences whether workflow "${workflow.name}" (${workflow.domain}) aligns with intent: ${intent ?? workflow.description ?? workflow.domain}. Mention human-approve gate if relevant. Do NOT invent money/tax numbers.`,
+      {
+        env,
+        system:
+          "You are BizMate Judge SLM. High-level review only. Laya owns static errors; you never publish workflows.",
+        timeoutMs: 12_000,
+      }
+    );
+    const content = live.content.trim();
+    if (!content) {
+      return {
+        ...base,
+        summary: `${base.summary} · live fallback: empty_content`,
+        liveMeta: {
+          usedLive: false,
+          fallbackUsed: true,
+          fallbackReason: "empty_content",
+        },
+      };
+    }
+    return {
+      findings: base.findings,
+      summary: `SLM live: ${content}`,
+      liveMeta: {
+        usedLive: true,
+        fallbackUsed: false,
+        modelId: live.modelId,
+      },
+    };
+  } catch (err) {
+    const reason = String(liveLlmFallbackReason(err));
+    return {
+      ...base,
+      summary: `${base.summary} · live fallback: ${reason}`,
+      liveMeta: {
+        usedLive: false,
+        fallbackUsed: true,
+        fallbackReason: reason,
+      },
+    };
+  }
 }
 
 /** Mode-aware SLM review entrypoint. */
 export async function reviewWithSlm(
   workflow: Workflow,
-  options: { intent?: string; mode?: BizMateMode } = {}
+  options: {
+    intent?: string;
+    mode?: BizMateMode;
+    env?: NodeJS.ProcessEnv;
+  } = {}
 ): Promise<SlmReviewResult> {
   const mode = options.mode ?? "offline";
+  const env = options.env ?? process.env;
   if (mode === "live") {
-    return callLiveSlm(workflow, options.intent);
+    return callLiveSlm(workflow, options.intent, env);
   }
   return reviewHeuristic(workflow, options.intent);
 }

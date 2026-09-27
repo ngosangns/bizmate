@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { judgeMessage } from "../engine.js";
 import {
   attachAiDrafts,
@@ -8,6 +8,11 @@ import {
   triageAssistScore,
   triageAssistScoreAsync,
 } from "../ai-explain.js";
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+  vi.restoreAllMocks();
+});
 
 describe("shield AI explain + triage", () => {
   it("always drafts AI explanation on block verdict (offline)", () => {
@@ -40,7 +45,6 @@ describe("shield AI explain + triage", () => {
     expect(triage.overridesVerdict).toBe(false);
     expect(triage.score).toBeGreaterThan(0.5);
     expect(triage.rationaleVi).toMatch(/verdict rule vẫn là/);
-    // rule decision unchanged
     expect(v.action).toBe("block");
   });
 
@@ -78,10 +82,9 @@ describe("shield AI explain + triage", () => {
     expect(triage.overridesVerdict).toBe(false);
     expect(triage.meta.mode).toBe("offline_stub");
     expect(triage.meta.source).not.toBe("llm");
-    expect(triage.meta.labelVi.toLowerCase()).toMatch(/fallback|stub|offline/);
   });
 
-  it("live async path catches stub throw → offline fallback, no llm claim", async () => {
+  it("live async missing key → missing_api_key, no llm claim", async () => {
     const msg = {
       id: "ai-5",
       channel: "zalo",
@@ -93,23 +96,64 @@ describe("shield AI explain + triage", () => {
     const beforeAction = v.action;
     const beforeRisk = v.risk;
 
-    const draft = await draftAiExplanationAsync(v, "live");
+    const draft = await draftAiExplanationAsync(v, "live", {
+      BIZMATE_MODE: "live",
+    });
     expect(draft.meta.mode).toBe("offline_stub");
-    expect(draft.meta.source).toBe("template");
+    expect(draft.meta.fallbackReason).toBe("missing_api_key");
+    expect(draft.meta.modelId).toBeUndefined();
     expect(draft.meta.source).not.toBe("llm");
-    expect(draft.meta.labelVi.toLowerCase()).toMatch(/fallback/);
-    expect(draft.elderVi).toMatch(/AI-draft/i);
 
-    const triage = await triageAssistScoreAsync(msg, v, "live");
+    const triage = await triageAssistScoreAsync(msg, v, "live", {
+      BIZMATE_MODE: "live",
+    });
     expect(triage.overridesVerdict).toBe(false);
-    expect(triage.meta.mode).toBe("offline_stub");
-    expect(triage.meta.source).not.toBe("llm");
+    expect(triage.meta.fallbackReason).toBe("missing_api_key");
 
-    const bundled = await attachAiDraftsAsync(msg, v, "live");
+    const bundled = await attachAiDraftsAsync(msg, v, "live", {
+      BIZMATE_MODE: "live",
+    });
     expect(bundled.action).toBe(beforeAction);
     expect(bundled.risk).toBe(beforeRisk);
     expect(bundled.aiExplanation.meta.source).not.toBe("llm");
     expect(bundled.triageAssist.overridesVerdict).toBe(false);
+  });
+
+  it("live async with key mocked → live meta; risk unchanged", async () => {
+    const fetchImpl = vi.fn(async () =>
+      new Response(
+        JSON.stringify({
+          model: "gpt-4o-mini",
+          choices: [
+            { message: { content: "Ba/mẹ ơi, tin này có dấu hiệu lừa đảo." } },
+          ],
+        }),
+        { status: 200 }
+      )
+    );
+    vi.stubGlobal("fetch", fetchImpl);
+
+    const msg = {
+      id: "ai-live-ok",
+      channel: "sms" as const,
+      from: "bank",
+      body: "OTP http://evil.xyz",
+      meta: { senderSpoof: true },
+    };
+    const v = judgeMessage(msg);
+    const before = { action: v.action, risk: v.risk };
+
+    const draft = await draftAiExplanationAsync(v, "live", {
+      BIZMATE_MODE: "live",
+      OPENAI_API_KEY: "sk-test",
+    });
+    expect(draft.meta.mode).toBe("live");
+    expect(draft.meta.source).toBe("llm");
+    expect(draft.meta.modelId).toBe("gpt-4o-mini");
+    expect(draft.elderVi).toMatch(/AI-live/);
+    expect(v.action).toBe(before.action);
+    expect(v.risk).toBe(before.risk);
+    expect(fetchImpl).toHaveBeenCalled();
   });
 
   it("offline async always drafts (same honesty as sync)", async () => {

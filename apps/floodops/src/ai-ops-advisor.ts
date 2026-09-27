@@ -2,14 +2,17 @@
  * FloodOps AI ops advisor — proposes NL replan rationale + optional alternate.
  * Policy engine still picks auto vs human by COD; human approves refunds.
  *
- * Sync path (`adviseReplan`) stays offline fixture for UI/tests.
- * Async path (`adviseReplanAsync`) gates live via BIZMATE_MODE=live and
- * falls back to offline fixture when callLiveLlmStub throws — never invents
- * live LLM traffic or a successful llm source offline.
+ * Soft A4: adviseReplanAsync + BIZMATE_MODE=live + API key → thin OpenAI NL;
+ * engine kind/status unchanged. Missing key / failure → offline fixture with
+ * fallbackUsed + reason (never invent live llm success).
  */
 import {
+  callLiveChatCompletion,
   createAiMeta,
+  createFallbackAiMeta,
+  liveLlmFallbackReason,
   resolveAiMode,
+  resolveOpenAiApiKey,
   type AiMode,
   type AiProposalMeta,
 } from "@bizmate/core";
@@ -59,12 +62,15 @@ function buildOfflineAdvice(
   order: Order,
   ward: Ward,
   mode: AiMode,
-  opts: { fallbackUsed: boolean; fallbackReason?: string } = {
-    fallbackUsed: false,
-  }
+  opts: {
+    fallbackUsed: boolean;
+    fallbackReason?: string;
+    liveRationale?: string;
+    liveModelId?: string;
+  } = { fallbackUsed: false }
 ): OpsAdvice {
   const kindVi = KIND_VI[action.kind];
-  const rationaleVi = [
+  const baseRationale = [
     `AI-advisor: Engine chọn «${kindVi}» cho đơn ${order.id}.`,
     `Phường ${ward.name} (${ward.status}, ${ward.floodCm}cm).`,
     `COD ${order.codVnd.toLocaleString("vi-VN")}₫ · SLA còn ${order.slaHoursLeft}h.`,
@@ -89,36 +95,40 @@ function buildOfflineAdvice(
   }
 
   let meta: AiProposalMeta;
-  if (opts.fallbackUsed) {
-    meta = {
-      ...createAiMeta("offline_stub", "fixture"),
-      // Honesty: do not attach modelId on fallback (would fake live).
-      labelVi: "AI đề xuất (stub offline · live fallback)",
-      labelEn: "AI proposed (offline stub · live fallback)",
-    };
+  let rationaleVi: string;
+
+  if (opts.liveRationale && opts.liveModelId && !opts.fallbackUsed) {
+    meta = createAiMeta("live", "llm", { modelId: opts.liveModelId });
+    rationaleVi = `AI-live: ${opts.liveRationale} · (engine «${kindVi}» không đổi)`;
+  } else if (opts.fallbackUsed) {
+    meta = createFallbackAiMeta(
+      "fixture",
+      opts.fallbackReason ?? "provider_error"
+    );
+    rationaleVi = opts.fallbackReason
+      ? `${baseRationale} · ${opts.fallbackReason}`
+      : baseRationale;
   } else if (mode === "live") {
-    // Sync path called while env says live — still offline fixture; async wires hook.
     meta = {
       ...createAiMeta("offline_stub", "fixture"),
       labelVi: "AI đề xuất (stub offline · dùng adviseReplanAsync cho live)",
       labelEn: "AI proposed (offline stub · use adviseReplanAsync for live)",
     };
+    rationaleVi = baseRationale;
   } else {
     meta = createAiMeta(mode, "fixture");
+    rationaleVi = baseRationale;
   }
 
-  const advice: OpsAdvice = {
+  return {
     orderId: order.id,
-    rationaleVi: opts.fallbackReason
-      ? `${rationaleVi} · ${opts.fallbackReason}`
-      : rationaleVi,
+    rationaleVi,
     alternateSuggestion,
     meta,
     engineKind: action.kind,
     engineStatus: action.status,
     fallbackUsed: opts.fallbackUsed,
   };
-  return advice;
 }
 
 /**
@@ -135,10 +145,8 @@ export function adviseReplan(
 }
 
 /**
- * Live-gated async wrapper. When BIZMATE_MODE=live, tries `callLiveLlmStub`
- * from `@bizmate/core`; on throw (no provider in this build), falls back to
- * offline fixture with honest labels. meta.mode stays `offline_stub` after
- * fallback — never claims llm source success without a real provider.
+ * Soft A4 live-gated async. Key present → OpenAI NL rationale; engine untouched.
+ * Missing key → missing_api_key. Any failure → offline fixture + fallbackUsed.
  */
 export async function adviseReplanAsync(
   action: ProposedAction,
@@ -153,23 +161,39 @@ export async function adviseReplanAsync(
     });
   }
 
-  const modelId = env.BIZMATE_LLM_MODEL;
-  try {
-    const { callLiveLlmStub } = await import("@bizmate/core");
-    // Promise<never> today — when a real provider is wired, parse NL here.
-    await callLiveLlmStub(
-      `Advise floodops replan for order ${order.id} action ${action.kind} ward ${ward.name}`,
-      { modelId }
-    );
-    // Unreachable until provider returns: still draft via offline (safe).
+  if (!resolveOpenAiApiKey(env)) {
     return buildOfflineAdvice(action, order, ward, mode, {
       fallbackUsed: true,
-      fallbackReason: "live provider returned but NL parser not wired → offline_stub",
+      fallbackReason: "missing_api_key",
     });
-  } catch {
+  }
+
+  try {
+    const live = await callLiveChatCompletion(
+      `Explain in 1-2 Vietnamese sentences why FloodOps engine chose ${action.kind} for order ${order.id} in ward ${ward.name} (flood ${ward.floodCm}cm, COD ${order.codVnd}). Do NOT change the engine action or invent refund approval.`,
+      {
+        env,
+        system:
+          "You are FloodOps AI ops advisor. Engine owns action kind. You explain only. Refunds need human.",
+        timeoutMs: 12_000,
+      }
+    );
+    const content = live.content.trim();
+    if (!content) {
+      return buildOfflineAdvice(action, order, ward, mode, {
+        fallbackUsed: true,
+        fallbackReason: "empty_content",
+      });
+    }
+    return buildOfflineAdvice(action, order, ward, mode, {
+      fallbackUsed: false,
+      liveRationale: content,
+      liveModelId: live.modelId,
+    });
+  } catch (err) {
     return buildOfflineAdvice(action, order, ward, mode, {
       fallbackUsed: true,
-      fallbackReason: "live hook unavailable → offline_stub",
+      fallbackReason: String(liveLlmFallbackReason(err)),
     });
   }
 }
