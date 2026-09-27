@@ -3,7 +3,12 @@
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { Order, ProposedAction, Ward } from "../lib/load-state";
-import { adviseReplan, type OpsAdvice } from "../../src/ai-ops-advisor";
+import {
+  adviseReplan,
+  TRUST_SPLIT_VI,
+  UI_BADGES,
+  type OpsAdvice,
+} from "../../src/ai-ops-advisor";
 import type { ProposedAction as EngineAction, Order as EngineOrder, Ward as EngineWard } from "../../src/engine";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -173,13 +178,20 @@ export default function OrdersTable({ orders, actions, wards }: Props) {
                       const advice = aiAdviceFor(a, o, w);
                       return (
                         <div className="mt-1 max-w-[320px] rounded border border-dashed border-border px-1.5 py-1 text-[11px] text-muted">
-                          <span className="font-medium text-ink">
-                            AI advice · {advice.meta.labelVi}
-                          </span>
+                          <div className="flex flex-wrap items-center gap-1">
+                            <Badge variant="auto">
+                              {UI_BADGES.proposing}
+                            </Badge>
+                            <Badge variant="muted">{advice.meta.labelVi}</Badge>
+                          </div>
+                          <div className="mt-0.5 text-[10px] font-medium text-ink">
+                            {TRUST_SPLIT_VI}
+                          </div>
                           <div className="mt-0.5">{advice.rationaleVi}</div>
                           {advice.alternateSuggestion ? (
                             <div className="mt-0.5 italic">
-                              Gợi ý phụ: {advice.alternateSuggestion.kind} —{" "}
+                              Gợi ý phụ (không auto):{" "}
+                              {advice.alternateSuggestion.kind} —{" "}
                               {advice.alternateSuggestion.whyVi}
                             </div>
                           ) : null}
@@ -243,8 +255,8 @@ export default function OrdersTable({ orders, actions, wards }: Props) {
       <p className="mt-2.5 text-sm text-muted">
         COD trên bảng = giá trị thu hộ đơn (ops risk) —{" "}
         <strong className="text-warn">COD ≠ invoice / seat charge</strong>.
-        Refund cao luôn HUMAN · Duyệt hoàn / Ops duyệt / Từ chối ghi audit JSONL
-        (sandbox).
+        {TRUST_SPLIT_VI}. Refund cao luôn HUMAN · Duyệt hoàn / Ops duyệt / Từ
+        chối ghi audit JSONL (sandbox · không live SPX).
       </p>
     </div>
   );
