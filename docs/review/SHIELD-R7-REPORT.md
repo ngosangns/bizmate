@@ -16,7 +16,7 @@
 
 ## Tip SHA
 
-**This polish tip:** `405023e`  
+**This polish tip:** `616b9ac`  
 **Parent seed:** `45252f0`
 
 ## Prove commands (EXIT codes)
