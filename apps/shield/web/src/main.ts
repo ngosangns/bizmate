@@ -199,9 +199,16 @@ function renderCards(): string {
           <span class="sr-only">Giải thích cho ông bà: </span>
           💬 ${escapeHtml(v.aiExplanation?.elderVi ?? v.elderExplanation)}
         </p>
-        <p class="mt-2 text-xs text-shield-muted m-0">
+        <p class="mt-2 text-xs text-shield-muted m-0 flex flex-wrap items-center gap-2">
+          <span class="${badgeClass("sandbox")}">AI đang đề xuất</span>
           <span class="${badgeClass("sandbox")}">${escapeHtml(v.aiExplanation?.meta.labelVi ?? "AI-draft stub")}</span>
-          ${v.triageAssist ? ` · triage ${v.triageAssist.score} (không override rule · ${escapeHtml(v.action)})` : ""}
+          ${
+            v.triageAssist
+              ? `<span class="${badgeClass("neutral")}">triage ${v.triageAssist.score}</span>
+                 <span class="${badgeClass("sandbox")}">overridesVerdict: false</span>
+                 <span class="text-shield-muted">(rule = ${escapeHtml(v.action)})</span>`
+              : ""
+          }
         </p>
         ${
           (v.aiExplanation?.familyVi ?? v.familyAlert)
@@ -278,6 +285,10 @@ function renderPlanCards(): string {
 }
 
 function renderHonestyStrip(): string {
+  const aiModeLabel =
+    verdicts[0]?.aiExplanation?.meta?.mode ?? "offline_stub";
+  const aiBadge =
+    verdicts[0]?.aiExplanation?.meta?.labelVi ?? "AI-draft stub (offline template)";
   return `<aside class="honesty-strip" role="status" aria-live="polite" aria-label="Honesty banners">
     <div class="mx-auto max-w-3xl px-4 py-3 space-y-1.5 text-sm sm:text-base">
       <p class="m-0">
@@ -292,6 +303,12 @@ function renderHonestyStrip(): string {
       <p class="m-0 text-shield-muted">
         ENGINE: luật + blacklist deterministic — <strong class="text-shield-ink">risk NEVER from LLM</strong>
         · Người trả: family B2C (con trả cho ba/mẹ)
+      </p>
+      <p class="m-0">
+        <span class="${badgeClass("sandbox")}">AI đang đề xuất</span>
+        <span class="${badgeClass("sandbox")}">${escapeHtml(aiBadge)}</span>
+        · mode=<strong class="text-shield-ink">${escapeHtml(aiModeLabel)}</strong>
+        · triage <strong class="text-shield-ink">overridesVerdict: false</strong> (rule owns allow/flag/block)
       </p>
     </div>
   </aside>`;

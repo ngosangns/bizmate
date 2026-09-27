@@ -13,7 +13,7 @@ SMS/Zalo giả ngân hàng, QR hoàn tiền, deepfake gọi “con đang cấp c
 |--------|-----------|---------------------|
 | Verdict | — | Blacklist + script patterns + fixture detector |
 | Explanation | Draft lời giải thích elder + family copy | Luôn có (offline template labeled AI-draft); live hook optional |
-| Triage assist | Điểm gợi ý ưu tiên xem | **Không** override rule; UI show cả hai |
+| Triage assist | Điểm gợi ý ưu tiên xem | **Không** override rule; UI show cả hai (`overridesVerdict: false`) |
 | Caregiver | — | Human override allow/block |
 
 ## Trust pitch
@@ -22,5 +22,7 @@ SMS/Zalo giả ngân hàng, QR hoàn tiền, deepfake gọi “con đang cấp c
 ## Honesty
 Deepfake score = fixture. Notify = local SW stub. Không fake push gateway.
 
-## Round 7 focus
-AI explanation **luôn** gắn verdict; triage score cạnh rule; nhãn stub rõ.
+## Round 7 focus (AI-OPS)
+- AI explanation **luôn** gắn verdict; triage score cạnh rule; nhãn stub rõ (`AI đang đề xuất` / AI-draft stub).
+- `BIZMATE_MODE=live` **optional**: async path gọi `callLiveLlmStub`; nếu thiếu provider → **fallback** offline template với meta `offline_stub` + nhãn live-fallback (không bịa câu trả lời LLM).
+- **Risk / action / allow / flag / block = rules only** — LLM không đổi verdict.

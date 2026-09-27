@@ -13,6 +13,7 @@ import {
   type IncomingMessage,
   type ShieldVerdict,
 } from "./engine.js";
+import { attachAiDrafts } from "./ai-explain.js";
 import {
   createCheckout,
   honestyBanner,
@@ -51,6 +52,9 @@ function printHeader(): void {
   // Son-S3 — do not claim Mate codegen for Shield
   console.log(
     `ENGINE: rule engine + fixture score — not Mate codegen (Codex = contracts/audit only)`
+  );
+  console.log(
+    `AI: explanation draft + triage assist (overridesVerdict=false) · risk/action = rules only`
   );
   // Sid-S2 — Sea wedge = distribution surface, NOT payer
   console.log(
@@ -91,7 +95,7 @@ function runInboxPass(
   for (let i = 0; i < total; i++) {
     const m = messages[i];
     const step = i + 1;
-    const v = judgeMessage(m);
+    const v = attachAiDrafts(m, judgeMessage(m));
     verdicts.push(v);
     live[v.action]++;
     const icon = v.action === "block" ? "🚫" : v.action === "flag" ? "⚠️" : "✅";
@@ -109,9 +113,14 @@ function runInboxPass(
         }`
       );
     }
-    // Kyle-S1 — main line = icon+STEP+💬 one elder sentence; reasons[] only in AUDIT
-    console.log(`   💬 ${v.elderExplanation}`);
-    if (v.familyAlert) console.log(`   📱 ${v.familyAlert}`);
+    // R7 — AI draft + triage (labels honest; does not override rule)
+    console.log(`   🤖 AI đang đề xuất · ${v.aiExplanation.meta.labelVi}`);
+    console.log(`   💬 ${v.aiExplanation.elderVi}`);
+    if (v.aiExplanation.familyVi) console.log(`   📱 ${v.aiExplanation.familyVi}`);
+    console.log(
+      `   triage score=${v.triageAssist.score} · overridesVerdict=${v.triageAssist.overridesVerdict} · ${v.triageAssist.meta.labelVi}`
+    );
+    console.log(`   ${v.triageAssist.rationaleVi}`);
     // TA-S2 — buyer VN tip after blocking fake QR hoàn tiền (m3)
     if (
       v.action === "block" &&
