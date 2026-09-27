@@ -133,7 +133,8 @@ export function BookkeeperScreen({ initial }: { initial: ScreenState }) {
             <CardHeader className="mb-2">
               <CardTitle>Lời nói (voice→ledger)</CardTitle>
               <CardDescription>
-                AI đề xuất (stub offline) → rule verify → chờ duyệt · chưa ASR live
+                AI đề xuất (stub offline · live chỉ khi BIZMATE_MODE=live) → rule
+                verify (1B code) → chờ duyệt · chưa ASR live
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-2.5">
@@ -199,7 +200,9 @@ export function BookkeeperScreen({ initial }: { initial: ScreenState }) {
                 <div className="flex flex-wrap gap-1.5">
                   {state.pending ? (
                     <>
-                      <Badge variant="muted">AI đề xuất</Badge>
+                      <Badge variant="muted">
+                        {state.pending.aiLabelVi || "AI đề xuất"}
+                      </Badge>
                       <Badge variant="muted">rule verify</Badge>
                       <Badge variant="accent">chờ duyệt</Badge>
                     </>
@@ -215,6 +218,14 @@ export function BookkeeperScreen({ initial }: { initial: ScreenState }) {
                   <p className="m-0 text-[0.95rem] italic leading-snug text-ink">
                     “{state.pending.utteranceText}”
                   </p>
+                  {state.pending.aiClassificationNote ? (
+                    <p className="m-0 text-[0.75rem] text-muted">
+                      {state.pending.aiClassificationNote}
+                      {state.pending.aiFallbackUsed
+                        ? " · live fallback"
+                        : ""}
+                    </p>
+                  ) : null}
                   <Separator />
                   <p className="m-0 text-sm leading-relaxed text-ink">
                     {state.pending.proposal.payload.items

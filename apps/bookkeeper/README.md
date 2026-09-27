@@ -1,6 +1,6 @@
 # Bookkeeper — sổ hộ kinh doanh (STACK-REBUILD)
 
-Persona: **Bà Lan — sạp vải chợ An Đông**. Parse utterance = **regex stub** (offline, chưa ASR) → đề xuất ghi sổ → **human Duyệt** (server actions) → SQLite ledger YTD; cảnh báo vượt ngưỡng miễn thuế **1 tỷ** (rule engine `@bizmate/core`, không LLM).
+Persona: **Bà Lan — sạp vải chợ An Đông**. Voice/text → **`AiLedgerProposer`** (offline stub labeled; live only if `BIZMATE_MODE=live`, else safe fallback) → rule verify (totals / 1B via `@bizmate/core`, **không LLM**) → **human Duyệt** → SQLite ledger YTD.
 
 ## Stack chosen (STACK-REBUILD)
 
@@ -9,7 +9,7 @@ Persona: **Bà Lan — sạp vải chợ An Đông**. Parse utterance = **regex 
 | UI | **Next.js App Router** | Domain-fit one-screen HITL for tiểu thương |
 | API | **Route Handlers + Server Actions** (not tRPC) | Less workspace friction; HITL `Duyệt` / `Từ chối` as server actions |
 | Ledger | **better-sqlite3** (not Prisma) | Offline-first demo, zero migrate toolchain, sync CLI + Next |
-| Voice→ledger | Regex stub (labeled offline) | Keep prior behavior judges PASS'd |
+| Voice→ledger | `AiLedgerProposer` offline stub (+ live hook gated) | AI propose → code verify → human Duyệt |
 
 Shared (non-negotiable): `@bizmate/contracts` (Ajv ledger-proposal) · `@bizmate/billing` (honestyBanner / createCheckout / stubCharge / planIds) · `@bizmate/core` money helpers.
 
@@ -23,6 +23,14 @@ Shared (non-negotiable): `@bizmate/contracts` (Ajv ledger-proposal) · `@bizmate
 | **Payment** | `@bizmate/billing` sandbox/stub (`offline_stub` / `stripe_test`) — **never live** |
 
 Chi tiết: `docs/review/BOOKKEEPER-BUSINESS.md`.
+
+## AI Ops (Round 7)
+
+Trust: **AI proposes → code verifies → human decides**. Money / 1B / tax stay deterministic (`@bizmate/core` + `rules.ts`).
+
+- Module: `src/lib/ai-ledger-proposer.ts`
+- Live gate: `BIZMATE_MODE=live` → `LiveAiLedgerProposer` (falls back to labeled offline stub if provider missing)
+- Docs: [`docs/product/AI-OPS-REQUIREMENTS.md`](../../docs/product/AI-OPS-REQUIREMENTS.md) · [`docs/product/business/bookkeeper.md`](../../docs/product/business/bookkeeper.md)
 
 ## Run
 
@@ -58,7 +66,7 @@ Demo on `crossedThreshold` prints honesty banner + `stubCharge` / `createCheckou
 
 ```
 apps/bookkeeper/
-  src/lib/     domain: agent · rules · parse · audit · metrics · ledger-db · demo · session
+  src/lib/     domain: ai-ledger-proposer · agent · rules · parse · audit · metrics · ledger-db · demo · session
   src/actions/ HITL server actions (Duyệt / Từ chối / Pro sandbox)
   src/app/     Next.js App Router UI + /api/health
   data/        SQLite ledger (gitignored *.db)

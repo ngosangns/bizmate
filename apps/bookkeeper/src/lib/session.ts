@@ -8,6 +8,7 @@ import {
   ingestUtterance,
   type VendorState,
 } from "./agent.js";
+import type { AiLedgerProposal } from "./ai-ledger-proposer.js";
 import {
   appendAudit,
   createAuditLog,
@@ -36,6 +37,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export interface PendingProposal {
   proposal: Proposal<LedgerEntry>;
   utteranceText: string;
+  /** Honesty label from AiLedgerProposer (stub vs live fallback). */
+  aiLabelVi: string;
+  aiClassificationNote: string;
+  aiMode: AiLedgerProposal["meta"]["mode"];
+  aiFallbackUsed: boolean;
 }
 
 export interface ScreenState {
@@ -192,7 +198,14 @@ export function proposeUtterance(text: string): ScreenState {
     return toScreen(db);
   }
 
-  _pending = { proposal: ingested.proposal, utteranceText: text };
+  _pending = {
+    proposal: ingested.proposal,
+    utteranceText: text,
+    aiLabelVi: ingested.ai.meta.labelVi,
+    aiClassificationNote: ingested.ai.classificationNote,
+    aiMode: ingested.ai.meta.mode,
+    aiFallbackUsed: ingested.ai.fallbackUsed,
+  };
   if (ingested.proposal.payload.crossedThreshold) {
     _lastStatus =
       "▶ ĐỀ XUẤT chờ Duyệt / Từ chối (HITL) · ⚠️ VƯỢT NGƯỠNG 1 TỶ";
