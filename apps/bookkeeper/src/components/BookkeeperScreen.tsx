@@ -131,9 +131,9 @@ export function BookkeeperScreen({ initial }: { initial: ScreenState }) {
           {/* Voice → propose */}
           <Card>
             <CardHeader className="mb-2">
-              <CardTitle>Lời nói (voice→ledger stub)</CardTitle>
+              <CardTitle>Lời nói (voice→ledger)</CardTitle>
               <CardDescription>
-                Nhập utterance · regex stub offline · chưa ASR
+                AI đề xuất (stub offline) → rule verify → chờ duyệt · chưa ASR live
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-2.5">
@@ -194,13 +194,19 @@ export function BookkeeperScreen({ initial }: { initial: ScreenState }) {
           {/* Proposal card */}
           <Card>
             <CardHeader className="mb-2">
-              <div className="flex items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <CardTitle>Đề xuất ghi sổ</CardTitle>
-                {state.pending ? (
-                  <Badge variant="accent">Chờ Duyệt</Badge>
-                ) : (
-                  <Badge variant="muted">Trống</Badge>
-                )}
+                <div className="flex flex-wrap gap-1.5">
+                  {state.pending ? (
+                    <>
+                      <Badge variant="muted">AI đề xuất</Badge>
+                      <Badge variant="muted">rule verify</Badge>
+                      <Badge variant="accent">chờ duyệt</Badge>
+                    </>
+                  ) : (
+                    <Badge variant="muted">Trống</Badge>
+                  )}
+                </div>
               </div>
             </CardHeader>
             <CardContent>

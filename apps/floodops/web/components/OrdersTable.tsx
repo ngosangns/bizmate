@@ -3,6 +3,8 @@
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { Order, ProposedAction, Ward } from "../lib/load-state";
+import { adviseReplan, type OpsAdvice } from "../../src/ai-ops-advisor";
+import type { ProposedAction as EngineAction, Order as EngineOrder, Ward as EngineWard } from "../../src/engine";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 
@@ -14,6 +16,19 @@ function vnd(n: number): string {
 function wardStatusLabel(status: Ward["status"]): string {
   return status === "flooded" ? "flooded · ngập" : "clear · khô";
 }
+
+function aiAdviceFor(
+  a: ProposedAction,
+  o: Order,
+  w: Ward
+): OpsAdvice {
+  return adviseReplan(
+    a as EngineAction,
+    o as EngineOrder,
+    w as EngineWard
+  );
+}
+
 
 interface Props {
   orders: Order[];
@@ -151,6 +166,26 @@ export default function OrdersTable({ orders, actions, wards }: Props) {
                       {a.reason}
                     </div>
                   )}
+                  {a &&
+                    (() => {
+                      const w = wardName.get(o.wardId);
+                      if (!w) return null;
+                      const advice = aiAdviceFor(a, o, w);
+                      return (
+                        <div className="mt-1 max-w-[320px] rounded border border-dashed border-border px-1.5 py-1 text-[11px] text-muted">
+                          <span className="font-medium text-ink">
+                            AI advice · {advice.meta.labelVi}
+                          </span>
+                          <div className="mt-0.5">{advice.rationaleVi}</div>
+                          {advice.alternateSuggestion ? (
+                            <div className="mt-0.5 italic">
+                              Gợi ý phụ: {advice.alternateSuggestion.kind} —{" "}
+                              {advice.alternateSuggestion.whyVi}
+                            </div>
+                          ) : null}
+                        </div>
+                      );
+                    })()}
                 </td>
                 <td className="border-b border-border px-2 py-2">
                   {a ? (

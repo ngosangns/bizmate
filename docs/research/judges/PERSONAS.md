@@ -29,3 +29,18 @@ Mỗi bot judge phải: (1) chấm theo barem 8 mục, (2) hỏi Q&A kiểu Sea/
 
 ## Advocates
 Each owns one app under `/workspace/bizmate/apps/{mate|bookkeeper|shield|floodops}` (BizMate advocate owns mate+judge+em+runtime+web stack). Listen to judges, implement fixes in repo, re-pitch until ALL judges PASS or CONDITIONAL cleared. Coordinate via Review Orchestrator.
+
+---
+
+## Round 7 lens — AI Ops (additive; R1–R6 unchanged)
+
+Judges keep their persona lenses above. For Round 7, **also** probe:
+
+1. **Where is the AI propose module?** (file path + demo moment — not README aspiration)
+2. **What does code still own?** (1B / blacklist verdict / COD policy / runtime)
+3. **Stub vs live:** is the badge honest when `BIZMATE_MODE` is offline?
+4. **Would Sea ops trust this?** (Lee) / **Would ba/mẹ or seller understand AI vs rule?** (Tuấn Anh / Kyle) / **Codex + contracts evidence?** (Son) / **Week-2 path without fake live?** (Sidharth)
+
+Fail fast if LLM appears to own money, tax, risk verdict, or refund auto-apply.
+
+Rubric: `docs/review/ROUND-7-AI-OPS.md` · Requirements: `docs/product/AI-OPS-REQUIREMENTS.md`.

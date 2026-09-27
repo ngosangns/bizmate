@@ -18,7 +18,10 @@ import {
   validateLedgerProposal,
   type LedgerProposal,
 } from "@bizmate/contracts";
-import { parseUtterance } from "./parse-utterance.js";
+import {
+  proposeOfflineSync,
+  type AiLedgerProposal,
+} from "./ai-ledger-proposer.js";
 import {
   approveEntry,
   proposeLedgerEntry,
@@ -119,16 +122,58 @@ export function ingestUtterance(
   utteranceId: string,
   text: string,
   citationIds: string[]
-): { proposal: Proposal<LedgerEntry>; state: VendorState } {
-  const items = parseUtterance(text);
+): {
+  proposal: Proposal<LedgerEntry>;
+  state: VendorState;
+  ai: AiLedgerProposal;
+} {
+  // AI propose layer (offline stub by default) — money still from rules.
+  const ai = proposeOfflineSync({
+    utteranceId,
+    text,
+    ytdRevenueVnd: state.ytdRevenueVnd,
+    citationIds,
+  });
   const entry = proposeLedgerEntry(
     utteranceId,
-    items,
+    ai.items,
     state.ytdRevenueVnd,
     citationIds
   );
   const draft = createProposal(utteranceId, entry, "mate");
-  return verifyLedgerProposal(state, draft);
+  const verified = verifyLedgerProposal(state, draft);
+  return { ...verified, ai };
+}
+
+/** Async path via AiLedgerProposer (offline or live+fallback). */
+export async function ingestUtteranceWithAi(
+  state: VendorState,
+  utteranceId: string,
+  text: string,
+  citationIds: string[],
+  env: NodeJS.ProcessEnv = process.env
+): Promise<{
+  proposal: Proposal<LedgerEntry>;
+  state: VendorState;
+  ai: AiLedgerProposal;
+}> {
+  const { createAiLedgerProposer } = await import("./ai-ledger-proposer.js");
+  const proposer = createAiLedgerProposer(env);
+  const ai = await proposer.propose({
+    utteranceId,
+    text,
+    ytdRevenueVnd: state.ytdRevenueVnd,
+    citationIds,
+  });
+  const entry = proposeLedgerEntry(
+    utteranceId,
+    ai.items,
+    state.ytdRevenueVnd,
+    citationIds
+  );
+  const draft = createProposal(utteranceId, entry, "mate");
+  const verified = verifyLedgerProposal(state, draft);
+  return { ...verified, ai };
 }
 
 /** Persist only after a verified proposal is human-approved. Re-asserts Ajv. */

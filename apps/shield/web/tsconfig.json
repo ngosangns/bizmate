@@ -14,7 +14,8 @@
       "@shield/engine": ["../src/engine.ts"],
       "@shield/blacklist": ["../src/blacklist.ts"],
       "@shield/notify": ["../src/notify.ts"],
-      "@shield/detector": ["../src/detector-stub.ts"]
+      "@shield/detector": ["../src/detector-stub.ts"],
+      "@shield/ai-explain": ["../src/ai-explain.ts"]
     }
   },
   "include": ["src/**/*", "../src/engine.ts", "../src/blacklist.ts", "../src/notify.ts", "../src/detector-stub.ts"]

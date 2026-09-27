@@ -46,3 +46,19 @@
 - https://www.businesstimes.com.sg/startups-tech/technology/ai-innovation-inaugural-sea-openai-regional-codex-hackathon-singapore  
 - https://openai.com/index/sea-david-chen/  
 - https://developers.openai.com/community/codex-ambassadors  
+
+---
+
+## F. Round 7 — AI Ops notes (additive)
+
+Round 7 chấm **AI operational presence + honesty** trên cả 4 app. Không sửa barem R1–R6 trong `docs/review/ROUND-*` cũ.
+
+| Lens | Câu hỏi thêm R7 |
+|------|-----------------|
+| Sidharth | AIpropose có path tuần 2 không fake live integration? |
+| Lee | Deterministic vs LLM split còn sạch dưới COD/flood/scam? |
+| Tuấn Anh | Seller/elder thấy rõ “AI đề xuất” vs “máy luật”? |
+| Kyle | 90s loop có badge AI / verify / chờ duyệt? |
+| Son Lê | Offline stub labeled? Contracts/Ajv vẫn gate? `AiMode` trong core? |
+
+Chi tiết: `docs/review/ROUND-7-AI-OPS.md`.

@@ -1,3 +1,4 @@
+export * from "./lib/ai-ledger-proposer.js";
 export * from "./lib/parse-utterance.js";
 export * from "./lib/rules.js";
 export * from "./lib/agent.js";

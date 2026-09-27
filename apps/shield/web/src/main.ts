@@ -15,6 +15,7 @@ import {
 } from "@shield/engine";
 import { buildFamilyNotify, SW_SHOW_NOTIFY } from "@shield/notify";
 import { runDetectorStub } from "@shield/detector";
+import { attachAiDrafts } from "@shield/ai-explain";
 import {
   createCheckout,
   honestyBanner,
@@ -28,7 +29,8 @@ const app = document.querySelector("#app")!;
 
 type LiveCounts = { allow: number; flag: number; block: number };
 
-let verdicts: ShieldVerdict[] = [];
+type AiBundled = ReturnType<typeof attachAiDrafts>;
+let verdicts: AiBundled[] = [];
 let live: LiveCounts = { allow: 0, flag: 0, block: 0 };
 let swReady = false;
 let notifPermission: NotificationPermission | "unsupported" = "unsupported";
@@ -108,7 +110,7 @@ function runInbox(): void {
   verdicts = [];
   live = { allow: 0, flag: 0, block: 0 };
   for (const m of messages) {
-    const v = judgeMessage(m);
+    const v = attachAiDrafts(m, judgeMessage(m));
     verdicts.push(v);
     live[v.action]++;
     void showLocalNotify(v);
@@ -195,13 +197,17 @@ function renderCards(): string {
         </div>
         <p class="text-elder-lg font-medium m-0 leading-snug">
           <span class="sr-only">Giải thích cho ông bà: </span>
-          💬 ${escapeHtml(v.elderExplanation)}
+          💬 ${escapeHtml(v.aiExplanation?.elderVi ?? v.elderExplanation)}
+        </p>
+        <p class="mt-2 text-xs text-shield-muted m-0">
+          <span class="${badgeClass("sandbox")}">${escapeHtml(v.aiExplanation?.meta.labelVi ?? "AI-draft stub")}</span>
+          ${v.triageAssist ? ` · triage ${v.triageAssist.score} (không override rule · ${escapeHtml(v.action)})` : ""}
         </p>
         ${
-          v.familyAlert
+          (v.aiExplanation?.familyVi ?? v.familyAlert)
             ? `<p class="mt-2 text-base text-shield-muted m-0">
                 <span class="sr-only">Cảnh báo gia đình: </span>
-                📱 ${escapeHtml(v.familyAlert)}
+                📱 ${escapeHtml(v.aiExplanation?.familyVi ?? v.familyAlert ?? "")}
               </p>`
             : ""
         }

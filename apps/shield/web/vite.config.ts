@@ -15,6 +15,7 @@ export default defineConfig({
       "@shield/blacklist": path.resolve(shieldRoot, "src/blacklist.ts"),
       "@shield/notify": path.resolve(shieldRoot, "src/notify.ts"),
       "@shield/detector": path.resolve(shieldRoot, "src/detector-stub.ts"),
+      "@shield/ai-explain": path.resolve(shieldRoot, "src/ai-explain.ts"),
     },
   },
   server: {

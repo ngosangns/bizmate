@@ -14,7 +14,7 @@ You are coding inside the **Biz Mate** monorepo. Read this before writing code.
 | Pillar | Path | Owns |
 |--------|------|------|
 | Contracts | `packages/contracts` | JSON Schema for workflows, judge verdicts, EM tasks |
-| Core | `packages/core` | Propose/verify/decide types, offline mode helpers |
+| Core | `packages/core` | Propose/verify/decide types, offline mode helpers, `AiMode` / `createAiMeta` |
 | Mate | `apps/mate` | Workflow codegen agent + evolution loop |
 | Judge | `apps/judge` | Laya + SLM (or rule) code judge for high-level review |
 | EM | `apps/em` | AI-native Engineering Manager (task queue, merges, acceptance) |
@@ -59,3 +59,7 @@ Prep repo for Sea x OpenAI Codex Hackathon VN. Day-of build starts empty; this r
 | FloodOps | `apps/floodops` | Flood-day logistics replan (Autonomous) |
 
 Same trust rules apply. Prefer extending fixtures over live integrations.
+
+## Round 7 — AI Ops
+
+Every app needs a labeled AI **propose** path (`offline_stub` default; optional `BIZMATE_MODE=live`). See `docs/product/AI-OPS-REQUIREMENTS.md` and `docs/review/ROUND-7-AI-OPS.md`. Money/tax/risk/refund stay code + human.
