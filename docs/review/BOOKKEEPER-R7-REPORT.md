@@ -6,7 +6,7 @@
 
 ## Tip
 
-**`fd0536e6ced403ad9d3964c159499fee584d52cf`** (filled at commit time) — bookkeeper + honesty docs only.
+**`1c685aa02315b5353ff5a6e9cea01daae4e1c15c`** (filled at commit time) — bookkeeper + honesty docs only.
 
 ## What changed
 
