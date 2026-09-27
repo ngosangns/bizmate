@@ -10,3 +10,13 @@ export {
   InMemoryRegistry,
   defaultRegistryDir,
 } from "./registry.js";
+export {
+  generateWorkflowWithMeta,
+  generateForDomainWithMeta,
+  evolveWorkflowWithMeta,
+  proposeWorkflowOffline,
+  proposeForDomainOffline,
+  resolveMateAiMode,
+  MATE_UI_BADGES,
+  type WorkflowProposal,
+} from "./ai-propose.js";

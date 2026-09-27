@@ -20,7 +20,20 @@ SME / seller cần phần mềm ops đáng tin (ledger, hóa đơn nháp, pipeli
 “AI viết workflow → code + Judge kiểm → bạn duyệt → runtime chạy không LLM. Tiền và thuế luôn do rule.”
 
 ## Honesty
-Offline fixtures mặc định. `BIZMATE_MODE=live` tùy chọn. Không giả live thuế / thanh toán.
+Offline fixtures mặc định. `BIZMATE_MODE=live` tùy chọn. Không giả live thuế / thanh toán / Stripe charge.
 
-## Round 7 focus
-Harden UI badges `AI đang đề xuất` / `đã verify`; chứng minh zero-LLM runtime; docs rõ stub vs live.
+## Round 7 focus — stub vs live · badges · zero-LLM runtime
+
+| Surface | Default | Live hook | Label |
+|---------|---------|-----------|-------|
+| Mate codegen / evolve | Offline **template / heuristic** via `apps/mate/src/ai-propose.ts` + `generator.ts` / `evolve.ts` | `BIZMATE_MODE=live` → `callLiveLlmStub` then **catch → offline stub** (never invent model traffic) | `createAiMeta` → `AI đề xuất (stub offline)` / live fallback |
+| Web badges | Vite browser = **offline_stub** unless `VITE_BIZMATE_MODE` injected | — | **`AI đang đề xuất`** (Tạo/generating) · **`đã verify`** (after Chấm / ready+) · **`runtime deterministic · không LLM`** (Chạy) |
+| Runtime | Hot path **zero LLM** | — | `apps/runtime/src/engine.ts` does not import LLM helpers |
+
+Shared helpers: `packages/core/src/ai.ts` (`resolveAiMode`, `createAiMeta`, `callLiveLlmStub`).
+
+### Pitch (VN)
+Mate **đề xuất** workflow (stub offline rõ ràng) → Judge/Ajv **đã verify** → bạn **Duyệt** → Chạy sổ **không LLM**. Không claim live thuế hay thanh toán.
+
+### Pitch (EN)
+Mate **proposes** workflow drafts (honest offline stub) → code/Judge **verify** → human **approve** → runtime executes with **zero LLM**. No fake live tax or payment claims.

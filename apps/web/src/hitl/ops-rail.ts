@@ -11,6 +11,7 @@ import {
 import { escapeHtml, fmtVnd } from "../format.js";
 import { state } from "../state.js";
 import type { RunResult } from "../runner.js";
+import { aiHonestyStripHtml } from "./ai-badges.js";
 
 const CHIP_LABELS = ["Tạo", "Chấm", "Duyệt", "Chạy"] as const;
 
@@ -51,13 +52,13 @@ export function progressBanner(): string {
   let msg = "";
   switch (state.progress) {
     case "generating":
-      msg = "⏳ Đang tạo workflow…";
+      msg = "⏳ AI đang đề xuất · Đang tạo workflow…";
       break;
     case "judging":
-      msg = "⚖️ Đang chấm workflow (Laya offline)…";
+      msg = "⚖️ đang verify · Đang chấm workflow (Laya offline)…";
       break;
     case "running":
-      msg = "▶️ Đang chạy runtime deterministic…";
+      msg = "▶️ runtime deterministic · không LLM · Đang chạy…";
       break;
     default:
       return "";
@@ -177,6 +178,8 @@ export function opsRailHtml(busy: boolean): string {
           <h2 class="text-sm font-semibold tracking-tight sm:text-base">Người duyệt (HITL) · chạy sổ</h2>
           <span class="${badgeVariants({ variant: "outline" })}">above fold</span>
         </div>
+
+        ${aiHonestyStripHtml()}
 
         <div class="rounded-lg border border-border bg-background/50 p-3" id="gtm-strip">
           <p class="text-sm font-semibold">

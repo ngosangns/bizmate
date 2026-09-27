@@ -7,6 +7,7 @@ import {
   type WorkflowStep,
 } from "@bizmate/contracts";
 import { getMode, type BizMateMode } from "@bizmate/core";
+/** For AI honesty meta + live hook, use `generateWorkflowWithMeta` from `./ai-propose.js`. */
 
 /** Domain brief input for Mate codegen. */
 export interface DomainBrief {
